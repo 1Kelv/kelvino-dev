@@ -1,0 +1,264 @@
+/* Responsive Header.css */
+
+.header {
+  background-color: var(--header-bg);
+  padding: var(--spacing-sm) 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-sm);
+}
+
+/* Site Title/Logo */
+.site-title {
+  display: flex;
+  align-items: center;
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.site-title:hover {
+  color: var(--accent-color);
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: var(--spacing-xs);
+  border-radius: 4px;
+}
+
+/* Navigation */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: var(--font-base);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.nav-links a:hover {
+  color: var(--accent-color);
+  background-color: var(--bg-secondary);
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  background: none;
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: var(--font-lg);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  margin-left: var(--spacing-sm);
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent-color);
+  background-color: var(--bg-secondary);
+  transform: rotate(180deg);
+}
+
+/* Mobile Menu Toggle (hidden by default) */
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: var(--font-xl);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+}
+
+/* Mobile Navigation Overlay */
+.mobile-nav-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.mobile-nav-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 280px;
+  height: 100vh;
+  background-color: var(--header-bg);
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease;
+  z-index: 1001;
+  padding: var(--spacing-lg);
+}
+
+.mobile-nav-menu.open {
+  right: 0;
+}
+
+.mobile-nav-close {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: var(--font-2xl);
+  cursor: pointer;
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-xs);
+  float: right;
+}
+
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.mobile-nav-links a {
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: var(--font-lg);
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--border-color);
+  transition: color 0.3s ease;
+}
+
+.mobile-nav-links a:hover {
+  color: var(--accent-color);
+}
+
+/* RESPONSIVE BREAKPOINTS */
+
+/* Large tablets and small desktops */
+@media (max-width: 1024px) {
+  .nav-links {
+    gap: var(--spacing-md);
+  }
+  
+  .nav-links a {
+    font-size: var(--font-sm);
+    padding: var(--spacing-xs);
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  .header .container {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .nav-links {
+    gap: var(--spacing-sm);
+  }
+  
+  .nav-links a {
+    font-size: var(--font-sm);
+    padding: 2px var(--spacing-xs);
+  }
+  
+  .site-title {
+    font-size: var(--font-lg);
+  }
+  
+  .logo-icon {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .theme-toggle {
+    width: 36px;
+    height: 36px;
+    font-size: var(--font-base);
+  }
+}
+
+/* Mobile devices - Switch to hamburger menu */
+@media (max-width: 640px) {
+  .nav-links {
+    display: none;
+  }
+  
+  .mobile-menu-toggle {
+    display: block;
+  }
+  
+  .mobile-nav-overlay.open {
+    display: block;
+  }
+  
+  .site-title {
+    font-size: var(--font-base);
+  }
+  
+  .logo-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .header {
+    padding: var(--spacing-xs) 0;
+  }
+  
+  .header .container {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .site-title {
+    font-size: var(--font-sm);
+  }
+  
+  .theme-toggle {
+    width: 32px;
+    height: 32px;
+    font-size: var(--font-sm);
+  }
+  
+  .mobile-nav-menu {
+    width: 100%;
+    right: -100%;
+  }
+}
+
+/* Extra small mobile */
+@media (max-width: 320px) {
+  .header .container {
+    padding: 0 var(--spacing-xs);
+  }
+  
+  .mobile-nav-menu {
+    padding: var(--spacing-md);
+  }
+}

@@ -1,0 +1,292 @@
+.projects-container {
+  padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 6vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rem;
+  position: relative;
+}
+
+/* Optional: Add subtle background pattern */
+.projects-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.03) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.03) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.project-triangle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.project-top {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.project-bottom {
+  display: flex;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  justify-content: center;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+/* Enhanced Cards */
+.project-card {
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  max-width: 380px;
+  min-width: 320px;
+  text-align: center;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+}
+
+/* Subtle gradient overlay */
+.project-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.project-card:hover::before {
+  opacity: 1;
+}
+
+.project-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.12),
+    0 16px 35px rgba(0, 0, 0, 0.08);
+  border-color: rgba(120, 119, 198, 0.2);
+}
+
+/* Dark mode styles */
+.dark .project-card {
+  background-color: #1a1a1a;
+  box-shadow: 
+    0 1px 3px rgba(255, 255, 255, 0.05),
+    0 4px 12px rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .project-card::before {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.08) 0%, 
+    rgba(255, 255, 255, 0.03) 50%,
+    transparent 100%);
+}
+
+.dark .project-card:hover {
+  box-shadow: 
+    0 8px 25px rgba(255, 255, 255, 0.08),
+    0 16px 35px rgba(255, 255, 255, 0.05);
+  border-color: rgba(120, 119, 198, 0.3);
+}
+
+/* Enhanced typography and spacing for card content */
+.project-card h3 {
+  font-size: clamp(1.25rem, 3vw, 1.4rem);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover h3 {
+  transform: translateY(-2px);
+}
+
+.project-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  opacity: 0.85;
+  letter-spacing: 0.01em;
+  transition: opacity 0.3s ease;
+}
+
+.project-card:hover p {
+  opacity: 1;
+}
+
+/* Enhanced focus states for accessibility */
+.project-card:focus-visible {
+  outline: 2px solid var(--primary-color, #2563eb);
+  outline-offset: 3px;
+  transform: translateY(-4px);
+}
+
+/* Staggered entrance animations */
+@keyframes slideInScale {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.project-card {
+  animation: slideInScale 0.6s ease-out forwards;
+}
+
+/* Stagger animation delays */
+.project-top .project-card {
+  animation-delay: 0.2s;
+}
+
+.project-bottom .project-card:nth-child(1) {
+  animation-delay: 0.4s;
+}
+
+.project-bottom .project-card:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .project-triangle {
+    max-width: 900px;
+  }
+  
+  .project-card {
+    max-width: 350px;
+    min-width: 280px;
+  }
+}
+
+@media (max-width: 768px) {
+  .projects-container {
+    gap: 3rem;
+  }
+  
+  .project-triangle {
+    align-items: center;
+  }
+  
+  .project-top,
+  .project-bottom {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .project-bottom {
+    gap: 2rem;
+  }
+  
+  .project-card {
+    max-width: 100%;
+    min-width: unset;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .project-card {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+  
+  .project-card h3 {
+    font-size: 1.2rem;
+  }
+  
+  .project-card p {
+    font-size: 0.95rem;
+  }
+}
+
+/* Optional: Floating animation for subtle movement */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Uncomment to add subtle floating animation */
+/*
+.project-card {
+  animation: float 6s ease-in-out infinite;
+}
+
+.project-card:nth-child(odd) {
+  animation-delay: -3s;
+}
+*/
+
+/* Enhanced button/link styles if cards contain them */
+.project-card .project-link,
+.project-card .project-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color, #2563eb);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.project-card .project-link:hover,
+.project-card .project-button:hover {
+  background: var(--primary-color-dark, #1d4ed8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Subtle pulse effect on hover for the entire container */
+@keyframes containerPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.001);
+  }
+}
+
+.projects-container:hover {
+  animation: containerPulse 19s ease-in-out infinite;
+}
