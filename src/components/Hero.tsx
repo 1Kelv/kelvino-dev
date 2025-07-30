@@ -104,6 +104,9 @@ const Hero = () => {
             <div className="hero-tech-item">JavaScript</div>
             <div className="hero-tech-item">Node.js</div>
             <div className="hero-tech-item">Python</div>
+            <div className="hero-tech-item">SQL</div>
+            <div className="hero-tech-item">MySQL</div>
+            <div className="hero-tech-item">PostgresDB</div>
           </div>
         </motion.div>
       </div>

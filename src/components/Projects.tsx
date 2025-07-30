@@ -30,7 +30,7 @@ const Projects = () => {
           <motion.div className="project-card" whileHover={{ scale: 1.05 }}>
             <h3>🍌 Banana Game</h3>
             <p>
-              A fun Python Tkinter game. Catch bananas and avoid traps! Demonstrates basic Python GUI logic.
+              An interactive browser-based puzzle game that fetches banana-themed challenges via an external API. It includes user registration & login features, with real-time gameplay & score logic. Built using HTML, CSS, JavaScrip, Express.js & MongoDB.
             </p>
             <a href="https://1drv.ms/v/c/23bbc21923c0c329/ESnDwCMZwrsggCMy0wAAAAABWCmkm56ZOiFTw7FYaMyHAg?e=u03y4q" target="_blank" rel="noreferrer">🎥 Watch Demo Video</a>
           </motion.div>
