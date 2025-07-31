@@ -49,7 +49,7 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 1.8 }}
           >
             <span className="hero-role-text">
-             Fraud Operations Lead & Aspiring Software Engineer
+             Fraud Operations Lead on a journey into Software Engineer & Data Analytics
             </span>
           </motion.div>
 
