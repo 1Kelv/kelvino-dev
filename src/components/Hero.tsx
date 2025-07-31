@@ -49,7 +49,7 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 1.8 }}
           >
             <span className="hero-role-text">
-             Fraud Operations Lead on a journey into Software Engineer & Data Analytics
+             Fraud Operations Lead on a journey into Software Engineering & Data Analytics
             </span>
           </motion.div>
 
@@ -61,7 +61,7 @@ const Hero = () => {
             transition={{ duration: 1, delay: 2.1 }}
           >
             First-Class Computer Science Graduate • Fraud Ops Lead @ <span className="hero-highlight">Nala</span> • 
-            Building <span className="hero-highlight">ethical AI</span> & <span className="hero-highlight">clean code</span>
+            Crafting <span className="hero-highlight">Frontend magic,</span>  <span className="hero-highlight">one commit at a time.</span>
           </motion.p>
 
           {/* Action Buttons */}
