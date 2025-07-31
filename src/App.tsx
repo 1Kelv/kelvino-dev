@@ -44,3 +44,11 @@ function App() {
 }
 
 export default App;
+
+/* to update any github commits */
+// Note: This file is the main entry point for the React application. 
+// git add .
+// git commit -m "updated hero role text or relevant changes made"
+
+// git push origin main
+
