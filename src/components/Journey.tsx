@@ -25,7 +25,7 @@ const Journey = () => {
 
         <div className="journey-card">
           <h3>2024 📅</h3>
-          <p>👨🏾‍💻 Created Banana Game project using JavaScript & React.</p>
+          <p>👨🏾‍💻 Created Banana Game project using HTML, CSS, JavaScript, Express.js & MongoDB..</p>
         </div>
 
         <div className="journey-card">
