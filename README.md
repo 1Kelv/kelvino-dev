@@ -1,69 +1,49 @@
-# React + TypeScript + Vite
+# KelvinO.dev – Personal Portfolio 💼
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Welcome to my personal portfolio website, built with **React**, **TypeScript**, and **Vite**. This single-page application showcases my background, development experience, and key projects.
 
-Currently, two official plugins are available:
+## 🔥 Purpose
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+While on holiday, I wanted to do something productive,  so I decided to build this portfolio from scratch. I initially implemented Tailwind CSS but faced challenges integrating dark mode across components, which led me to switch to **vanilla CSS** after days of debugging. This version now includes:
 
-## Expanding the ESLint configuration
+- Responsive design (mobile-first)
+- Smooth scrolling with `scrollIntoView`
+- Subtle animations using **Framer Motion**
+- Working contact form (via Netlify Forms)
+- Live links to my projects and social platforms
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 Live Site
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+👉 [kelvino-dev.netlify.app](https://kelvino-dev.netlify.app)
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## 💡 Featured Projects
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **NextGen AI Résumé Analyser** – An AI-powered résumé reviewer using SHAP, LIME, and fairness auditing.
+- **AgileFlow** – A task/sprint manager with predictive AI and Supabase backend.
+- **Banana Game 🍌** – A JavaScript puzzle game with real-time login and API challenges.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🛠️ Tech Stack
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Area           | Technology                      |
+|----------------|----------------------------------|
+| Frontend       | React (v18), TypeScript, Vite    |
+| Styling        | Vanilla CSS                     |
+| Animations     | Framer Motion                   |
+| State Mgmt     | Context API                     |
+| Hosting        | Netlify                         |
+| Deployment     | GitHub + Netlify (CI/CD)        |
+| Contact Form   | Netlify Forms                   |
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 📫 Contact
+
+Feel free to reach out or explore more of my work:
+
+- 🌐 [LinkedIn](https://www.linkedin.com/in/kelvinosupo/)
+- 🐙 [GitHub](https://github.com/1Kelv)
+- ✍🏾 [Medium](https://medium.com/@kelvinosupo)
+- 📧 Email: [hidden via contact form for privacy]
+
+---
+
+Thanks for visiting my portfolio. I’d love your feedback!
+
