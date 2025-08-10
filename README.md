@@ -31,8 +31,21 @@ While on holiday, I wanted to do something productive,  so I decided to build th
 | Animations     | Framer Motion                   |
 | State Mgmt     | Context API                     |
 | Hosting        | Netlify                         |
-| Deployment     | GitHub + Netlify (CI/CD)        |
+| Deployment     | ## Deployment
+Hosted on **Netlify** with **GitHub‑based CI/CD**:
+- Every push triggers an automatic build on Netlify Continuous Integration (CI).
+- Merges to `main` deploy to production automatically Continuous Delivery/Deployment (CD).
+- Pull requests create preview deploys for review.        |
 | Contact Form   | Netlify Forms                   |
+
+## How it deploys
+1) Connect this repo to Netlify.
+2) Build command: `npm run build`
+3) Publish directory: `dist`
+4) Netlify auto-builds on every push; `main` → production, PRs → preview.
+
+![Netlify Status](https://api.netlify.com/api/v1/badges/kelvino-dev.netlify.app/deploy-status)
+![GitHub last commit](https://img.shields.io/github/last-commit/1Kelv/kelvino-dev)
 
 ## 📫 Contact
 
