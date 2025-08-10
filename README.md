@@ -31,18 +31,19 @@ While on holiday, I wanted to do something productive,  so I decided to build th
 | Animations     | Framer Motion                   |
 | State Mgmt     | Context API                     |
 | Hosting        | Netlify                         |
-| Deployment     | ## Deployment
-Hosted on **Netlify** with **GitHub‑based CI/CD**:
-- Every push triggers an automatic build on Netlify Continuous Integration (CI).
-- Merges to `main` deploy to production automatically Continuous Delivery/Deployment (CD).
-- Pull requests create preview deploys for review.        |
-| Contact Form   | Netlify Forms                   |
 
-## How it deploys
-1) Connect this repo to Netlify.
-2) Build command: `npm run build`
-3) Publish directory: `dist`
-4) Netlify auto-builds on every push; `main` → production, PRs → preview.
+## Deployment
+
+| Environment  | Command(s)                            | Purpose |
+|--------------|---------------------------------------|---------|
+| **Local Dev** | `npm install` → `npm run dev`          | Installs dependencies, then starts Vite dev server for local testing. |
+| **Production Build** | `npm install` → `npm run build` | Installs dependencies, then builds the production-ready site into the `dist` folder. |
+| **Netlify Deploy** | *(automatic)* `npm install` → `npm run build` | Netlify runs this when you push to GitHub; outputs to `dist` and serves it live. |
+| **Local Production Preview** | `npm run build` → `npm run preview` | Builds production site and previews it locally. |
+
+**CI/CD Flow:**  
+- **Continuous Integration (CI):** Every push to GitHub triggers a Netlify build.  
+- **Continuous Delivery/Deployment (CD):** Merges to `main` auto-deploy to production; pull requests create preview deploys.
 
 ![Netlify Status](https://api.netlify.com/api/v1/badges/kelvino-dev.netlify.app/deploy-status)
 ![GitHub last commit](https://netlify.png/github/last-commit/1Kelv/kelvino-dev)
