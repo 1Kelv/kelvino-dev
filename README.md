@@ -45,7 +45,7 @@ Hosted on **Netlify** with **GitHub‑based CI/CD**:
 4) Netlify auto-builds on every push; `main` → production, PRs → preview.
 
 ![Netlify Status](https://api.netlify.com/api/v1/badges/kelvino-dev.netlify.app/deploy-status)
-![GitHub last commit](https://img.shields.io/github/last-commit/1Kelv/kelvino-dev)
+![GitHub last commit](https://netlify.png/github/last-commit/1Kelv/kelvino-dev)
 
 ## 📫 Contact
 
