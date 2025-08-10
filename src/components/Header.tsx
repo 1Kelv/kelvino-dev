@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import './Header.css';
 import logo from '../assets/KO.png';
 
-const Header = () => {
-  const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme || 'light';
+const Header: React.FC = () => {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    return saved ?? 'light';
   });
-  
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -18,39 +17,21 @@ const Header = () => {
     document.body.style.setProperty('background-color', theme === 'dark' ? '#0a0a0a' : '#ffffff');
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-  };
+  const toggleTheme = () => setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  const toggleMobileMenu = () => setIsMobileMenuOpen(prev => !prev);
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+  const handleNavClick = () => setIsMobileMenuOpen(false);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(prev => !prev);
-  };
-
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
-
-  // Close mobile menu when clicking on a nav link
-  const handleNavClick = () => {
-    setIsMobileMenuOpen(false);
-  };
-
-  // Close mobile menu when pressing Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsMobileMenuOpen(false);
-      }
+      if (e.key === 'Escape') setIsMobileMenuOpen(false);
     };
-
     if (isMobileMenuOpen) {
       document.addEventListener('keydown', handleEscape);
-      // Prevent body scroll when menu is open
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
-
     return () => {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
@@ -62,19 +43,35 @@ const Header = () => {
       <header className="header">
         <div className="container">
           <a href="#home" className="site-title">
-            <img src={logo} alt="Logo" className="logo-icon" />
+            <img src={logo} alt="KelvinO.dev logo" className="logo-icon" />
             KelvinO.dev
           </a>
-          
+
           {/* Desktop Navigation */}
           <nav className="nav-links">
             <a href="#projects">Projects</a>
             <a href="#about">About</a>
             <a href="#journey">Journey</a>
             <a href="#contact">Contact</a>
-            <a href="/KelvinOlasupo-CV.pdf" target="_blank" rel="noopener noreferrer">
+
+            {/* Separate links – no nesting */}
+            <a
+              href="/KelvinOlasupo-CV.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View CV (PDF)"
+            >
               View CV
             </a>
+            <a
+              href="/CodeInstitute-Cert.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View Certifications (PDF)"
+            >
+              Certifications
+            </a>
+
             <button
               onClick={toggleTheme}
               className="theme-toggle"
@@ -97,7 +94,7 @@ const Header = () => {
             >
               {theme === 'light' ? '🌙' : '☀️'}
             </button>
-            
+
             <button
               onClick={toggleMobileMenu}
               className="mobile-menu-toggle"
@@ -112,8 +109,8 @@ const Header = () => {
 
       {/* Mobile Navigation Overlay */}
       {isMobileMenuOpen && (
-        <div 
-          className="mobile-nav-overlay open" 
+        <div
+          className="mobile-nav-overlay open"
           onClick={closeMobileMenu}
           aria-hidden="true"
         />
@@ -128,21 +125,31 @@ const Header = () => {
         >
           ×
         </button>
-        
+
         <div className="mobile-nav-links">
           <a href="#projects" onClick={handleNavClick}>Projects</a>
           <a href="#about" onClick={handleNavClick}>About</a>
           <a href="#journey" onClick={handleNavClick}>Journey</a>
           <a href="#contact" onClick={handleNavClick}>Contact</a>
-          <a 
-            href="/KelvinOlasupo-CV.pdf" 
-            target="_blank" 
+
+          {/* Separate items – one link per PDF */}
+          <a
+            href="/KelvinOlasupo-CV.pdf"
+            target="_blank"
             rel="noopener noreferrer"
             onClick={handleNavClick}
           >
             View CV
           </a>
-          
+          <a
+            href="/CodeInstitute-Cert.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={handleNavClick}
+          >
+            Certifications
+          </a>
+
           <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
             <button
               onClick={() => {
