@@ -45,9 +45,6 @@ While on holiday, I wanted to do something productive,  so I decided to build th
 - **Continuous Integration (CI):** Every push to GitHub triggers a Netlify build.  
 - **Continuous Delivery/Deployment (CD):** Merges to `main` auto-deploy to production; pull requests create preview deploys.
 
-![Netlify Status](https://api.netlify.com/api/v1/badges/kelvino-dev.netlify.app/deploy-status)
-![GitHub last commit](https://netlify.png/github/last-commit/1Kelv/kelvino-dev)
-
 ## 📫 Contact
 
 Feel free to reach out or explore more of my work:
