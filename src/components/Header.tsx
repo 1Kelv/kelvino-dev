@@ -56,12 +56,12 @@ const Header: React.FC = () => {
 
             {/* Separate links – no nesting */}
             <a
-              href="/KelvinOlasupo-CV.pdf"
+              href="/KelvinOlasupo-Resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="View CV (PDF)"
             >
-              View CV
+              View my CV
             </a>
             <a
               href="/CodeInstitute-Cert.pdf"
