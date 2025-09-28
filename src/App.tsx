@@ -48,7 +48,7 @@ export default App;
 /* to update any github commits */
 // Note: This file is the main entry point for the React application. 
 // git add .
-// git commit -m "updated hero role text or relevant changes made"
+// git commit -m "updated contact section by removing email and adding social links plus contact form"
 
 // git push origin main
 
