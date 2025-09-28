@@ -37,11 +37,12 @@ const Projects = () => {
           </motion.div>
 
           <motion.div className="project-card" whileHover={{ scale: 1.05 }}>
-            <h3>☁️  Weather Forecast App</h3>
+            <h3>🌦 Weather Forecast App</h3>
             <p>
-              A responsive weather app using basic HTML, CSS, and vanilla JavaScript. It fetches real-time weather data from the OpenWeatherMap API based on user input and displays it in a user-friendly interface.
+              Stay ahead of the weather with this responsive web app that delivers real-time forecasts in a clean, intuitive interface. Built with HTML, CSS, and vanilla JavaScript, it integrates the OpenWeatherMap API to let users quickly check conditions in any city worldwide.
             </p>
-            <a href="https://weather-app-kelvin.netlify.app/" target="_blank" rel="noreferrer">☁️ Live Demo</a>
+            <a href="https://weather-app-kelvin.netlify.app/" target="_blank" rel="noreferrer">
+👉 see it in action – type in your city and see the weather update instantly!</a>
           </motion.div>
         </div>
       </div>
