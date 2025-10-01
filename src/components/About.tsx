@@ -29,7 +29,7 @@ const About = () => {
           viewport={{ once: true }}
         >
           <p className="about-text">
-            Hello 👋🏾,<span className="highlight">I'm Kelvin, a Computer Science First-Class Graduate and current Fraud Operations Lead at Nala – a high-growth FinTech company. With over 6 years of experience in fraud analysis & prevention, I specialise in building fraud detection systems, designing rules, & creating real-time dashboards using tools like Hex and SQL.</span> At Nala, I lead initiatives that combat fraud across multiple channels, while also building scalable processes and documentation to support global operations. My role blends technical skill with operational insight, from fraud rule optimisation to chargeback strategy and team workflow design.
+            Hello 👋🏾,<span className="highlight">I'm Kelvin, a Computer Science First-Class Graduate and current Fraud Operations Lead at Nala – a high-growth FinTech company. With over 6 years of experience in fraud analysis & prevention, I specialise in building fraud detection systems, & creating real-time dashboards using tools like Hex and SQL.</span> At Nala, I lead initiatives that combat fraud across multiple channels, while also building scalable processes and documentation to support global operations. My role blends technical skill with operational insight, from fraud rule optimisation to chargeback strategy and team workflow design.
  <span className="highlight">I’m also passionate about software development & recently launched this personal portfolio to showcase my journey. It highlights some of my proudest tech work</span> I enjoy turning ideas into functional, user-focused web tools, & I’m always learning. 
           </p>
         </motion.div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import BackToTop from './components/BackToTop';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -11,10 +12,13 @@ import Footer from './components/Footer';
 function App() {
   return (
     <div className="App">
+      {/* True page-top anchor so clicking the brand always goes to the very top */}
+      <div id="home" aria-hidden="true" />
+
       <Header />
 
-      {/* Hero Section */}
-      <section id="home">
+      {/* Hero Section (kept as-is; the real #home is now above the header) */}
+      <section id="hero">
         <Hero />
       </section>
 
@@ -33,6 +37,8 @@ function App() {
         <Journey />
       </section>
 
+      <BackToTop />
+
       {/* Contact Section */}
       <section id="contact">
         <Contact />
@@ -46,9 +52,6 @@ function App() {
 export default App;
 
 /* to update any github commits */
-// Note: This file is the main entry point for the React application. 
 // git add .
-// git commit -m "updated contact section by removing email and adding social links plus contact form"
-
+// git commit -m "Add top-of-page #home anchor and smooth scroll"
 // git push origin main
-

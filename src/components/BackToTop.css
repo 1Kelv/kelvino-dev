@@ -1,0 +1,38 @@
+.back-to-top {
+  position: fixed;
+  right: clamp(12px, 2.2vw, 20px);
+  bottom: clamp(12px, 2.2vw, 20px);
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 2px solid var(--border-color);
+  background: var(--header-bg);
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.18);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease, border-color .2s ease, background-color .2s ease;
+  z-index: 2000; /* above header (1000) + drawer (1001) */
+}
+
+.back-to-top:hover {
+  border-color: var(--accent-color);
+  background: var(--bg-secondary);
+}
+
+.back-to-top.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top { transition: none; }
+}
+/* ---------- Journey Component Styles ---------- */

@@ -49,7 +49,7 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 1.8 }}
           >
             <span className="hero-role-text">
-             Fraud Operations Lead on a journey into Software Engineering & Data Analytics
+             Fraud Operations Lead on a journey into Software Engineering
             </span>
           </motion.div>
 
@@ -72,10 +72,10 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 1.4 }}
           >
             <a href="#projects" className="hero-btn hero-btn-primary">
-              View My Work
+              View recent Projects
             </a>
             <a href="#contact" className="hero-btn hero-btn-secondary">
-              Get In Touch
+              Let's connect!
             </a>
           </motion.div>
 
@@ -87,7 +87,7 @@ const Hero = () => {
             transition={{ duration: 1, delay: 2 }}
           >
             <div className="hero-scroll-text">Scroll to explore</div>
-            <div className="hero-scroll-arrow">↓</div>
+            <div className="hero-scroll-arrow">🖱️</div>
           </motion.div>
         </motion.div>
 
