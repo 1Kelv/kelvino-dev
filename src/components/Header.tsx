@@ -69,12 +69,12 @@ const Header: React.FC = () => {
             </button>
 
             <button
-              className="mobile-menu-toggle"
-              onClick={toggleMobileMenu}
-              aria-label="Open menu"
-              title="Menu"
-            >
-              ☰
+             onClick={toggleMobileMenu}
+  className={`mobile-menu-toggle ${isMobileMenuOpen ? 'open' : ''}`}
+  aria-label="Toggle mobile menu"
+  title="Menu"
+>
+  <span aria-hidden="true" />  {/* middle bar; top/bottom are CSS pseudos */}
             </button>
           </div>
         </div>

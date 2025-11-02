@@ -9,9 +9,7 @@
 }
 
 /* Prevent horizontal scroll on any device */
-html, body {
-  overflow-x: hidden;
-}
+html, body { overflow-x: hidden; }
 
 /* Container with smart gutters */
 .container {
@@ -48,7 +46,7 @@ html, body {
 }
 .site-title:hover .brand-text { color: var(--accent-color); }
 
-/* Centered desktop nav */
+/* Centred desktop nav */
 .nav-links {
   display: flex;
   justify-content: center;
@@ -64,7 +62,7 @@ html, body {
   text-decoration: none;
   padding: 6px 8px;
   border-radius: 6px;
-  white-space: nowrap; /* avoid wrap that causes micro overflow */
+  white-space: nowrap;
   transition: color .2s ease, background-color .2s ease;
 }
 .nav-links a:hover {
@@ -103,13 +101,54 @@ html, body {
 
 /* Mobile hamburger (hidden on desktop) */
 .mobile-menu-toggle {
-  display: none;
+  display: none;                 /* shown in mobile rules */
+  position: relative;
   background: none;
   border: none;
   color: var(--text-primary);
-  font-size: 1.5rem;
+  width: 42px;
+  height: 42px;
   cursor: pointer;
-  padding: 4px 6px;
+  padding: 0;
+  border-radius: 8px;            /* nicer tap target outline */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hamburger bars (middle line is the span; top/bottom are pseudos) */
+.mobile-menu-toggle span,
+.mobile-menu-toggle::before,
+.mobile-menu-toggle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 24px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: transform .3s ease, opacity .2s ease, background-color .2s ease;
+}
+
+/* Positions: middle, top, bottom */
+.mobile-menu-toggle span {
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.mobile-menu-toggle::before {
+  top: 50%;
+  transform: translate(-50%, calc(-50% - 7px));
+}
+.mobile-menu-toggle::after {
+  top: 50%;
+  transform: translate(-50%, calc(-50% + 7px));
+}
+
+/* Open state → morph to X */
+.mobile-menu-toggle.open span { opacity: 0; }
+.mobile-menu-toggle.open::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.mobile-menu-toggle.open::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 /* Overlay */
@@ -189,11 +228,25 @@ html, body {
   .nav-links { gap: clamp(8px, 2vw, 20px); }
 }
 
-/* Mobile: hide desktop nav & show hamburger, keep theme in drawer */
+/* Mobile */
 @media (max-width: 640px) {
+  /* Keep three-column grid; let actions live on the far right */
+  .header-grid {
+    grid-template-columns: auto 1fr auto;
+  }
+
   .nav-links { display: none; }
-  .mobile-menu-toggle { display: inline-flex; }
+
+  /* Ensure the hamburger hugs the right edge */
+  .header-actions { margin-left: auto; }
+  .mobile-menu-toggle {
+    display: inline-flex;
+    margin-left: auto;          /* ultimate "push right" */
+  }
+
   .theme-toggle-desktop { display: none; }
+
+  .site-title { gap: 8px; }
 }
 
 /* Very small phones */
@@ -207,4 +260,8 @@ html, body {
   .theme-toggle { transition: none; }
   .mobile-nav-menu { transition: none; }
   .nav-links a { transition: none; }
+  .mobile-menu-toggle,
+  .mobile-menu-toggle::before,
+  .mobile-menu-toggle::after,
+  .mobile-menu-toggle span { transition: none; }
 }
