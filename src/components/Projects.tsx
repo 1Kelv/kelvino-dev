@@ -33,7 +33,7 @@ const Projects = () => {
             <p>
               An interactive browser-based puzzle game that fetches banana-themed challenges via an external API. It includes user registration & login features, with real-time gameplay & score logic. Built using HTML, CSS, JavaScrip, Express.js & MongoDB.
             </p>
-            <a href="https://1drv.ms/v/c/23bbc21923c0c329/ESnDwCMZwrsggCMy0wAAAAABWCmkm56ZOiFTw7FYaMyHAg?e=u03y4q" target="_blank" rel="noreferrer">🎥 Watch Demo Video</a>
+            <a href="https://api-banana-game.netlify.app/" target="_blank" rel="noreferrer">🎮 Play Game</a>
           </motion.div>
 
           <motion.div className="project-card" whileHover={{ scale: 1.05 }}>
@@ -42,7 +42,7 @@ const Projects = () => {
               Stay ahead of the weather with this responsive web app that delivers real-time forecasts in a clean, intuitive interface. Built with HTML, CSS, and vanilla JavaScript, it integrates the OpenWeatherMap API to let users quickly check conditions in any city worldwide.
             </p>
             <a href="https://weather-app-kelvin.netlify.app/" target="_blank" rel="noreferrer">
-👉 see it in action – type in your city and see the weather update instantly!</a>
+👉 Check your weather</a>
           </motion.div>
         </div>
       </div>
