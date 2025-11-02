@@ -55,8 +55,6 @@ const Header: React.FC = () => {
             <a href="#journey">Journey</a>
             <a href="#contact">Contact</a>
             <a href="/KelvinOlasupo.Dev_Resume.pdf" target="_blank" rel="noopener noreferrer">View my CV</a>
-            <a href="/AgileFlow-Award.pdf" target="_blank" rel="noopener noreferrer">Final Year Project Award</a>
-            <a href="/CodeInstitute-Cert.pdf" target="_blank" rel="noopener noreferrer">Certifications</a>
           </nav>
 
           {/* RIGHT: desktop actions */}
@@ -101,8 +99,6 @@ const Header: React.FC = () => {
           <a href="#journey" onClick={handleNavClick}>Journey</a>
           <a href="#contact" onClick={handleNavClick}>Contact</a>
           <a href="/KelvinOlasupo.Dev_Resume.pdf" target="_blank" rel="noopener noreferrer" onClick={handleNavClick}>View my CV</a>
-          <a href="/AgileFlow-Award.pdf" target="_blank" rel="noopener noreferrer" onClick={handleNavClick}>Final Year Project Award</a>
-          <a href="/CodeInstitute-Cert.pdf" target="_blank" rel="noopener noreferrer" onClick={handleNavClick}>Certifications</a>
 
           <div className="mobile-theme-wrap">
             <button

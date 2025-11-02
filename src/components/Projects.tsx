@@ -16,7 +16,7 @@ const Projects = () => {
             <p>
               An Agile project management tool with AI-driven sprint predictions using TensorFlow. Built using React, TypeScript, Supabase.
             </p>
-            <a href="https://1drv.ms/v/c/23bbc21923c0c329/ESnDwCMZwrsggCPzZAYAAAABormTGWiQE89270qR8-PWbA?e=VB1r2Z" target="_blank" rel="noreferrer">🎥 Watch Demo Video</a>
+            <a href="https://github.com/1Kelv/AgileFlow" target="_blank" rel="noreferrer"> 🐙 GitHub</a>
           </motion.div>
         </div>
         <div className="project-bottom">
@@ -25,7 +25,7 @@ const Projects = () => {
             <p>
               AI-powered résumé analyser using SHAP, LIME, and fairness audit techniques. Focus on ethical AI.
             </p>
-            <a href="https://1drv.ms/v/c/23bbc21923c0c329/ESnDwCMZwrsggCNoZQYAAAABAwmA4MsO4ocCNMYB49AQYQ?e=fiAesq" target="_blank" rel="noreferrer">🎥 Watch Demo Video</a>
+            <a href="https://github.com/1Kelv/nextgen-ai-resume-analyser" target="_blank" rel="noreferrer"> 🐙 GitHub</a>
           </motion.div>
 
           <motion.div className="project-card" whileHover={{ scale: 1.05 }}>

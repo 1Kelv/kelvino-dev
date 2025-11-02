@@ -2,13 +2,13 @@
   position: fixed;
   right: clamp(12px, 2.2vw, 20px);
   bottom: clamp(12px, 2.2vw, 20px);
-  width: 44px;
-  height: 44px;
+  width: 54px;
+  height: 64px;
   border-radius: 999px;
   border: 2px solid var(--border-color);
   background: var(--header-bg);
   color: var(--text-primary);
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   line-height: 1;
   display: grid;
   place-items: center;

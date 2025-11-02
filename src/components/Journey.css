@@ -1,197 +1,192 @@
-.journey {
-  padding: 56px 18px;
-  max-width: 880px;
+.journey-section {
+  padding: var(--spacing-xl) 0;
+  overflow: hidden;
+}
+
+.journey-container {
+  max-width: 900px;
   margin: 0 auto;
+  padding: 0 var(--spacing-md);
 }
 
 .journey-title {
-  font-size: clamp(1.5rem, 3.4vw, 2.1rem);
-  font-weight: 700;
-  margin-bottom: 0.6rem;
-  color: var(--primary-text-color);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 800;
   text-align: center;
-  letter-spacing: -0.015em;
-  line-height: 1.15;
-  position: relative;
+  margin-bottom: 2rem;
+  color: var(--text-primary);
+  opacity: 0;
+  animation: fadeInDown 0.18s ease forwards;
 }
 
-.journey-title::after {
+/* Timeline wrapper */
+.timeline {
+  position: relative;
+  margin-left: 1.5rem;
+  border-left: 2px solid var(--accent-color);
+}
+
+/* Animated timeline line growth */
+.timeline::before {
   content: '';
   position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 48px;
-  height: 3px;
-  background: var(--primary-color, #2563eb);
-  border-radius: 2px;
+  left: -2px;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--accent-color), transparent);
+  transform-origin: top;
+  animation: lineGrow 2.5s ease forwards;
 }
 
-.journey-subtitle {
-  text-align: center;
-  color: var(--secondary-text-color, #888);
-  font-size: 0.9rem;
-  margin-bottom: 1.75rem;
-  font-weight: 500;
-  opacity: 0.85;
-}
-
-.journey-timeline { display: flex; flex-direction: column; gap: 18px; }
-
-/* --- Flip card container --- */
-.flip-card {
-  perspective: 800px;
-  cursor: pointer;
+/* Each timeline item */
+.timeline-item {
   position: relative;
-  z-index: 1;
-  margin-bottom: 18px;     /* extra breathing room between cards */
+  margin-bottom: 2rem;
+  padding-left: 1.5rem;
+  opacity: 0;
+  transform: translateX(-30px);
+  animation: slideInLeft 0.16s ease forwards;
+  transition: transform 0.13s ease;
 }
 
-/* We will control the inner height with JS for no-overlap */
-.flip-card-inner {
-  position: relative;
-  width: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.5s ease, height 0.2s ease;
-  height: 170px;           /* default compact height */
+/* Stagger animation delays for each item */
+.timeline-item:nth-child(1) { animation-delay: 0.13s; }
+.timeline-item:nth-child(2) { animation-delay: 0.15s; }
+.timeline-item:nth-child(3) { animation-delay: 0.17s; }
+.timeline-item:nth-child(4) { animation-delay: 0.19s; }
+.timeline-item:nth-child(5) { animation-delay: 1.11s; }
+.timeline-item:nth-child(6) { animation-delay: 1.13s; }
+.timeline-item:nth-child(7) { animation-delay: 1.15s; }
+.timeline-item:nth-child(8) { animation-delay: 1.17s; }
+
+.timeline-item:hover {
+  transform: translateX(8px) translateY(-2px);
 }
 
-/* Rotate when flipped */
-.flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-
-/* Faces */
-.flip-card-front,
-.flip-card-back {
+/* Circle marker with pulse animation */
+.timeline-marker {
   position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-  border-radius: 14px;
-  padding: 1rem 1rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  box-shadow:
-    0 4px 6px rgba(0,0,0,0.07),
-    0 2px 4px rgba(0,0,0,0.05);
-  border: 1px solid rgba(0,0,0,0.06);
+  left: -11px;
+  top: 4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.25);
+  animation: markerPulse 12s ease infinite;
+  transition: all 0.13s ease;
 }
 
-.flip-card-front {
-  background: linear-gradient(135deg, var(--card-bg, #111) 0%, var(--card-bg-alt, #1a1a1a) 100%);
+.timeline-item:hover .timeline-marker {
+  transform: scale(1.3);
+  box-shadow: 0 0 0 6px rgba(0, 122, 255, 0.4);
 }
 
-.flip-card-back {
-  transform: rotateY(180deg);
-  background: linear-gradient(135deg, var(--primary-color, #2563eb) 0%, rgba(37,99,235,0.85) 100%);
-  color: #fff;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-/* Smaller typography */
-.year-emoji { font-size: 1.6rem; }
-.year-text  { font-size: clamp(1.25rem, 3.3vw, 1.6rem); font-weight: 800; color: var(--primary-color, #4f7cff); margin: 0; }
-
-.flip-hint {
-  position: absolute; bottom: 0.9rem;
-  display: flex; align-items: center; gap: 0.4rem;
-  color: var(--secondary-text-color, #aaa);
-  font-size: 0.8rem; opacity: 0.75;
-}
-
-.back-year-badge {
-  font-size: 0.85rem;
+/* Year with fade-in */
+.timeline-year {
   font-weight: 700;
-  background: rgba(255,255,255,0.18);
-  padding: 0.3rem 0.7rem;
-  border-radius: 16px;
-  margin-bottom: 0.6rem;
-  border: 1px solid rgba(255,255,255,0.28);
-  backdrop-filter: blur(8px);
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+  transition: color 0.13s ease;
 }
 
-.journey-details {
-  font-size: 0.9rem;      /* smaller body */
-  line-height: 1.45;
-  text-align: left;
-  margin: 0;
-  font-weight: 400;
-  color: #fff;
+.timeline-item:hover .timeline-year {
+  color: var(--accent-color);
 }
 
-/* Accessibility */
-.flip-card:focus-visible {
-  outline: 2px solid var(--primary-color, #2563eb);
-  outline-offset: 4px;
-  border-radius: 12px;
+/* Description with enhanced interactions */
+.timeline-text {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
 }
 
-/* Entry animation */
-@keyframes slideInUp {
-  from { opacity: 0; transform: translateY(28px) rotateX(-6deg); }
-  to   { opacity: 1; transform: translateY(0) rotateX(0); }
+.timeline-item:hover .timeline-text {
+  box-shadow: 0 8px 24px rgba(0, 122, 255, 0.15);
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
 }
-.flip-card { animation: slideInUp 0.45s ease-out forwards; opacity: 0; }
-.flip-card:nth-child(1){animation-delay:0.08s}
-.flip-card:nth-child(2){animation-delay:0.14s}
-.flip-card:nth-child(3){animation-delay:0.2s}
-.flip-card:nth-child(4){animation-delay:0.26s}
-.flip-card:nth-child(5){animation-delay:0.32s}
 
-/* Mobile tweaks */
+/* Keyframe Animations */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lineGrow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes markerPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(0, 122, 255, 0.15);
+  }
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .journey      { padding: 44px 16px; }
-  .flip-card-inner { height: 160px; }
-  .flip-card-front, .flip-card-back { padding: 0.9rem; }
-  .journey-details { font-size: 0.88rem; line-height: 1.4; }
-  .flip-hint { font-size: 0.78rem; bottom: 0.75rem; }
+  .timeline {
+    margin-left: 1rem;
+  }
+  .timeline-text {
+    font-size: 0.95rem;
+  }
+  .timeline-item:hover {
+    transform: translateX(4px) translateY(-2px);
+  }
 }
 
-/* --- Gentle breathing on the visible face (no layout shift) --- */
-
-/* give each face its own scale variable */
-.flip-card-front,
-.flip-card-back {
-  --s: 1;
-  transform: translateZ(0) scale(var(--s));
-  will-change: transform, box-shadow, filter;
+@media (prefers-color-scheme: dark) {
+  .timeline-text {
+    background: #111;
+  }
 }
 
-/* back needs to keep its rotate, then scale */
-.flip-card-back {
-  transform: translateZ(0) rotateY(180deg) scale(var(--s));
-}
-
-/* tiny inhale/exhale */
-@keyframes breathe {
-  0%, 100% { --s: 1; }
-  50%      { --s: 1.008; }  /* very small to avoid overlaps */
-}
-
-/* trigger breathing on whichever face is visible */
-.flip-card:hover .flip-card-front,
-.flip-card:focus-within .flip-card-front,
-.flip-card.flipped:hover .flip-card-back,
-.flip-card.flipped:focus-within .flip-card-back {
-  animation: breathe 3.8s ease-in-out infinite;
-}
-
-/* subtle lift/glow without reflow */
-.flip-card:hover .flip-card-front,
-.flip-card:hover .flip-card-back {
-  box-shadow:
-    0 10px 26px rgba(0,0,0,0.18),
-    0 4px 10px rgba(0,0,0,0.10);
-  filter: brightness(1.02);
-}
-
-/* respect reduced motion */
+/* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
-  .flip-card:hover .flip-card-front,
-  .flip-card:focus-within .flip-card-front,
-  .flip-card.flipped:hover .flip-card-back,
-  .flip-card.flipped:focus-within .flip-card-back {
+  .timeline-item,
+  .journey-title,
+  .timeline::before,
+  .timeline-marker {
     animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  
+  .timeline-item:hover {
+    transform: none;
   }
 }

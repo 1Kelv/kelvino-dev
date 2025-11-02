@@ -1,37 +1,57 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import './About.css';
+import gradPhoto from '../assets/gradphoto.jpg'; // <- put your image in src/assets
 
-const About = () => {
+const About: React.FC = () => {
   return (
     <motion.section
+      id="about"
       className="about-section"
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1.6 }}
-      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true, amount: 0.2 }}
     >
       <div className="about-container">
-        <motion.h2
-          className="about-heading"
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.9, delay: 1.3 }}
-          viewport={{ once: true }}
-        >
-          About Me
-        </motion.h2>
-        
+        {/* Text */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.9 }}
+          className="about-text-col"
+          initial={{ opacity: 0, x: -16 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.55 }}
           viewport={{ once: true }}
         >
+          <h2 className="about-heading">About Me</h2>
+
           <p className="about-text">
-            Hello 👋🏾,<span className="highlight">I'm Kelvin, a Computer Science First-Class Graduate and current Fraud Operations Lead at Nala – a high-growth FinTech company. With over 6 years of experience in fraud analysis & prevention, I specialise in building fraud detection systems, & creating real-time dashboards using tools like Hex and SQL.</span> At Nala, I lead initiatives that combat fraud across multiple channels, while also building scalable processes and documentation to support global operations. My role blends technical skill with operational insight, from fraud rule optimisation to chargeback strategy and team workflow design.
- <span className="highlight">I’m also passionate about software development & recently launched this personal portfolio to showcase my journey. It highlights some of my proudest tech work</span> I enjoy turning ideas into functional, user-focused web tools, & I’m always learning. 
+            Hello 👋🏾 I’m Kelvin, a First-Class Computer Science graduate and current Fraud Operations Lead at{' '}
+  <a href="https://www.nala.com/" target="_blank" rel="noopener noreferrer">Nala</a>. 
+  I lead initiatives that combat fraud, streamline investigations, and strengthen internal operations through 
+  clear, process-driven documentation and data-backed insights.
           </p>
+
+          <p className="about-text">
+           I collaborate closely with engineers to review fraud rule performance and share actionable feedback, while 
+  creating structured SOPs and workflows in Scribe to support a fast-growing team.  
+  Looking ahead, I’m eager to transition into Software Engineering, building scalable, user-focused tools 
+  that combine my technical foundation with my operational experience.
+          </p>
+        </motion.div>
+
+        {/* Image */}
+        <motion.div
+          className="about-image-col"
+          initial={{ opacity: 0, x: 16 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.55, delay: 0.05 }}
+          viewport={{ once: true }}
+        >
+          <img
+            src={gradPhoto}
+            alt="Kelvin Olasupo at graduation"
+            className="about-image"
+          />
         </motion.div>
       </div>
     </motion.section>
@@ -39,4 +59,3 @@ const About = () => {
 };
 
 export default About;
-

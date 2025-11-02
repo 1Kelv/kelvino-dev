@@ -5,6 +5,7 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import About from './components/About';
 import Projects from './components/Projects';
+import Achievements from './components/Achievements';
 import Journey from './components/Journey';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
@@ -30,6 +31,11 @@ function App() {
       {/* Projects Section */}
       <section id="projects">
         <Projects />
+      </section>
+      
+      {/* Achievements Section */}
+      <section id="achievements">
+        <Achievements />
       </section>
 
       {/* Journey Section */}
