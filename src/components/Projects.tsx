@@ -25,7 +25,7 @@ const Projects = () => {
             <p>
               AI-powered résumé analyser using SHAP, LIME, and fairness audit techniques. Focus on ethical AI.
             </p>
-            <a href="https://github.com/1Kelv/nextgen-ai-resume-analyser" target="_blank" rel="noreferrer"> 🐙 GitHub</a>
+            <a href="https://g3tsfvzt8zlfbxsttxk5bh.streamlit.app/" target="_blank" rel="noreferrer"> 📊 View Analysis</a>
           </motion.div>
 
           <motion.div className="project-card" whileHover={{ scale: 1.05 }}>
