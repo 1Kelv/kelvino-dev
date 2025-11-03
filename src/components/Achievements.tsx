@@ -28,8 +28,7 @@ const Achievements: React.FC = () => {
               🥉 Awarded the <strong>Bronze Award for Innovation</strong> from{' '}
               <strong>SwitchShop Limited</strong> for my final-year project{' '}
               <strong>AgileFlow</strong>, a React and TypeScript-based Agile project management
-              dashboard integrating AI prediction via TensorFlow and fairness auditing tools (SHAP &
-              LIME). Recognised for innovation, usability, and ethical AI implementation.
+              dashboard integrating AI prediction via TensorFlow and fairness auditing tools.
             </p>
 
             {/* PDF button */}

@@ -14,7 +14,7 @@ const Projects = () => {
 
             <h3>⚙️ AgileFlow</h3>
             <p>
-              An Agile project management tool with AI-driven sprint predictions using TensorFlow. Built using React, TypeScript, Supabase.
+              An Agile project management tool with AI-driven sprint predictions using TensorFlow. Built using React, TypeScript + JavaScript & Supabase.
             </p>
             <a href="https://github.com/1Kelv/AgileFlow" target="_blank" rel="noreferrer"> 🐙 GitHub</a>
           </motion.div>
@@ -23,7 +23,7 @@ const Projects = () => {
           <motion.div className="project-card" whileHover={{ scale: 1.05 }}>
             <h3>📊 NextGen AI Resumer analyser</h3>
             <p>
-              AI-powered résumé analyser using SHAP, LIME, and fairness audit techniques. Focus on ethical AI.
+              AI-powered résumé analyser using SHAP (SHapley Additive exPlanations), LIME (Local Interpretable Model-Agnostic Explanations), and Fairness Audit techniques. Focus on ethical AI.
             </p>
             <a href="https://g3tsfvzt8zlfbxsttxk5bh.streamlit.app/" target="_blank" rel="noreferrer"> 📊 View Analysis</a>
           </motion.div>
@@ -31,9 +31,9 @@ const Projects = () => {
           <motion.div className="project-card" whileHover={{ scale: 1.05 }}>
             <h3>🍌 Banana Game</h3>
             <p>
-              An interactive browser-based puzzle game that fetches banana-themed challenges via an external API. It includes user registration & login features, with real-time gameplay & score logic. Built using HTML, CSS, JavaScrip, Express.js & MongoDB.
+              An interactive browser-based puzzle game that fetches banana-themed challenges via an external API. It includes user registration & login features, with real-time gameplay & score logic. Built using HTML, CSS, JavaScript, Express.js & MySQL.
             </p>
-            <a href="https://api-banana-game.netlify.app/" target="_blank" rel="noreferrer">🎮 Play Game</a>
+            <a href="https://api-banana-game.netlify.app/" target="_blank" rel="noreferrer">🎮 Log in to Play Game</a>
           </motion.div>
 
           <motion.div className="project-card" whileHover={{ scale: 1.05 }}>
