@@ -35,9 +35,14 @@ html, body { overflow-x: hidden; }
   text-decoration: none;
 }
 .logo-icon {
-  width: clamp(44px, 14vw, 58px);
-  height: clamp(4px, 4vw, 48px);
-  border-radius: 18px;
+ width: 56px;              /* visually same scale as before */
+  height: auto;             /* let height follow width */
+  aspect-ratio: 3 / 2;      /* safety for older browsers */
+  object-fit: contain;
+  border-radius: 14px;
+}
+@media (max-width:640px){
+  .logo-icon{ width: 44px; }
 }
 .brand-text {
   font-weight: 700;

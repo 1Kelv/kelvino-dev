@@ -48,6 +48,7 @@
   justify-content: center;
 }
 
+
 /* Image */
 .about-image {
   width: 100%;
@@ -57,7 +58,7 @@
   border-radius: 14px;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
   border: 1px solid var(--border-color);
-  transition: transform 220ms ease, box-shadow 220ms ease;
+  transition: transform 320ms ease, box-shadow 220ms ease;
 }
 
 .about-image:hover {
@@ -72,6 +73,11 @@
     gap: 1.5rem;
     text-align: left;
   }
+
+  /* Optional: tiny performance hint for the animated image */
+.about-image {
+  will-change: opacity, transform;
+}
 
   /* Put image under text on smaller screens */
   .about-image-col {

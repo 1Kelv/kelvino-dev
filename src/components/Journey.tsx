@@ -16,7 +16,7 @@ const journeyData = [
   },
   {
     year: '2024',
-    text: '🎮 Created the Banana Game, a full-stack API-fetching banana-themed game using HTML, CSS, JavaScript, Express.js, and MongoDB. This project sharpened my ability to integrate APIs and build interactive front-to-back solutions.',
+    text: '🎮 Created the Banana Game, a full-stack API-fetching banana-themed game using HTML, CSS, JavaScript, Express.js, and MySQL. This project sharpened my ability to integrate APIs and build interactive front-to-back solutions.',
   },
   {
     year: '2025',

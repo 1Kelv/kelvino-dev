@@ -1,5 +1,7 @@
 .journey-section {
   padding: var(--spacing-xl) 0;
+  background: var(--bg-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
   overflow: hidden;
 }
 
@@ -19,27 +21,22 @@
   animation: fadeInDown 0.18s ease forwards;
 }
 
-/* Timeline wrapper */
+/* Timeline */
 .timeline {
   position: relative;
   margin-left: 1.5rem;
   border-left: 2px solid var(--accent-color);
 }
-
-/* Animated timeline line growth */
 .timeline::before {
   content: '';
   position: absolute;
-  left: -2px;
-  top: 0;
-  width: 2px;
-  height: 100%;
+  left: -2px; top: 0; width: 2px; height: 100%;
   background: linear-gradient(to bottom, var(--accent-color), transparent);
   transform-origin: top;
   animation: lineGrow 2.5s ease forwards;
 }
 
-/* Each timeline item */
+/* Items */
 .timeline-item {
   position: relative;
   margin-bottom: 2rem;
@@ -50,7 +47,7 @@
   transition: transform 0.13s ease;
 }
 
-/* Stagger animation delays for each item */
+/* Stagger */
 .timeline-item:nth-child(1) { animation-delay: 0.13s; }
 .timeline-item:nth-child(2) { animation-delay: 0.15s; }
 .timeline-item:nth-child(3) { animation-delay: 0.17s; }
@@ -60,47 +57,30 @@
 .timeline-item:nth-child(7) { animation-delay: 1.15s; }
 .timeline-item:nth-child(8) { animation-delay: 1.17s; }
 
-.timeline-item:hover {
-  transform: translateX(8px) translateY(-2px);
-}
+.timeline-item:hover { transform: translateX(8px) translateY(-2px); }
 
-/* Circle marker with pulse animation */
+/* Marker */
 .timeline-marker {
   position: absolute;
-  left: -11px;
-  top: 4px;
-  width: 14px;
-  height: 14px;
+  left: -11px; top: 4px; width: 14px; height: 14px;
   border-radius: 50%;
   background-color: var(--accent-color);
   box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.25);
   animation: markerPulse 12s ease infinite;
   transition: all 0.13s ease;
 }
+.timeline-item:hover .timeline-marker { transform: scale(1.3); box-shadow: 0 0 0 6px rgba(0,122,255,0.4); }
 
-.timeline-item:hover .timeline-marker {
-  transform: scale(1.3);
-  box-shadow: 0 0 0 6px rgba(0, 122, 255, 0.4);
-}
-
-/* Year with fade-in */
+/* Text blocks */
 .timeline-year {
-  font-weight: 700;
-  color: var(--text-primary);
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-  display: inline-block;
+  font-weight: 700; color: var(--text-primary);
+  font-size: 1.1rem; margin-bottom: 0.5rem; display: inline-block;
   transition: color 0.13s ease;
 }
+.timeline-item:hover .timeline-year { color: var(--accent-color); }
 
-.timeline-item:hover .timeline-year {
-  color: var(--accent-color);
-}
-
-/* Description with enhanced interactions */
 .timeline-text {
   color: var(--text-secondary);
-  line-height: 1.6;
   background: var(--bg-secondary);
   border-radius: 10px;
   padding: 1rem;
@@ -108,85 +88,37 @@
   box-shadow: var(--shadow);
   transition: all 0.3s ease;
 }
-
 .timeline-item:hover .timeline-text {
   box-shadow: 0 8px 24px rgba(0, 122, 255, 0.15);
   border-color: var(--accent-color);
   transform: translateY(-2px);
 }
 
-/* Keyframe Animations */
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes lineGrow {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
+/* Keyframes */
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px);} to { opacity: 1; transform: translateY(0);} }
+@keyframes lineGrow { from { transform: scaleY(0);} to { transform: scaleY(1);} }
+@keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px);} to { opacity: 1; transform: translateX(0);} }
 @keyframes markerPulse {
-  0%, 100% {
-    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.25);
-  }
-  50% {
-    box-shadow: 0 0 0 6px rgba(0, 122, 255, 0.15);
-  }
+  0%, 100% { box-shadow: 0 0 0 3px rgba(0,122,255,0.25); }
+  50%       { box-shadow: 0 0 0 6px rgba(0,122,255,0.15); }
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .timeline {
-    margin-left: 1rem;
-  }
-  .timeline-text {
-    font-size: 0.95rem;
-  }
-  .timeline-item:hover {
-    transform: translateX(4px) translateY(-2px);
-  }
+  .timeline { margin-left: 1rem; }
+  .timeline-text { font-size: 0.95rem; }
+  .timeline-item:hover { transform: translateX(4px) translateY(-2px); }
 }
 
-@media (prefers-color-scheme: dark) {
-  .timeline-text {
-    background: #111;
-  }
-}
-
-/* Reduce motion for accessibility */
+/* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
-  .timeline-item,
-  .journey-title,
-  .timeline::before,
-  .timeline-marker {
-    animation: none;
-    opacity: 1;
-    transform: none;
+  .timeline-item, .journey-title, .timeline::before, .timeline-marker {
+    animation: none; opacity: 1; transform: none;
   }
-  
-  .timeline-item:hover {
-    transform: none;
-  }
+  .timeline-item:hover { transform: none; }
+}
+
+/* Optional: tiny dark-mode shadow soften */
+body[data-page-theme='dark'] .timeline-item:hover .timeline-text {
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.06);
 }

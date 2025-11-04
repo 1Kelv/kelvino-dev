@@ -1,24 +1,68 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './Header.css';
 import logo from '../assets/KO.png';
 
+type Theme = 'light' | 'dark';
+
+const THEME_KEY = 'theme'; // if absent => follow system
+
+function getSystemPrefersDark(): boolean {
+  if (typeof window === 'undefined' || !window.matchMedia) return false;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function getInitialTheme(): Theme {
+  const saved = (localStorage.getItem(THEME_KEY) as Theme | null);
+  if (saved === 'light' || saved === 'dark') return saved;
+  return getSystemPrefersDark() ? 'dark' : 'light';
+}
+
 const Header: React.FC = () => {
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    const saved = localStorage.getItem('theme') as 'light' | 'dark' | null;
-    return saved ?? 'light';
-  });
+  // whether user has explicitly chosen a theme
+  const hasSavedPreference = useMemo(
+    () => localStorage.getItem(THEME_KEY) !== null,
+    []
+  );
+
+  const [theme, setTheme] = useState<Theme>(() => getInitialTheme());
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Apply theme
+  // Apply theme to <body>
   useEffect(() => {
-    localStorage.setItem('theme', theme);
+    // persist only if it was explicitly chosen during this session
+    // (we persist on toggle; first load uses system if no saved value)
     document.body.setAttribute('data-page-theme', theme);
     document.body.classList.remove('theme-light', 'theme-dark');
     document.body.classList.add(`theme-${theme}`);
-    document.body.style.setProperty('background-color', theme === 'dark' ? '#0a0a0a' : '#ffffff');
+    // do NOT hard-set background colours here; let CSS variables handle it
   }, [theme]);
 
-  const toggleTheme = () => setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  // Follow system changes if the user has NOT saved a preference
+  useEffect(() => {
+    if (hasSavedPreference) return;
+
+    const mql = window.matchMedia?.('(prefers-color-scheme: dark)');
+    if (!mql) return;
+
+    const handle = (e: MediaQueryListEvent) => setTheme(e.matches ? 'dark' : 'light');
+    // older Safari uses addListener/removeListener
+    if (mql.addEventListener) mql.addEventListener('change', handle);
+    else mql.addListener?.(handle);
+
+    return () => {
+      if (mql.removeEventListener) mql.removeEventListener('change', handle);
+      else mql.removeListener?.(handle);
+    };
+  }, [hasSavedPreference]);
+
+  const toggleTheme = () => {
+    setTheme(prev => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      localStorage.setItem(THEME_KEY, next); // after first toggle, preference is explicit
+      return next;
+    });
+  };
+
   const toggleMobileMenu = () => setIsMobileMenuOpen(o => !o);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
   const handleNavClick = () => setIsMobileMenuOpen(false);
@@ -50,14 +94,14 @@ const Header: React.FC = () => {
 
           {/* CENTER: desktop nav */}
           <nav className="nav-links" aria-label="Primary">
-            <a href="#projects">Projects</a>
-            <a href="#about">About</a>
-            <a href="#journey">Journey</a>
-            <a href="#contact">Contact</a>
+            <a href="#projects" onClick={handleNavClick}>Projects</a>
+            <a href="#about" onClick={handleNavClick}>About</a>
+            <a href="#journey" onClick={handleNavClick}>Journey</a>
+            <a href="#contact" onClick={handleNavClick}>Contact</a>
             <a href="/KelvinOlasupo.Dev_Resume.pdf" target="_blank" rel="noopener noreferrer">View my CV</a>
           </nav>
 
-          {/* RIGHT: desktop actions */}
+          {/* RIGHT: actions */}
           <div className="header-actions">
             <button
               className="theme-toggle theme-toggle-desktop"
@@ -69,12 +113,12 @@ const Header: React.FC = () => {
             </button>
 
             <button
-             onClick={toggleMobileMenu}
-  className={`mobile-menu-toggle ${isMobileMenuOpen ? 'open' : ''}`}
-  aria-label="Toggle mobile menu"
-  title="Menu"
->
-  <span aria-hidden="true" />  {/* middle bar; top/bottom are CSS pseudos */}
+              onClick={toggleMobileMenu}
+              className={`mobile-menu-toggle ${isMobileMenuOpen ? 'open' : ''}`}
+              aria-label="Toggle mobile menu"
+              title="Menu"
+            >
+              <span aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -98,7 +142,9 @@ const Header: React.FC = () => {
           <a href="#about" onClick={handleNavClick}>About</a>
           <a href="#journey" onClick={handleNavClick}>Journey</a>
           <a href="#contact" onClick={handleNavClick}>Contact</a>
-          <a href="/KelvinOlasupo.Dev_Resume.pdf" target="_blank" rel="noopener noreferrer" onClick={handleNavClick}>View my CV</a>
+          <a href="/KelvinOlasupo.Dev_Resume.pdf" target="_blank" rel="noopener noreferrer" onClick={handleNavClick}>
+            View my CV
+          </a>
 
           <div className="mobile-theme-wrap">
             <button
