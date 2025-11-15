@@ -98,7 +98,13 @@ const Header: React.FC = () => {
             <a href="#about" onClick={handleNavClick}>About</a>
             <a href="#journey" onClick={handleNavClick}>Journey</a>
             <a href="#contact" onClick={handleNavClick}>Contact</a>
-            <a href="/KelvinOlasupo.Dev_Resume.pdf" target="_blank" rel="noopener noreferrer">View my CV</a>
+           <a
+  href="mailto:kelvinolasupo@yahoo.com?subject=Request%20for%20Kelvin%20Olasupo%20CV&body=Hi%20Kelvin,%0D%0A%0D%0AI came across your portfolio and would like to request a copy of your CV.%0D%0A%0D%0AName:%0D%0ACompany/Role:%0D%0AReason:%0D%0A%0D%0AThanks!%0D%0A"
+  className="cv-request-link"
+  aria-label="Request CV by email"
+>
+  Request CV
+</a>
           </nav>
 
           {/* RIGHT: actions */}
@@ -142,9 +148,13 @@ const Header: React.FC = () => {
           <a href="#about" onClick={handleNavClick}>About</a>
           <a href="#journey" onClick={handleNavClick}>Journey</a>
           <a href="#contact" onClick={handleNavClick}>Contact</a>
-          <a href="/KelvinOlasupo.Dev_Resume.pdf" target="_blank" rel="noopener noreferrer" onClick={handleNavClick}>
-            View my CV
-          </a>
+          <a
+  href="mailto:kelvinolasupo@yahoo.com?subject=Request%20for%20Kelvin%20Olasupo%20CV&body=Hi%20Kelvin,%0D%0A%0D%0AI came across your portfolio and would like to request a copy of your CV.%0D%0A%0D%0AName:%0D%0ACompany/Role:%0D%0AReason:%0D%0A%0D%0AThanks!%0D%0A"
+  className="cv-request-link"
+  onClick={handleNavClick}
+>
+  Request CV
+</a>
 
           <div className="mobile-theme-wrap">
             <button

@@ -19,14 +19,18 @@ const Hero: React.FC = () => {
 
           <p className="hero-subtitle">
             Fraud Operations Lead @ <a href="https://www.nala.com/" target="_blank" rel="noopener noreferrer" className="link-inline">Nala</a>  
-            &nbsp;and aspiring Frontend Developer passionate about building clean, responsive, and interactive web applications.
+            &nbsp;and aspiring Software Engineer passionate about building clean, scalable, and reliable applications across frontend and backend.
           </p>
 
           <div className="hero-buttons">
             <a href="#projects" className="btn">View My Projects</a>
-            <a href="/KelvinOlasupo.Dev_Resume.pdf" target="_blank" rel="noopener noreferrer" className="btn-outline">
-              Download CV
-            </a>
+            <a
+  href="mailto:kelvinolasupo@yahoo.com?subject=Request%20for%20Kelvin%20Olasupo%20CV&body=Hi%20Kelvin,%0D%0A%0D%0AI came across your portfolio and would like to request a copy of your CV.%0D%0A%0D%0AName:%0D%0ACompany/Role:%0D%0AReason:%0D%0A%0D%0AThanks!%0D%0A"
+  className="cv-request-link"
+  aria-label="Request CV by email"
+>
+  Request CV
+</a>
           </div>
         </motion.div>
       </div>
