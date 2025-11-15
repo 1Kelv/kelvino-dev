@@ -18,16 +18,8 @@ const Contact: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
-    if (status) setStatus(''); // clear old status when user edits
+    if (status) setStatus('');
   };
-
-  const encode = (data: Record<string, string>) =>
-    Object.keys(data)
-      .map(
-        key =>
-          encodeURIComponent(key) + '=' + encodeURIComponent(data[key] ?? '')
-      )
-      .join('&');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,19 +27,26 @@ const Contact: React.FC = () => {
     setStatus('');
 
     try {
-      await fetch('/', {
+      const response = await fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: encode({
+        body: new URLSearchParams({
           'form-name': 'contact',
-          ...formData,
-        }),
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }).toString(),
       });
 
-      setStatus('success');
-      setFormData({ name: '', email: '', message: '' });
+      if (response.ok) {
+        setStatus('success');
+        setFormData({ name: '', email: '', message: '' });
+        setTimeout(() => setStatus(''), 5000);
+      } else {
+        setStatus('error');
+      }
     } catch (err) {
-      console.error('Netlify form submission error:', err);
+      console.error('Form submission error:', err);
       setStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -64,9 +63,10 @@ const Contact: React.FC = () => {
       viewport={{ once: true }}
     >
       <motion.h2
+        className="contact-heading"
         initial={{ opacity: 0, y: -10 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
       >
         Get in Touch
       </motion.h2>
@@ -77,31 +77,45 @@ const Contact: React.FC = () => {
         whileInView={{ opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.6 }}
       >
-        <a href="https://github.com/1Kelv" target="_blank" rel="noopener noreferrer">
-          <img src={githubIcon} alt="GitHub" /> GitHub
+        <a 
+          href="https://github.com/1Kelv" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="contact-link"
+        >
+          <img src={githubIcon} alt="GitHub" className="contact-icon" /> 
+          GitHub
         </a>
         <a
           href="https://www.linkedin.com/in/kelvin-o-72a874226/"
           target="_blank"
           rel="noopener noreferrer"
+          className="contact-link"
         >
-          <img src={linkedinIcon} alt="LinkedIn" /> LinkedIn
+          <img src={linkedinIcon} alt="LinkedIn" className="contact-icon" /> 
+          LinkedIn
         </a>
-        <a href="https://medium.com/@1kelv" target="_blank" rel="noopener noreferrer">
-          <img src={mediumIcon} alt="Medium" /> Medium
+        <a 
+          href="https://medium.com/@1kelv" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="contact-link"
+        >
+          <img src={mediumIcon} alt="Medium" className="contact-icon" /> 
+          Medium
         </a>
       </motion.div>
 
-      {/* Netlify form */}
       <motion.form
         name="contact"
         method="POST"
         data-netlify="true"
         data-netlify-honeypot="bot-field"
         onSubmit={handleSubmit}
+        className="contact-form"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        transition={{ delay: 0.8, duration: 0.6 }}
+        transition={{ delay: 0.4, duration: 0.6 }}
       >
         {/* Hidden field Netlify uses to identify the form */}
         <input type="hidden" name="form-name" value="contact" />
@@ -109,46 +123,59 @@ const Contact: React.FC = () => {
         {/* Honeypot field for spam protection */}
         <div style={{ display: 'none' }}>
           <label>
-            Don’t fill this out if you’re human:{' '}
+            Don't fill this out if you're human:{' '}
             <input name="bot-field" onChange={() => {}} />
           </label>
         </div>
 
-        <input
-          type="text"
-          name="name"
-          placeholder="Your Name"
-          required
-          value={formData.name}
-          onChange={handleChange}
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Your Email"
-          required
-          value={formData.email}
-          onChange={handleChange}
-        />
-        <textarea
-          name="message"
-          rows={5}
-          placeholder="Your Message (or CV request)"
-          required
-          value={formData.message}
-          onChange={handleChange}
-        />
+        <div className="form-group">
+          <input
+            type="text"
+            name="name"
+            placeholder="Your Name"
+            required
+            value={formData.name}
+            onChange={handleChange}
+            className="form-input"
+          />
+        </div>
 
-        <button type="submit" disabled={isSubmitting}>
+        <div className="form-group">
+          <input
+            type="email"
+            name="email"
+            placeholder="Your Email"
+            required
+            value={formData.email}
+            onChange={handleChange}
+            className="form-input"
+          />
+        </div>
+
+        <div className="form-group">
+          <textarea
+            name="message"
+            rows={5}
+            placeholder="Your Message"
+            required
+            value={formData.message}
+            onChange={handleChange}
+            className="form-textarea"
+          />
+        </div>
+
+        <button type="submit" disabled={isSubmitting} className="form-button">
           {isSubmitting ? 'Sending…' : 'Send Message'}
         </button>
 
         {status === 'success' && (
-          <p className="success-message">Message sent. Thank you!</p>
+          <p className="success-message">
+            ✓ Message sent successfully! I'll get back to you soon.
+          </p>
         )}
         {status === 'error' && (
           <p className="error-message">
-            Something went wrong while sending your message. Please try again.
+            ✗ Something went wrong. Please try again or reach out via social media.
           </p>
         )}
       </motion.form>
