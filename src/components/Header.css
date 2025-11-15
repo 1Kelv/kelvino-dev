@@ -270,4 +270,47 @@ html, body { overflow-x: hidden; }
   .mobile-menu-toggle::after,
   .mobile-menu-toggle span { transition: none; }
 }
+/* ------------------------------
+   UNIVERSAL HEADER BUTTON STYLE
+   ------------------------------ */
 
+.header-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 1rem;
+  border: 1.5px solid var(--accent-color);
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  background: transparent;
+  color: var(--accent-color);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+/* Hover effect */
+.header-btn:hover {
+  background: var(--accent-color);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 112, 243, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Active (clicked) */
+.header-btn:active {
+  transform: translateY(0);
+}
+
+/* Dark mode adjustments */
+body.theme-dark .header-btn {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+body.theme-dark .header-btn:hover {
+  background: var(--accent-color);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 112, 243, 0.45);
+}
