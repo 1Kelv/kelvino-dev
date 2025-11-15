@@ -11,11 +11,37 @@ const Contact: React.FC = () => {
     email: '',
     message: '',
   });
+  const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    // Manually submit to Netlify
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        'form-name': 'contact',
+        'name': formData.name,
+        'email': formData.email,
+        'message': formData.message,
+      }).toString(),
+    })
+    .then(() => {
+      setSubmitted(true);
+      setFormData({ name: '', email: '', message: '' });
+      // Hide success message after 5 seconds
+      setTimeout(() => setSubmitted(false), 5000);
+    })
+    .catch(() => {
+      alert('Error sending message. Please try again.');
+    });
   };
 
   return (
@@ -73,24 +99,12 @@ const Contact: React.FC = () => {
 
       <motion.form
         name="contact"
-        method="POST"
-        data-netlify="true"
-        data-netlify-honeypot="bot-field"
+        onSubmit={handleSubmit}
         className="contact-form"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ delay: 0.4, duration: 0.6 }}
       >
-        <input type="hidden" name="form-name" value="contact" />
-        <input type="hidden" name="_redirectTo" value="/" />
-
-        <div style={{ display: 'none' }}>
-          <label>
-            Don't fill this out if you're human:{' '}
-            <input name="bot-field" onChange={() => {}} />
-          </label>
-        </div>
-
         <div className="form-group">
           <input
             type="text"
@@ -130,10 +144,21 @@ const Contact: React.FC = () => {
         <button type="submit" className="form-button">
           Send Message
         </button>
+
+        {submitted && (
+          <motion.p
+            className="success-message"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+          >
+            ✓ Message sent successfully! Thank you for reaching out. I'll get back to you soon!
+          </motion.p>
+        )}
       </motion.form>
 
       <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-        After you submit, you'll receive a confirmation and I'll get back to you soon!
+        I'll respond to your message as soon as possible!
       </p>
     </motion.section>
   );
