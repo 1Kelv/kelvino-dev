@@ -4,7 +4,7 @@ import logo from '../assets/KO.png';
 
 type Theme = 'light' | 'dark';
 
-const THEME_KEY = 'theme'; // if absent => follow system
+const THEME_KEY = 'theme';
 
 function getSystemPrefersDark(): boolean {
   if (typeof window === 'undefined' || !window.matchMedia) return false;
@@ -18,7 +18,6 @@ function getInitialTheme(): Theme {
 }
 
 const Header: React.FC = () => {
-  // whether user has explicitly chosen a theme
   const hasSavedPreference = useMemo(
     () => localStorage.getItem(THEME_KEY) !== null,
     []
@@ -27,17 +26,12 @@ const Header: React.FC = () => {
   const [theme, setTheme] = useState<Theme>(() => getInitialTheme());
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Apply theme to <body>
   useEffect(() => {
-    // persist only if it was explicitly chosen during this session
-    // (we persist on toggle; first load uses system if no saved value)
     document.body.setAttribute('data-page-theme', theme);
     document.body.classList.remove('theme-light', 'theme-dark');
     document.body.classList.add(`theme-${theme}`);
-    // do NOT hard-set background colours here; let CSS variables handle it
   }, [theme]);
 
-  // Follow system changes if the user has NOT saved a preference
   useEffect(() => {
     if (hasSavedPreference) return;
 
@@ -45,7 +39,6 @@ const Header: React.FC = () => {
     if (!mql) return;
 
     const handle = (e: MediaQueryListEvent) => setTheme(e.matches ? 'dark' : 'light');
-    // older Safari uses addListener/removeListener
     if (mql.addEventListener) mql.addEventListener('change', handle);
     else mql.addListener?.(handle);
 
@@ -58,7 +51,7 @@ const Header: React.FC = () => {
   const toggleTheme = () => {
     setTheme(prev => {
       const next = prev === 'light' ? 'dark' : 'light';
-      localStorage.setItem(THEME_KEY, next); // after first toggle, preference is explicit
+      localStorage.setItem(THEME_KEY, next);
       return next;
     });
   };
@@ -67,7 +60,12 @@ const Header: React.FC = () => {
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
   const handleNavClick = () => setIsMobileMenuOpen(false);
 
-  // ESC to close drawer + body scroll lock
+  const handleCVRequest = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    window.location.href = 'mailto:kelvinolasupo@yahoo.com?subject=CV%20Request&body=Hi%20Kelvin,%0A%0AI%20would%20like%20to%20request%20a%20copy%20of%20your%20CV.%0A%0AThank%20you!';
+    handleNavClick();
+  };
+
   useEffect(() => {
     const onEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsMobileMenuOpen(false); };
     if (isMobileMenuOpen) {
@@ -94,12 +92,14 @@ const Header: React.FC = () => {
 
           {/* CENTER: desktop nav */}
           <nav className="nav-links" aria-label="Primary">
-  <a href="#projects">Projects</a>
-  <a href="#about">About</a>
-  <a href="#journey">Journey</a>
-  <a href="#contact">Contact</a>
-  <a href="#contact" className="header-nav-btn">Request CV</a>
-</nav>
+            <a href="#projects">Projects</a>
+            <a href="#about">About</a>
+            <a href="#journey">Journey</a>
+            <a href="#contact">Contact</a>
+            <a href="#" onClick={handleCVRequest} className="header-nav-btn">
+              Request CV
+            </a>
+          </nav>
 
           {/* RIGHT: actions */}
           <div className="header-actions">
@@ -142,9 +142,9 @@ const Header: React.FC = () => {
           <a href="#about" onClick={handleNavClick}>About</a>
           <a href="#journey" onClick={handleNavClick}>Journey</a>
           <a href="#contact" onClick={handleNavClick}>Contact</a>
-          <a href="#contact" onClick={handleNavClick}>
-  Request CV
-</a>
+          <a href="#" onClick={handleCVRequest}>
+            Request CV
+          </a>
 
           <div className="mobile-theme-wrap">
             <button
