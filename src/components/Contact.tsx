@@ -12,7 +12,6 @@ const Contact: React.FC = () => {
     message: '',
   });
   const [status, setStatus] = useState<'success' | 'error' | ''>('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -21,36 +20,9 @@ const Contact: React.FC = () => {
     if (status) setStatus('');
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setStatus('');
-
-    try {
-      const response = await fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          'form-name': 'contact',
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
-        }).toString(),
-      });
-
-      if (response.ok) {
-        setStatus('success');
-        setFormData({ name: '', email: '', message: '' });
-        setTimeout(() => setStatus(''), 5000);
-      } else {
-        setStatus('error');
-      }
-    } catch (err) {
-      console.error('Form submission error:', err);
-      setStatus('error');
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    // Let Netlify handle the form submission naturally
+    // Don't prevent default - I want the form to submit to Netlify
   };
 
   return (
@@ -164,21 +136,14 @@ const Contact: React.FC = () => {
           />
         </div>
 
-        <button type="submit" disabled={isSubmitting} className="form-button">
-          {isSubmitting ? 'Sending…' : 'Send Message'}
+        <button type="submit" className="form-button">
+          Send Message
         </button>
-
-        {status === 'success' && (
-          <p className="success-message">
-            ✓ Message sent successfully! I'll get back to you soon.
-          </p>
-        )}
-        {status === 'error' && (
-          <p className="error-message">
-            ✗ Something went wrong. Please try again or reach out via social media.
-          </p>
-        )}
       </motion.form>
+
+      <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+        After you submit, you'll be redirected to a success page. Your message will arrive in my inbox!
+      </p>
     </motion.section>
   );
 };
