@@ -7,10 +7,5 @@
   to = "/index.html"
   status = 200
 
-[[redirects]]
-  from = "/success"
-  to = "/"
-  status = 200
-
 [functions]
   directory = "netlify/functions"

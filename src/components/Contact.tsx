@@ -74,7 +74,6 @@ const Contact: React.FC = () => {
       <motion.form
         name="contact"
         method="POST"
-        action="/success"
         data-netlify="true"
         data-netlify-honeypot="bot-field"
         className="contact-form"
@@ -83,6 +82,7 @@ const Contact: React.FC = () => {
         transition={{ delay: 0.4, duration: 0.6 }}
       >
         <input type="hidden" name="form-name" value="contact" />
+        <input type="hidden" name="_redirectTo" value="/" />
 
         <div style={{ display: 'none' }}>
           <label>
