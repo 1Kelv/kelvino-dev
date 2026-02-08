@@ -38,17 +38,13 @@ const About: React.FC = () => {
           <h2 className="about-heading">About Me</h2>
 
           <p className="about-text">
-            Hello 👋🏾 I’m Kelvin, a First-Class Computer Science graduate and current Fraud Operations Lead at{' '}
-            <a href="https://www.nala.com/" target="_blank" rel="noopener noreferrer">Nala</a>.
-            I lead initiatives that combat fraud, streamline investigations, and strengthen internal operations through
-            clear, process-driven documentation and data-backed insights.
+            Hello 👋 I’m Kelvin, a First-Class Computer Science graduate and Fraud Operations Lead with a strong focus on building practical software and data solutions. I work at the intersection of software engineering, data analytics, and fraud operations, where I design and build internal tools that improve decision-making, reduce manual effort, and scale operational processes. My day-to-day work blends hands-on development with real-world problem solving, from building React-based interfaces and Python tooling to designing Hex dashboards that surface meaningful risk signals.
           </p>
 
           <p className="about-text">
-            I collaborate closely with engineers to review fraud-rule performance and share actionable feedback, while
-            creating structured SOPs and workflows in Scribe to support a fast-growing team. Looking ahead, I’m eager to
-            transition into Software Engineering, building scalable, user-focused tools that combine my technical
-            foundation with my operational experience.
+            Alongside my operational role, I collaborate closely with engineers and data teams to review fraud-rule performance, translate operational pain points into technical requirements, and iterate on solutions that work in production. I care deeply about clarity in code, in data, and in process, which is why I also create structured SOPs and workflows that support fast-growing teams.
+
+Looking ahead, I’m continuing to transition towards software engineering roles, with a particular interest in product-focused engineering, internal tooling, and data-driven systems. I enjoy building software that sits close to real users and real problems, where technical decisions have immediate, practical impact.
           </p>
         </motion.div>
 

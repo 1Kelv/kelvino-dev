@@ -1,235 +1,178 @@
-/* =========================
-   Projects.css – refined
-   ========================= */
-
-/* Section wrapper */
-.projects-container {
-  padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 6vw, 4rem);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4rem;
-  position: relative;
-}
-
-/* Subtle background texture (very light) */
-.projects-container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 20% 80%, rgba(120,119,198,0.035) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255,119,198,0.035) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: -1;
-}
-
-/* Layout: 1 card on top, 3 below (collapses on mobile) */
-.project-triangle {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* -------- Image -------- */
+.project-image-wrap {
   width: 100%;
-  max-width: 1200px;
-}
-.project-top {
-  margin-bottom: 2rem;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-.project-bottom {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: clamp(1.5rem, 4vw, 2.5rem);
-  flex-wrap: wrap;
-}
-
-/* -------- Cards -------- */
-.project-card {
-  position: relative;
   overflow: hidden;
-  flex: 1;
-  min-width: 320px;
-  max-width: 380px;
-  padding: 2rem;
-  border-radius: 16px;
-  text-align: center;
-  background: #fff;
-  border: 1px solid rgba(0,0,0,0.06);
-  box-shadow:
-    0 1px 3px rgba(0,0,0,0.08),
-    0 4px 12px rgba(0,0,0,0.05);
-  transition: transform .4s cubic-bezier(.175,.885,.32,1.275), box-shadow .3s ease, border-color .3s ease;
-  animation: slideInScale .6s ease-out forwards;
+  background: rgba(0,0,0,0.04);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  position: relative;
+  padding: 1.5rem; /* Add breathing room */
 }
 
-/* Soft sheen on hover */
-.project-card::before {
+/* Aspect ratio container for consistent wide format */
+.project-image-wrap::before {
   content: '';
+  display: block;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
+}
+
+.project-image {
   position: absolute;
-  inset: 0 0 auto 0;
+  top: 1.5rem; /* Match padding */
+  left: 1.5rem;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  width: calc(100% - 3rem);
+  height: calc(100% - 3rem);
+  object-fit: contain; /* Show full image, no cropping */
+  object-position: center;
+  display: block;
+  transform: scale(1);
+  transition: transform .35s ease;
+}
+
+.project-card:hover .project-image {
+  transform: scale(1.05); /* Slightly bigger hover effect */
+}
+
+/* Placeholder for projects without screenshots */
+.project-image-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.05) 50%, transparent 100%);
-  opacity: 0;
-  transition: opacity .3s ease;
-  pointer-events: none;
-}
-.project-card:hover::before { opacity: 1; }
-
-.project-card:hover {
-  transform: translateY(-10px) scale(1.02);
-  border-color: rgba(120,119,198,0.2);
-  box-shadow:
-    0 8px 25px rgba(0,0,0,0.12),
-    0 16px 35px rgba(0,0,0,0.08);
+  display: grid;
+  place-items: center;
+  font-size: 0.95rem;
+  opacity: 0.72;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.03), rgba(0,0,0,0.01));
 }
 
-/* Headings & body copy */
-.project-card h3 {
-  font-size: clamp(1.25rem, 3vw, 1.4rem);
-  font-weight: 700;
-  margin-bottom: 1rem;
-  letter-spacing: -0.02em;
-  line-height: 1.3;
-  transition: transform .3s ease;
-}
-.project-card:hover h3 { transform: translateY(-2px); }
-
-.project-card p {
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 1.2rem;
-  opacity: .85;
-  letter-spacing: .01em;
-  transition: opacity .3s ease;
-}
-.project-card:hover p { opacity: 1; }
-
-/* -------- Buttons row (NEW) -------- */
-.project-actions {
-  display: flex;
-  gap: 0.9rem;              /* spacing between buttons */
-  flex-wrap: wrap;
-  justify-content: center;  /* centre in card; looks tidy on all widths */
-  margin-top: 1rem;
+/* -------- Dark mode image wrap -------- */
+body[data-page-theme='dark'] .project-image-wrap {
+  background: rgba(255,255,255,0.02); /* Slightly darker background */
+  border-bottom-color: rgba(255,255,255,0.08);
 }
 
-/* Button base */
-.project-actions .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 120px;
-  padding: 0.7rem 1.4rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  text-decoration: none;
-  border: none;
-  line-height: 1.2;
-  cursor: pointer;
-  transition: all .3s ease;
-  user-select: none;
-}
-
-/* Primary = live app */
-.btn-primary {
-  background: linear-gradient(135deg, #0070f3, #005ad9);
-  color: #fff;
-  box-shadow: 0 3px 8px rgba(0,112,243,.25);
-}
-.btn-primary:hover {
-  background: linear-gradient(135deg, #0062d1, #004cb7);
-  box-shadow: 0 5px 14px rgba(0,112,243,.4);
-  transform: translateY(-2px);
-}
-
-/* Secondary = GitHub */
-.btn-secondary {
-  background: transparent;
-  border: 2px solid var(--border-color, #cfd6dd);
-  color: var(--text-secondary, #444);
-}
-.btn-secondary:hover {
-  border-color: var(--accent-color, #0070f3);
-  color: var(--accent-color, #0070f3);
-  transform: translateY(-2px);
-}
-
-/* Active click */
-.btn-primary:active,
-.btn-secondary:active { transform: scale(.97); }
-
-/* -------- Dark mode tweaks -------- */
-body[data-page-theme='dark'] .project-card {
-  background: #111; /* slightly lighter than page bg for contrast */
-  border-color: rgba(255,255,255,0.08);
-  box-shadow:
-    0 1px 3px rgba(255,255,255,0.05),
-    0 4px 12px rgba(255,255,255,0.03);
-}
-body[data-page-theme='dark'] .project-card::before {
-  background: linear-gradient(135deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.04) 50%, transparent 100%);
-}
-body[data-page-theme='dark'] .project-card:hover {
-  border-color: rgba(102,204,255,0.28);
-  box-shadow:
-    0 8px 25px rgba(255,255,255,0.08),
-    0 16px 35px rgba(255,255,255,0.05);
-}
-
-body[data-page-theme='dark'] .btn-primary {
-  background: linear-gradient(135deg, #1e90ff, #0070f3);
-  box-shadow: 0 3px 8px rgba(30,144,255,.35);
-}
-body[data-page-theme='dark'] .btn-secondary {
-  border-color: rgba(255,255,255,0.22);
-  color: rgba(255,255,255,0.88);
-}
-body[data-page-theme='dark'] .btn-secondary:hover {
-  border-color: #66ccff;
-  color: #66ccff;
-}
-
-/* -------- Animations -------- */
-@keyframes slideInScale {
-  from { opacity: 0; transform: translateY(40px) scale(0.95); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-.project-top .project-card { animation-delay: .2s; }
-.project-bottom .project-card:nth-child(1) { animation-delay: .4s; }
-.project-bottom .project-card:nth-child(2) { animation-delay: .5s; }
-
-/* -------- Responsive -------- */
-@media (max-width: 1024px) {
-  .project-triangle { max-width: 900px; }
-  .project-card { max-width: 350px; min-width: 280px; }
-}
-
+/* -------- Responsive adjustments -------- */
 @media (max-width: 768px) {
-  .projects-container { gap: 3rem; }
-  .project-top, .project-bottom {
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+  .projects-container {
+    gap: 1.8rem;
   }
-  .project-bottom { gap: 2rem; }
-  .project-card { width: 100%; max-width: 100%; min-width: unset; }
-  .project-actions { justify-content: center; }
+
+  .project-content {
+    padding: 1.35rem 1.3rem 1.5rem;
+  }
+
+  .project-actions {
+    justify-content: flex-start;
+  }
+
+  /* Reduce padding on smaller screens */
+  .project-image-wrap {
+    padding: 1rem;
+  }
+
+  .project-image {
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    width: calc(100% - 2rem);
+    height: calc(100% - 2rem);
+  }
+
+  /* Slightly taller on mobile for better visibility */
+  .project-image-wrap::before {
+    padding-top: 60%; /* Closer to 5:3 */
+  }
 }
 
 @media (max-width: 480px) {
-  .project-card { padding: 1.5rem; border-radius: 12px; }
-  .project-card h3 { font-size: 1.2rem; }
-  .project-card p { font-size: .95rem; }
+  .project-card {
+    border-radius: 14px;
+  }
+
+  .project-actions .btn {
+    width: 100%;
+    min-width: unset;
+  }
+
+  /* Less padding on small phones */
+  .project-image-wrap {
+    padding: 0.75rem;
+  }
+
+  .project-image {
+    top: 0.75rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: calc(100% - 1.5rem);
+    height: calc(100% - 1.5rem);
+  }
+
+  /* Even taller on small phones */
+  .project-image-wrap::before {
+    padding-top: 65%;
+  }
+}
+
+/* ============================
+   Tech Stack Icons
+   ============================ */
+
+.tech-stack {
+  margin: 1rem 0 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tech-stack-icons {
+  height: 34px;
+  width: auto;
+  display: block;
+  opacity: 0.9;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.project-card:hover .tech-stack-icons {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+/* Dark mode adjustments */
+body[data-page-theme='dark'] .tech-stack-icons {
+  opacity: 0.95;
+  filter: brightness(1.15);
+}
+
+body[data-page-theme='dark'] .project-card:hover .tech-stack-icons {
+  filter: brightness(1.2);
+}
+
+/* Responsive sizing */
+@media (max-width: 768px) {
+  .tech-stack-icons {
+    height: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tech-stack-icons {
+    height: 28px;
+  }
+  
+  .tech-stack {
+    margin: 0.8rem 0 0.4rem;
+  }
 }
 
 /* Reduce motion if user prefers */
 @media (prefers-reduced-motion: reduce) {
-  .project-card,
-  .project-card:hover,
-  .btn-primary,
-  .btn-secondary { transition: none; }
+  .tech-stack-icons {
+    transition: none !important;
+  }
 }
