@@ -1,30 +1,119 @@
+// I configure all routes for the Mylestone app
 import React from 'react';
-import './App.css';
-import BackToTop from './components/BackToTop';
-import Header from './components/Header';
-import Hero from './components/Hero';
-import About from './components/About';
-import Projects from './components/Projects';
-import Achievements from './components/Achievements';
-import Journey from './components/Journey';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './lib/AuthContext';
+import { HomePage } from './pages/HomePage';
+import { FeedsPage } from './pages/FeedsPage';
+import { NappiesPage } from './pages/NappiesPage';
+import { MedicationsPage } from './pages/MedicationsPage';
+import { GrowthPage } from './pages/GrowthPage';
+import { SymptomsPage } from './pages/SymptomsPage';
+import { SleepPage } from './pages/SleepPage';
+import { AppointmentsPage } from './pages/AppointmentsPage';
+import { NotesPage } from './pages/NotesPage';
+import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
 
-function App() {
-  return (
-    <div className="App">
-      <div id="home" aria-hidden="true" />
-      <Header />
-      <Hero />
-      <About />
-      <Projects />
-      <Achievements />
-      <Journey />
-      <Contact />
-      <Footer />
-      <BackToTop />
-    </div>
-  );
+// I protect routes that require authentication
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
+          <p className="text-sm text-gray-500">Loading Mylestone...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
 }
 
-export default App;
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/feeds"
+        element={
+          <ProtectedRoute>
+            <FeedsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/nappies"
+        element={
+          <ProtectedRoute>
+            <NappiesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/medications"
+        element={
+          <ProtectedRoute>
+            <MedicationsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/growth"
+        element={
+          <ProtectedRoute>
+            <GrowthPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/symptoms"
+        element={
+          <ProtectedRoute>
+            <SymptomsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/sleep"
+        element={
+          <ProtectedRoute>
+            <SleepPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/appointments"
+        element={
+          <ProtectedRoute>
+            <AppointmentsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/notes"
+        element={
+          <ProtectedRoute>
+            <NotesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
