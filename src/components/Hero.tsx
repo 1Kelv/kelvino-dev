@@ -85,8 +85,8 @@ const Hero: React.FC = () => {
             </div>
             <div className="hero-stat-divider" />
             <div className="hero-stat">
-              <span className="hero-stat-value">2+</span>
-              <span className="hero-stat-label">Years at Nala</span>
+              <span className="hero-stat-value">1</span>
+              <span className="hero-stat-label">Year at Nala</span>
             </div>
           </div>
         </motion.div>

@@ -26,10 +26,10 @@ const featuredProjects = [
   {
     title: 'Thrive Finance',
     emoji: '💸',
-    tag: 'Live Product',
+    tag: 'Startup · Now Live',
     description:
-      'A personal finance app that helps users track spending, detect suspicious activity before it costs them, and build healthy financial habits — built by someone who understands fraud firsthand.',
-    image: null,
+      'My own startup. A personal finance app that helps users track spending, catch suspicious activity before it costs them, and build healthy financial habits — built by someone who understands fraud firsthand. 12+ users and actively iterating.',
+    image: 'https://api.microlink.io/?url=https%3A%2F%2Fgetmythrive.io&screenshot=true&meta=false&embed=screenshot.url',
     techStack: ['react', 'ts', 'supabase'],
     links: [
       { label: 'Visit Live App', href: 'https://getmythrive.io', type: 'primary', external: true },
