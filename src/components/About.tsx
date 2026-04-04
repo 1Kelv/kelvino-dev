@@ -3,16 +3,19 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import './About.css';
 import gradPhoto from '../assets/gradphoto.jpg';
 
+const skills = [
+  'React', 'TypeScript', 'JavaScript', 'Python', 'Streamlit',
+  'Supabase', 'Node.js', 'SQL', 'TensorFlow', 'Framer Motion',
+  'Hex Dashboards', 'Fraud Operations', 'Data Analytics', 'Git',
+];
+
 const About: React.FC = () => {
-  // Track scroll progress *within* the About section
   const sectionRef = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    // Starts reacting as the section begins to enter, and stops as it fully leaves
     offset: ['start 80%', 'end 20%'],
   });
 
-  // Fade/scale curve: invisible at edges, fully visible through the middle
   const imgOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   const imgScale   = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.96, 1, 1, 0.96]);
 
@@ -24,36 +27,47 @@ const About: React.FC = () => {
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      viewport={{ once: true, amount: 0.25 }}
+      viewport={{ once: true, amount: 0.2 }}
     >
       <div className="about-container">
-        {/* Text */}
+        {/* Text column */}
         <motion.div
           className="about-text-col"
-          initial={{ opacity: 0, x: -16 }}
+          initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.55 }}
+          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <h2 className="about-heading">About Me</h2>
+          <div className="about-header">
+            <span className="section-label">About Me</span>
+            <h2 className="section-title">Engineer. Analyst. Builder.</h2>
+          </div>
 
           <p className="about-text">
-            Hello 👋 I’m Kelvin, a First-Class Computer Science graduate and Fraud Operations Lead with a strong focus on building practical software and data solutions. I work at the intersection of software engineering, data analytics, and fraud operations, where I design and build internal tools that improve decision-making, reduce manual effort, and scale operational processes. My day-to-day work blends hands-on development with real-world problem solving, from building React-based interfaces and Python tooling to designing Hex dashboards that surface meaningful risk signals.
+            I'm Kelvin — a First-Class Computer Science graduate and Fraud Operations Lead working at the intersection of software engineering, data analytics, and operational problem-solving. I design and build internal tools that improve decision-making, reduce manual effort, and scale operational processes.
           </p>
 
           <p className="about-text">
-            Alongside my operational role, I collaborate closely with engineers and data teams to review fraud-rule performance, translate operational pain points into technical requirements, and iterate on solutions that work in production. I care deeply about clarity in code, in data, and in process, which is why I also create structured SOPs and workflows that support fast-growing teams.
-
-Looking ahead, I’m continuing to transition towards software engineering roles, with a particular interest in product-focused engineering, internal tooling, and data-driven systems. I enjoy building software that sits close to real users and real problems, where technical decisions have immediate, practical impact.
+            My day-to-day blends hands-on development with real-world impact: React-based interfaces, Python tooling, and Hex dashboards that surface meaningful risk signals. I collaborate closely with engineers and data teams, translating operational pain points into technical requirements and iterating on solutions that work in production.
           </p>
+
+          <p className="about-text">
+            I'm actively transitioning toward software engineering roles — with a particular focus on product-focused engineering, internal tooling, and data-driven systems. Currently preparing for a master's degree in AI & Machine Learning.
+          </p>
+
+          <div className="about-skills">
+            {skills.map(skill => (
+              <span key={skill} className="skill-chip">{skill}</span>
+            ))}
+          </div>
         </motion.div>
 
-        {/* Image (scroll-linked fade) */}
+        {/* Image column */}
         <motion.div
           className="about-image-col"
-          initial={{ opacity: 0, x: 16 }}
+          initial={{ opacity: 0, x: 20 }}
           whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1.55, delay: 0.25 }}
+          transition={{ duration: 0.7, delay: 0.15 }}
           viewport={{ once: true }}
         >
           <motion.img

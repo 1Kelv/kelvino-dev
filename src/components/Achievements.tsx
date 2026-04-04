@@ -2,44 +2,56 @@ import React from 'react';
 import './Achievements.css';
 import { motion } from 'framer-motion';
 
+const cardVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] },
+  }),
+};
+
 const Achievements: React.FC = () => {
   return (
     <motion.section
       id="achievements"
       className="achievements-section"
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1 }}
-      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true, amount: 0.15 }}
     >
       <div className="achievements-container">
-        <h2 className="achievements-title">🏆 Achievements & Certifications</h2>
+        <div className="achievements-header">
+          <span className="section-label">Recognition</span>
+          <h2 className="section-title">Achievements & Certifications</h2>
+        </div>
 
         <div className="achievements-grid">
           {/* Final Year Project Award */}
           <motion.article
             className="ach-card"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            custom={0}
+            initial="hidden"
+            whileInView="visible"
+            variants={cardVariants}
+            viewport={{ once: true }}
           >
-            <h3 className="ach-card-title">Final Year Project Award</h3>
+            <h3 className="ach-card-title">🥉 Final Year Project Award</h3>
             <p className="ach-card-text">
-              🥉 Awarded the <strong>Bronze Award for Innovation</strong> from{' '}
-              <strong>SwitchShop Limited</strong> for my final-year project{' '}
-              <strong>AgileFlow</strong>, a React and TypeScript-based Agile project management
-              dashboard integrating AI prediction via TensorFlow and fairness auditing tools.
+              Awarded the <strong>Bronze Award for Innovation</strong> from{' '}
+              <strong>SwitchShop Limited</strong> for <strong>AgileFlow</strong> — a
+              React &amp; TypeScript Agile project management dashboard integrating
+              AI sprint prediction via TensorFlow and fairness auditing tools.
             </p>
-
-            {/* PDF button */}
             <div className="cert-actions">
               <a
-                className="btn"
+                className="btn btn-primary"
                 href="/AgileFlow-Award.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                View certificate (PDF)
+                View Certificate (PDF)
               </a>
             </div>
           </motion.article>
@@ -47,14 +59,15 @@ const Achievements: React.FC = () => {
           {/* Certifications */}
           <motion.article
             className="ach-card"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            custom={1}
+            initial="hidden"
+            whileInView="visible"
+            variants={cardVariants}
+            viewport={{ once: true }}
           >
-            <h3 className="ach-card-title">Selected Certifications</h3>
+            <h3 className="ach-card-title">📜 Selected Certifications</h3>
 
             <ul className="cert-list" aria-label="Certifications">
-              {/* Cisco Cybersecurity Essentials */}
               <li className="cert-row">
                 <span className="cert-name">Cisco: Cybersecurity Essentials</span>
                 <div className="cert-actions">
@@ -65,12 +78,11 @@ const Achievements: React.FC = () => {
                     rel="noopener noreferrer"
                     aria-label="Verify Cisco Cybersecurity Essentials badge on Credly"
                   >
-                    Verify badge
+                    Verify Badge
                   </a>
                 </div>
               </li>
 
-              {/* Cisco Introduction to Networks */}
               <li className="cert-row">
                 <span className="cert-name">Cisco: Introduction to Networks</span>
                 <div className="cert-actions">
@@ -81,37 +93,35 @@ const Achievements: React.FC = () => {
                     rel="noopener noreferrer"
                     aria-label="Verify Cisco Introduction to Networks badge on Credly"
                   >
-                    Verify badge
+                    Verify Badge
                   </a>
                 </div>
               </li>
 
-              {/* Bright Network: Couch to Coder */}
               <li className="cert-row">
                 <span className="cert-name">Bright Network: Couch to Coder</span>
                 <div className="cert-actions">
                   <a
-                    className="btn"
+                    className="btn btn-secondary"
                     href="/CouchToCoder.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    View certificate (PDF)
+                    View PDF
                   </a>
                 </div>
               </li>
 
-              {/* Code Institute: 5-Day Coding Challenge */}
               <li className="cert-row">
                 <span className="cert-name">Code Institute: 5-Day Coding Challenge</span>
                 <div className="cert-actions">
                   <a
-                    className="btn"
+                    className="btn btn-secondary"
                     href="/CodeInstitute-Cert.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    View certificate (PDF)
+                    View PDF
                   </a>
                 </div>
               </li>

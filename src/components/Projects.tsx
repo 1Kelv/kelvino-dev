@@ -7,122 +7,243 @@ import otHelperImg from '../assets/ot_helper.jpeg';
 import regEImg from '../assets/reg_e.jpeg';
 import skypulseImg from '../assets/skypulse.png';
 
-const Projects = () => {
- const getTechStackUrl = (techArray: string[]) => {
-  return `https://skillicons.dev/icons?i=${techArray.join(',')}`;
-};
+const getTechStackUrl = (techArray: string[]) =>
+  `https://skillicons.dev/icons?i=${techArray.join(',')}`;
 
-  const featuredProject = {
-    title: '⚙️ AgileFlow',
-    description: 'An Agile project management tool with AI-driven sprint predictions using TensorFlow. Built with React, TypeScript + JavaScript and Supabase.',
+const featuredProjects = [
+  {
+    title: 'AgileFlow',
+    emoji: '⚙️',
+    tag: 'Final Year Project · Bronze Award',
+    description:
+      'An Agile project management tool with AI-driven sprint predictions using TensorFlow. Built with React, TypeScript, and Supabase — earned the Bronze Award for Innovation from SwitchShop Limited.',
     image: agileflowImg,
     techStack: ['react', 'ts', 'js', 'supabase', 'tensorflow', 'github'],
     links: [
-      { label: 'View on GitHub', href: 'https://github.com/1Kelv/AgileFlow', type: 'primary', external: true }
+      { label: 'View on GitHub', href: 'https://github.com/1Kelv/AgileFlow', type: 'primary', external: true },
     ],
-  };
+  },
+  {
+    title: 'Thrive Finance',
+    emoji: '💸',
+    tag: 'Live Product',
+    description:
+      'A personal finance app that helps users track spending, detect suspicious activity before it costs them, and build healthy financial habits — built by someone who understands fraud firsthand.',
+    image: null,
+    techStack: ['react', 'ts', 'supabase'],
+    links: [
+      { label: 'Visit Live App', href: 'https://getmythrive.io', type: 'primary', external: true },
+    ],
+  },
+];
 
-  const projects = [
-    {
-      title: '🛡️ Reg-E Radar (Anonymised Internal Tool)',
-      description: 'A decision-support tool that helps classify Regulation E disputes and draft consistent case notes using a structured checklist and rule-based logic.',
-      image: regEImg,
-      techStack: ['react', 'js'],
-      links: [
-        { label: 'Case study on request', href: '#contact', type: 'secondary', external: false }
-      ],
-    },
-    {
-      title: '⏱️ Overtime Helper (Anonymised Internal Tool)',
-      description: 'An internal tool that standardises overtime and bank-holiday calculations from workforce management exports, reducing manual reconciliation work.',
-      image: otHelperImg,
-      techStack: ['py', 'streamlit'],
-      links: [
-        { label: 'Case study on request', href: '#contact', type: 'secondary', external: false }
-      ],
-    },
-    {
-      title: '📊 NextGen AI Résumé Analyser',
-      description: 'AI-powered résumé analyser using SHAP, LIME, and Fairness Audit techniques, with a focus on ethical AI and explainable predictions.',
-      image: null,
-      techStack: ['py', 'streamlit', 'scikitlearn'],
-      links: [
-        { label: 'View Analysis', href: 'https://g3tsfvzt8zlfbxsttxk5bh.streamlit.app/', type: 'primary', external: true },
-        { label: 'GitHub Repo', href: 'https://github.com/1Kelv/nextgen-ai-resume-analyser', type: 'secondary', external: true }
-      ],
-    },
-    {
-      title: '🍌 Banana Game',
-      description: 'Interactive browser puzzle fetching banana-themed challenges via an external API. Features authentication, live gameplay, and score tracking.',
-      image: bananaImg,
-      techStack: ['html', 'css', 'js', 'nodejs', 'express', 'mysql', 'netlify'],
-      links: [
-        { label: 'Play Game', href: 'https://api-banana-game.netlify.app/', type: 'primary', external: true },
-        { label: 'GitHub Repo', href: 'https://github.com/1Kelv/banana-game', type: 'secondary', external: true }
-      ],
-    },
-    {
-      title: '🌦 SkyPulse Weather App',
-      description: 'Responsive weather app that delivers real-time forecasts via OpenWeatherMap API in a clean, intuitive interface.',
-      image: skypulseImg,
-      techStack: ['html', 'css', 'js', 'netlify'],
-      links: [
-        { label: 'Check Weather', href: 'https://weather-app-kelvin.netlify.app/', type: 'primary', external: true },
-        { label: 'GitHub Repo', href: 'https://github.com/1Kelv/weather-app', type: 'secondary', external: true }
-      ],
-    },
-  ];
+const projects = [
+  {
+    title: 'Reg-E Radar',
+    emoji: '🛡️',
+    tag: 'Internal Tool',
+    description:
+      'A decision-support tool that classifies Regulation E disputes and drafts consistent case notes using a structured checklist and rule-based logic.',
+    image: regEImg,
+    techStack: ['react', 'js'],
+    links: [
+      { label: 'Case study on request', href: '#contact', type: 'secondary', external: false },
+    ],
+  },
+  {
+    title: 'Overtime Helper',
+    emoji: '⏱️',
+    tag: 'Internal Tool',
+    description:
+      'Standardises overtime and bank-holiday calculations from workforce management exports, reducing manual reconciliation work significantly.',
+    image: otHelperImg,
+    techStack: ['py', 'streamlit'],
+    links: [
+      { label: 'Case study on request', href: '#contact', type: 'secondary', external: false },
+    ],
+  },
+  {
+    title: 'NextGen AI Résumé Analyser',
+    emoji: '📊',
+    tag: 'AI / ML',
+    description:
+      'AI-powered résumé analyser using SHAP, LIME, and fairness audit techniques — focused on ethical AI and explainable predictions.',
+    image: null,
+    techStack: ['py', 'streamlit', 'scikitlearn'],
+    links: [
+      { label: 'View Analysis', href: 'https://g3tsfvzt8zlfbxsttxk5bh.streamlit.app/', type: 'primary', external: true },
+      { label: 'GitHub', href: 'https://github.com/1Kelv/nextgen-ai-resume-analyser', type: 'secondary', external: true },
+    ],
+  },
+  {
+    title: 'Banana Game',
+    emoji: '🍌',
+    tag: 'Full Stack',
+    description:
+      'Interactive browser puzzle fetching banana-themed challenges via an external API. Features authentication, live gameplay, and score tracking.',
+    image: bananaImg,
+    techStack: ['html', 'css', 'js', 'nodejs', 'express', 'mysql', 'netlify'],
+    links: [
+      { label: 'Play Game', href: 'https://api-banana-game.netlify.app/', type: 'primary', external: true },
+      { label: 'GitHub', href: 'https://github.com/1Kelv/banana-game', type: 'secondary', external: true },
+    ],
+  },
+  {
+    title: 'SkyPulse Weather App',
+    emoji: '🌦',
+    tag: 'Frontend',
+    description:
+      'Responsive weather app delivering real-time forecasts via the OpenWeatherMap API in a clean, intuitive interface.',
+    image: skypulseImg,
+    techStack: ['html', 'css', 'js', 'netlify'],
+    links: [
+      { label: 'Check Weather', href: 'https://weather-app-kelvin.netlify.app/', type: 'primary', external: true },
+      { label: 'GitHub', href: 'https://github.com/1Kelv/weather-app', type: 'secondary', external: true },
+    ],
+  },
+];
 
+const cardVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] },
+  }),
+};
+
+const Projects: React.FC = () => {
   return (
-    <section className="projects-container" id="projects">
-      <h2 className="section-title">Projects</h2>
-      <motion.div className="project-card project-card-featured" whileHover={{ scale: 1.01 }} transition={{ duration: 0.2 }}>
-        <div className="project-image-wrap">
-          <img className="project-image" src={featuredProject.image} alt="AgileFlow screenshot" loading="lazy" />
+    <section className="projects-section" id="projects">
+      <div className="projects-container">
+        {/* Section header */}
+        <div className="projects-header">
+          <span className="section-label">Projects</span>
+          <h2 className="section-title">Things I've Built</h2>
+          <p className="section-subtitle">
+            A mix of personal projects, AI tools, and anonymised internal products — built to solve real problems.
+          </p>
         </div>
-        <div className="project-content">
-          <h3>{featuredProject.title}</h3>
-          <p>{featuredProject.description}</p>
-          <div className="tech-stack">
-            <img src={getTechStackUrl(featuredProject.techStack)} alt="Tech stack icons" className="tech-stack-icons" loading="lazy" />
-          </div>
-          <div className="project-actions">
-            {featuredProject.links.map((link, idx) => (
-              <a key={idx} className={link.type === 'primary' ? 'btn btn-primary' : 'btn btn-secondary'} href={link.href} target={link.external ? '_blank' : '_self'} rel={link.external ? 'noreferrer' : ''}>
-                {link.label}
-              </a>
-            ))}
-          </div>
+
+        {/* Featured 2-col grid */}
+        <div className="projects-featured-grid">
+          {featuredProjects.map((proj, i) => (
+            <motion.div
+              key={proj.title}
+              className="project-card project-card-featured"
+              custom={i}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={cardVariants}
+              whileHover={{ y: -4 }}
+              transition={{ duration: 0.2 }}
+            >
+              {proj.image ? (
+                <div className="project-image-wrap">
+                  <img
+                    className="project-image"
+                    src={proj.image}
+                    alt={`${proj.title} screenshot`}
+                    loading="lazy"
+                  />
+                </div>
+              ) : (
+                <div className="project-image-wrap project-image-placeholder">
+                  <span className="placeholder-emoji">{proj.emoji}</span>
+                </div>
+              )}
+              <div className="project-content">
+                <div className="project-meta">
+                  <span className="project-tag">{proj.tag}</span>
+                </div>
+                <h3 className="project-title">{proj.emoji} {proj.title}</h3>
+                <p className="project-description">{proj.description}</p>
+                <div className="tech-stack">
+                  <img
+                    src={getTechStackUrl(proj.techStack)}
+                    alt="Tech stack"
+                    className="tech-stack-icons"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="project-actions">
+                  {proj.links.map((link, idx) => (
+                    <a
+                      key={idx}
+                      className={`btn ${link.type === 'primary' ? 'btn-primary' : 'btn-secondary'}`}
+                      href={link.href}
+                      target={link.external ? '_blank' : '_self'}
+                      rel={link.external ? 'noreferrer' : ''}
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
-      </motion.div>
-      <div className="projects-grid">
-        {projects.map((proj, projIdx) => (
-          <motion.div key={projIdx} className="project-card" whileHover={{ scale: 1.02 }} transition={{ duration: 0.2 }}>
-            {proj.image ? (
-              <div className="project-image-wrap">
-                <img className="project-image" src={proj.image} alt={`${proj.title} screenshot`} loading="lazy" />
+
+        {/* Regular grid */}
+        <div className="projects-grid">
+          {projects.map((proj, i) => (
+            <motion.div
+              key={proj.title}
+              className="project-card"
+              custom={i}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.15 }}
+              variants={cardVariants}
+              whileHover={{ y: -4 }}
+              transition={{ duration: 0.2 }}
+            >
+              {proj.image ? (
+                <div className="project-image-wrap">
+                  <img
+                    className="project-image"
+                    src={proj.image}
+                    alt={`${proj.title} screenshot`}
+                    loading="lazy"
+                  />
+                </div>
+              ) : (
+                <div className="project-image-wrap project-image-placeholder">
+                  <span className="placeholder-emoji">{proj.emoji}</span>
+                </div>
+              )}
+              <div className="project-content">
+                <div className="project-meta">
+                  <span className="project-tag">{proj.tag}</span>
+                </div>
+                <h3 className="project-title">{proj.emoji} {proj.title}</h3>
+                <p className="project-description">{proj.description}</p>
+                <div className="tech-stack">
+                  <img
+                    src={getTechStackUrl(proj.techStack)}
+                    alt="Tech stack"
+                    className="tech-stack-icons"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="project-actions">
+                  {proj.links.map((link, idx) => (
+                    <a
+                      key={idx}
+                      className={`btn ${link.type === 'primary' ? 'btn-primary' : 'btn-secondary'}`}
+                      href={link.href}
+                      target={link.external ? '_blank' : '_self'}
+                      rel={link.external ? 'noreferrer' : ''}
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
               </div>
-            ) : (
-              <div className="project-image-wrap project-image-placeholder">
-                <span>Screenshot coming soon</span>
-              </div>
-            )}
-            <div className="project-content">
-              <h3>{proj.title}</h3>
-              <p>{proj.description}</p>
-              <div className="tech-stack">
-                <img src={getTechStackUrl(proj.techStack)} alt="Tech stack icons" className="tech-stack-icons" loading="lazy" />
-              </div>
-              <div className="project-actions">
-                {proj.links.map((link, linkIdx) => (
-                  <a key={linkIdx} className={link.type === 'primary' ? 'btn btn-primary' : 'btn btn-secondary'} href={link.href} target={link.external ? '_blank' : '_self'} rel={link.external ? 'noreferrer' : ''}>
-                    {link.label}
-                  </a>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

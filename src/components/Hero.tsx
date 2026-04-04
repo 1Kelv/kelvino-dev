@@ -9,29 +9,85 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section id="home" className="hero">
+    <section id="hero" className="hero">
+      <div className="hero-bg-grid" aria-hidden="true" />
+      <div className="hero-glow" aria-hidden="true" />
+
       <div className="hero-container">
         <motion.div
           className="hero-content"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
-          viewport={{ once: true }}
+          initial={{ opacity: 0, y: 32 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
+          {/* Badge */}
+          <motion.div
+            className="hero-badge"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <span className="hero-badge-dot" />
+            Available for opportunities
+          </motion.div>
+
+          {/* Headline */}
           <h1 className="hero-title">
-            👋 Hi, I'm <span className="highlight">Kelvin Olasupo</span>
+            Hi, I'm{' '}
+            <span className="gradient-text">Kelvin Olasupo</span>
           </h1>
 
-          <p className="hero-subtitle">
-            Fraud Operations Lead @ <a href="https://www.nala.com/" target="_blank" rel="noopener noreferrer" className="link-inline">Nala</a>  
-            &nbsp;and aspiring Software Engineer passionate about building clean, scalable, and reliable applications across frontend and backend.
+          {/* Role line */}
+          <p className="hero-role">
+            Fraud Operations Lead{' '}
+            <span className="hero-role-sep">@</span>{' '}
+            <a
+              href="https://www.nala.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hero-company-link"
+            >
+              Nala
+            </a>
+            {' '}· CS Graduate · Aspiring Software Engineer
           </p>
 
-          <div className="hero-buttons">
-            <a href="#projects" className="btn">View My Projects</a>
-            <a href="#" onClick={handleCVRequest} className="hero-btn hero-btn-outline">
+          {/* Description */}
+          <p className="hero-description">
+            I build clean, scalable software at the intersection of engineering,
+            data analytics, and fraud operations — from React interfaces and Python
+            tooling to data dashboards that surface real risk signals.
+          </p>
+
+          {/* CTAs */}
+          <div className="hero-cta">
+            <a href="#projects" className="btn btn-primary hero-cta-primary">
+              View My Work
+            </a>
+            <a href="#contact" className="btn hero-cta-ghost">
+              Get In Touch
+            </a>
+            <a href="#" onClick={handleCVRequest} className="btn hero-cta-ghost">
               Request CV
             </a>
+          </div>
+
+          {/* Stats */}
+          <div className="hero-stats">
+            <div className="hero-stat">
+              <span className="hero-stat-value">1st</span>
+              <span className="hero-stat-label">Class Honours</span>
+            </div>
+            <div className="hero-stat-divider" />
+            <div className="hero-stat">
+              <span className="hero-stat-value">6+</span>
+              <span className="hero-stat-label">Projects Built</span>
+            </div>
+            <div className="hero-stat-divider" />
+            <div className="hero-stat">
+              <span className="hero-stat-value">2+</span>
+              <span className="hero-stat-label">Years at Nala</span>
+            </div>
           </div>
         </motion.div>
       </div>
