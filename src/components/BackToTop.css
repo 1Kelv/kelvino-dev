@@ -1,34 +1,42 @@
+/* ============================================
+   BACK TO TOP BUTTON
+   ============================================ */
+
 .back-to-top {
   position: fixed;
-  right: clamp(12px, 2.2vw, 20px);
-  bottom: clamp(12px, 2.2vw, 20px);
-  width: 54px;
-  height: 64px;
-  border-radius: 999px;
-  border: 2px solid var(--border-color);
-  background: var(--header-bg);
-  color: var(--text-primary);
-  font-size: 1.1rem;
-  line-height: 1;
+  right: clamp(16px, 2.5vw, 28px);
+  bottom: clamp(16px, 2.5vw, 28px);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text-secondary);
+  font-size: 1rem;
   display: grid;
   place-items: center;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(0,0,0,.18);
+  box-shadow: var(--shadow);
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(10px) scale(0.9);
   pointer-events: none;
-  transition: opacity .25s ease, transform .25s ease, border-color .2s ease, background-color .2s ease;
-  z-index: 2000; /* above header (1000) + drawer (1001) */
+  transition: opacity 0.25s ease, transform 0.25s ease, border-color 0.2s ease,
+    color 0.2s ease, box-shadow 0.2s ease;
+  z-index: 2000;
 }
 
 .back-to-top:hover {
-  border-color: var(--accent-color);
-  background: var(--bg-secondary);
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 4px 16px var(--accent-glow);
+  transform: translateY(-2px) scale(1);
 }
 
 .back-to-top.show {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
   pointer-events: auto;
 }
 
