@@ -26,9 +26,9 @@ const featuredProjects = [
   {
     title: 'Thrive Finance',
     emoji: '💸',
-    tag: 'Live Product',
+    tag: 'Startup · Now Live',
     description:
-      'A personal finance app that helps users track spending, detect suspicious activity before it costs them, and build healthy financial habits — built by someone who understands fraud firsthand.',
+      'My own startup. A personal finance app that helps users track spending, catch suspicious activity before it costs them, and build healthy financial habits — built by someone who understands fraud firsthand. 12+ users and actively iterating.',
     image: null,
     techStack: ['react', 'ts', 'supabase'],
     links: [
