@@ -1,0 +1,69 @@
+/* ── Light mode variable overrides ────────────────────────────────────── */
+[data-theme="light"] {
+  --bg:        #f0f4f8;
+  --bg-card:   #ffffff;
+  --bg-card-2: #f8fafc;
+  --bg-hover:  #e2eaf4;
+
+  --border:    rgba(0, 0, 0, 0.08);
+  --border-md: rgba(0, 0, 0, 0.14);
+
+  --text:      #0f172a;
+  --text-dim:  #475569;
+  --text-muted:#94a3b8;
+
+  --violet-soft:   rgba(124, 58, 237, 0.10);
+  --violet-border: rgba(124, 58, 237, 0.25);
+
+  --blue-soft:      rgba(59, 130, 246, 0.10);
+  --blue-border:    rgba(59, 130, 246, 0.28);
+  --amber-soft:     rgba(245, 158, 11, 0.10);
+  --amber-border:   rgba(245, 158, 11, 0.30);
+  --red-soft:       rgba(239, 68, 68, 0.10);
+  --red-border:     rgba(239, 68, 68, 0.32);
+  --critical-soft:  rgba(220, 38, 38, 0.12);
+  --critical-border:rgba(220, 38, 38, 0.40);
+  --green-soft:     rgba(16, 185, 129, 0.10);
+  --green-border:   rgba(16, 185, 129, 0.28);
+}
+
+[data-theme="light"] .landing {
+  background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124,58,237,0.08) 0%, transparent 70%), var(--bg);
+}
+
+/* ── Theme toggle button ──────────────────────────────────────────────── */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  padding: 5px 11px;
+  border-radius: var(--r);
+  border: 1px solid var(--border-md);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background-color 0.3s;
+}
+
+.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--violet-border);
+}
+
+.toggle-icon { font-size: 13px; line-height: 1; }
+
+/* ── Smooth theme transitions (structural elements only) ──────────────── */
+.app, .landing, .landing-header, .feature-card,
+.confidence-legend, .compliance-bar span,
+.dashboard, .call-header, .start-card,
+.transcript-panel, .alerts-panel, .crm-panel,
+.panel-header, .transcript-body, .alerts-list, .crm-body,
+.entry-text, .confidence-meter, .crm-input, .crm-textarea,
+.sentinel-logo-btn, .theme-toggle {
+  transition:
+    background-color 0.3s ease,
+    border-color 0.25s ease,
+    color 0.2s ease;
+}
