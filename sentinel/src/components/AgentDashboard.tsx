@@ -33,17 +33,17 @@ export function AgentDashboard({ onBack, theme, onToggleTheme }: Props) {
             </div>
           </div>
         )}
+        {callStatus === 'ended' && (
+          <div className="call-ended-bar">
+            <span>Call completed — CRM note auto-generated. Review and save below.</span>
+            <button className="run-again-btn" onClick={resetDemo}>↺ Run Demo Again</button>
+          </div>
+        )}
         {(callStatus === 'active' || callStatus === 'ended') && (
           <div className="dashboard-grid">
             <TranscriptPanel transcript={transcript} callStatus={callStatus} />
             <AlertsPanel alerts={alerts} confidence={confidence} onAcknowledge={acknowledgeAlert} />
             <CRMPanel crmDraft={crmDraft} callStatus={callStatus} onUpdate={updateCRM} />
-          </div>
-        )}
-        {callStatus === 'ended' && (
-          <div className="call-ended-bar">
-            <span>Call completed — CRM note auto-generated. Review and save below.</span>
-            <button className="run-again-btn" onClick={resetDemo}>↺ Run Demo Again</button>
           </div>
         )}
       </div>
