@@ -36,7 +36,10 @@ export function RegisterForm() {
       await register(name, email, password);
       navigate('/app');
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Registration failed. Please try again.';
+      const raw = err instanceof Error ? err.message : '';
+      const msg = raw.toLowerCase().includes('already exists')
+        ? 'An account with this email already exists. Please sign in instead.'
+        : raw || 'Registration failed. Please try again.';
       setError(msg);
     } finally {
       setLoading(false);
