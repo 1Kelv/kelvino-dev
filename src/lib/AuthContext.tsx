@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Appwrite requires email verification before sessions can be created.
       // Send a magic-link email so the user can verify and log in by clicking it.
-      await account.createEmailToken(userId, email, false);
+      await account.createMagicURLToken(userId, email, `${window.location.origin}/verify`);
       throw new Error(VERIFY_EMAIL_REQUIRED);
     }
   };
