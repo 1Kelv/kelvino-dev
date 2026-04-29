@@ -1,5 +1,5 @@
-// I render a reusable button with variant support
 import React from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '../../lib/utils';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -23,10 +23,9 @@ export function Button({
 
   const variants = {
     primary: 'bg-brand-mint text-white hover:bg-brand-dark focus:ring-brand-mint',
-    secondary:
-      'border-2 border-brand-mint text-brand-mint hover:bg-brand-light focus:ring-brand-mint',
+    secondary: 'border-2 border-brand-mint text-brand-mint hover:bg-brand-light dark:hover:bg-brand-dark/20 focus:ring-brand-mint',
     danger: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-500',
-    ghost: 'text-gray-600 hover:bg-gray-100 focus:ring-gray-300',
+    ghost: 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-gray-300',
   };
 
   const sizes = {
@@ -36,33 +35,21 @@ export function Button({
   };
 
   return (
-    <button
+    <motion.button
+      whileTap={{ scale: 0.96 }}
+      whileHover={{ scale: 1.02 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 17 }}
       className={cn(base, variants[variant], sizes[size], className)}
       disabled={disabled || loading}
-      {...props}
+      {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
     >
       {loading ? (
-        <svg
-          className="animate-spin -ml-1 mr-2 h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-          />
+        <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
       ) : null}
       {children}
-    </button>
+    </motion.button>
   );
 }

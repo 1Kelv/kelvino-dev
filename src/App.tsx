@@ -13,25 +13,24 @@ import { AppointmentsPage } from './pages/AppointmentsPage';
 import { NotesPage } from './pages/NotesPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
+import { ResetPasswordPage } from './pages/ResetPasswordPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
-          <p className="text-sm text-gray-500">Loading Mylestone...</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Loading Mylestone...</p>
         </div>
       </div>
     );
   }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
+  if (!user) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
 
@@ -48,6 +47,8 @@ export default function App() {
       <Route path="/" element={<PublicOnlyRoute><LandingPage /></PublicOnlyRoute>} />
       <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
       <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
+      <Route path="/forgot-password" element={<PublicOnlyRoute><ForgotPasswordPage /></PublicOnlyRoute>} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/app" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
       <Route path="/feeds" element={<ProtectedRoute><FeedsPage /></ProtectedRoute>} />
       <Route path="/nappies" element={<ProtectedRoute><NappiesPage /></ProtectedRoute>} />

@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
-// I configure Tailwind with brand colours for Mylestone
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {

@@ -1,24 +1,33 @@
-// I render the login form with email and password inputs
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../lib/AuthContext';
+
+const formVariants = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.08 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } },
+};
 
 export function LoginForm() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError('Please enter your email and password.');
-      return;
-    }
+    if (!email || !password) { setError('Please enter your email and password.'); return; }
     setLoading(true);
     setError(null);
     try {
@@ -32,37 +41,66 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <Input
-        label="Email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="you@example.com"
-        autoComplete="email"
-        required
-      />
-      <Input
-        label="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="••••••••"
-        autoComplete="current-password"
-        required
-      />
-      {error && (
-        <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-3">{error}</p>
-      )}
-      <Button type="submit" size="lg" loading={loading}>
-        Sign In
-      </Button>
-      <p className="text-center text-sm text-gray-500">
-        Don't have an account?{' '}
-        <Link to="/register" className="text-brand-mint font-semibold hover:underline">
-          Create one
+    <motion.form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4"
+      variants={formVariants}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div variants={itemVariants}>
+        <Input
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+          autoComplete="email"
+          required
+        />
+      </motion.div>
+      <motion.div variants={itemVariants}>
+        <Input
+          label="Password"
+          type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="••••••••"
+          autoComplete="current-password"
+          required
+          rightElement={
+            <button
+              type="button"
+              onClick={() => setShowPassword(s => !s)}
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1"
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          }
+        />
+      </motion.div>
+      <motion.div variants={itemVariants} className="flex justify-end -mt-2">
+        <Link to="/forgot-password" className="text-sm text-brand-mint font-semibold hover:underline">
+          Forgot password?
         </Link>
-      </p>
-    </form>
+      </motion.div>
+      {error && (
+        <motion.p
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-sm text-red-500 bg-red-50 dark:bg-red-900/30 rounded-xl px-4 py-3"
+        >
+          {error}
+        </motion.p>
+      )}
+      <motion.div variants={itemVariants}>
+        <Button type="submit" size="lg" loading={loading}>Sign In</Button>
+      </motion.div>
+      <motion.p variants={itemVariants} className="text-center text-sm text-gray-500 dark:text-gray-400">
+        Don't have an account?{' '}
+        <Link to="/register" className="text-brand-mint font-semibold hover:underline">Create one</Link>
+      </motion.p>
+    </motion.form>
   );
 }

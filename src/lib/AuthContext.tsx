@@ -1,4 +1,3 @@
-// I provide authentication state and methods throughout the app
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Models } from 'appwrite';
 import { account, ID } from './appwrite';
@@ -9,6 +8,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (userId: string, secret: string, password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -17,7 +18,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<Models.User<Models.Preferences> | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // I check for an existing session on mount
   useEffect(() => {
     account.get()
       .then(setUser)
@@ -43,8 +43,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   };
 
+  const forgotPassword = async (email: string) => {
+    await account.createRecovery(email, `${window.location.origin}/reset-password`);
+  };
+
+  const resetPassword = async (userId: string, secret: string, password: string) => {
+    await account.updateRecovery(userId, secret, password);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, forgotPassword, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

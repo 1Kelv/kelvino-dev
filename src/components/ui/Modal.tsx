@@ -1,6 +1,6 @@
-// I render a bottom sheet modal with slide-up animation and backdrop
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../lib/utils';
 
 interface ModalProps {
@@ -12,66 +12,51 @@ interface ModalProps {
 }
 
 export function Modal({ open, onClose, title, children, className }: ModalProps) {
-  // I lock body scroll when modal is open
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
   }, [open]);
 
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-        aria-hidden="true"
-      />
-      {/* Sheet */}
-      <div
-        className={cn(
-          'relative w-full max-w-lg bg-white rounded-t-3xl shadow-2xl',
-          'animate-slide-up',
-          'pb-safe-bottom',
-          className
-        )}
-        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)' }}
-      >
-        {/* Handle bar */}
-        <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full bg-gray-300" />
-        </div>
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-          <button
+    <AnimatePresence>
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center">
+          <motion.div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             onClick={onClose}
-            className="p-2 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
-            aria-label="Close"
+            aria-hidden="true"
+          />
+          <motion.div
+            className={cn(
+              'relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-t-3xl shadow-2xl',
+              className
+            )}
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+            style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 16px)' }}
           >
-            <X size={20} />
-          </button>
+            <div className="flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-gray-600" />
+            </div>
+            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 dark:border-gray-700">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white">{title}</h2>
+              <button
+                onClick={onClose}
+                className="p-2 rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="Close"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="overflow-y-auto max-h-[75vh] px-5 py-4">{children}</div>
+          </motion.div>
         </div>
-        {/* Content */}
-        <div className="overflow-y-auto max-h-[75vh] px-5 py-4">{children}</div>
-      </div>
-
-      <style>{`
-        @keyframes slideUp {
-          from { transform: translateY(100%); }
-          to { transform: translateY(0); }
-        }
-        .animate-slide-up {
-          animation: slideUp 0.3s ease-out;
-        }
-      `}</style>
-    </div>
+      )}
+    </AnimatePresence>
   );
 }

@@ -1,4 +1,3 @@
-// I render the page header with title, subtitle, and baby info
 import React from 'react';
 
 interface PageHeaderProps {
@@ -11,15 +10,14 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, subtitle, babyName, babyAge, action }: PageHeaderProps) {
   return (
-    <div className="bg-white border-b border-gray-100 px-5 pt-4 pb-4">
+    <div className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-5 pt-4 pb-4">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-          {subtitle && <p className="text-sm text-gray-500 mt-0.5">{subtitle}</p>}
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h1>
+          {subtitle && <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{subtitle}</p>}
           {babyName && (
-            <p className="text-sm text-brand-dark font-medium mt-1">
-              {babyName}
-              {babyAge ? ` · ${babyAge}` : ''}
+            <p className="text-sm text-brand-dark dark:text-brand-mint font-medium mt-1">
+              {babyName}{babyAge ? ` · ${babyAge}` : ''}
             </p>
           )}
         </div>
