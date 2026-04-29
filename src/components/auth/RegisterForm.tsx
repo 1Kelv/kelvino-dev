@@ -4,7 +4,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
-import { useAuth } from '../../lib/AuthContext';
+import { useAuth, VERIFY_EMAIL_REQUIRED } from '../../lib/AuthContext';
 
 const formVariants = {
   hidden: { opacity: 0 },
@@ -25,6 +25,7 @@ export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [verifyEmailSent, setVerifyEmailSent] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +37,10 @@ export function RegisterForm() {
       await register(name, email, password);
       navigate('/app');
     } catch (err: unknown) {
+      if (err instanceof Error && err.message === VERIFY_EMAIL_REQUIRED) {
+        setVerifyEmailSent(true);
+        return;
+      }
       const raw = err instanceof Error ? err.message : '';
       const msg = raw.toLowerCase().includes('already exists')
         ? 'An account with this email already exists. Please sign in instead.'
@@ -45,6 +50,33 @@ export function RegisterForm() {
       setLoading(false);
     }
   };
+
+  if (verifyEmailSent) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        className="text-center py-4"
+      >
+        <motion.div
+          className="text-5xl mb-4"
+          animate={{ rotate: [0, -10, 10, -10, 0] }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+        >
+          📬
+        </motion.div>
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Check your email!</h3>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
+          We've sent a sign-in link to <strong>{email}</strong>. Click it to verify your account and get started.
+        </p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">
+          Already verified?{' '}
+          <Link to="/login" className="text-brand-mint font-semibold hover:underline">Sign in here</Link>
+        </p>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.form

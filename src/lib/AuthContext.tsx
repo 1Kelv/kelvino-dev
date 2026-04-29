@@ -2,6 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Models } from 'appwrite';
 import { account, ID } from './appwrite';
 
+export const VERIFY_EMAIL_REQUIRED = 'VERIFY_EMAIL_REQUIRED';
+
 interface AuthContextType {
   user: Models.User<Models.Preferences> | null;
   loading: boolean;
@@ -10,6 +12,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (userId: string, secret: string, password: string) => Promise<void>;
+  createSessionFromToken: (userId: string, secret: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -32,10 +35,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const register = async (name: string, email: string, password: string) => {
-    await account.create(ID.unique(), email, password, name);
-    await account.createEmailPasswordSession(email, password);
-    const currentUser = await account.get();
-    setUser(currentUser);
+    const userId = ID.unique();
+    await account.create(userId, email, password, name);
+    try {
+      await account.createEmailPasswordSession(email, password);
+      const currentUser = await account.get();
+      setUser(currentUser);
+    } catch {
+      // Appwrite requires email verification before sessions can be created.
+      // Send a magic-link email so the user can verify and log in by clicking it.
+      await account.createEmailToken(userId, email, false);
+      throw new Error(VERIFY_EMAIL_REQUIRED);
+    }
   };
 
   const logout = async () => {
@@ -51,8 +62,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await account.updateRecovery(userId, secret, password);
   };
 
+  const createSessionFromToken = async (userId: string, secret: string) => {
+    await account.createSession(userId, secret);
+    const currentUser = await account.get();
+    setUser(currentUser);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, forgotPassword, resetPassword }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, forgotPassword, resetPassword, createSessionFromToken }}>
       {children}
     </AuthContext.Provider>
   );
