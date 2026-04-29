@@ -1,5 +1,4 @@
-// I provide a typed database service layer wrapping Appwrite
-import { databases, DB_ID, COLLECTIONS, ID, Query } from './appwrite';
+import { databases, DB_ID, COLLECTIONS, ID, Query, Permission, Role } from './appwrite';
 import type {
   FeedEntry,
   NappyEntry,
@@ -11,10 +10,16 @@ import type {
   NoteEntry,
 } from '../types';
 
-// I cast Appwrite documents to typed interfaces
 function cast<T>(doc: Record<string, unknown>): T {
   return doc as unknown as T;
 }
+
+// Permissions every document gets on creation — any authenticated user can CRUD their own docs
+const userPerms = [
+  Permission.read(Role.users()),
+  Permission.update(Role.users()),
+  Permission.delete(Role.users()),
+];
 
 // Feeds
 export const feedsDb = {
@@ -27,7 +32,7 @@ export const feedsDb = {
     return res.documents.map((d) => cast<FeedEntry>(d as Record<string, unknown>));
   },
   create: async (data: Omit<FeedEntry, '$id'>): Promise<FeedEntry> => {
-    const doc = await databases.createDocument(DB_ID, COLLECTIONS.FEEDS, ID.unique(), data);
+    const doc = await databases.createDocument(DB_ID, COLLECTIONS.FEEDS, ID.unique(), data, userPerms);
     return cast<FeedEntry>(doc as Record<string, unknown>);
   },
   delete: async (id: string): Promise<void> => {
@@ -46,7 +51,7 @@ export const nappiesDb = {
     return res.documents.map((d) => cast<NappyEntry>(d as Record<string, unknown>));
   },
   create: async (data: Omit<NappyEntry, '$id'>): Promise<NappyEntry> => {
-    const doc = await databases.createDocument(DB_ID, COLLECTIONS.NAPPIES, ID.unique(), data);
+    const doc = await databases.createDocument(DB_ID, COLLECTIONS.NAPPIES, ID.unique(), data, userPerms);
     return cast<NappyEntry>(doc as Record<string, unknown>);
   },
   delete: async (id: string): Promise<void> => {
@@ -65,7 +70,7 @@ export const medicationsDb = {
     return res.documents.map((d) => cast<MedicationEntry>(d as Record<string, unknown>));
   },
   create: async (data: Omit<MedicationEntry, '$id'>): Promise<MedicationEntry> => {
-    const doc = await databases.createDocument(DB_ID, COLLECTIONS.MEDICATIONS, ID.unique(), data);
+    const doc = await databases.createDocument(DB_ID, COLLECTIONS.MEDICATIONS, ID.unique(), data, userPerms);
     return cast<MedicationEntry>(doc as Record<string, unknown>);
   },
   delete: async (id: string): Promise<void> => {
@@ -84,7 +89,7 @@ export const growthDb = {
     return res.documents.map((d) => cast<GrowthEntry>(d as Record<string, unknown>));
   },
   create: async (data: Omit<GrowthEntry, '$id'>): Promise<GrowthEntry> => {
-    const doc = await databases.createDocument(DB_ID, COLLECTIONS.GROWTH, ID.unique(), data);
+    const doc = await databases.createDocument(DB_ID, COLLECTIONS.GROWTH, ID.unique(), data, userPerms);
     return cast<GrowthEntry>(doc as Record<string, unknown>);
   },
   delete: async (id: string): Promise<void> => {
@@ -103,7 +108,7 @@ export const symptomsDb = {
     return res.documents.map((d) => cast<SymptomEntry>(d as Record<string, unknown>));
   },
   create: async (data: Omit<SymptomEntry, '$id'>): Promise<SymptomEntry> => {
-    const doc = await databases.createDocument(DB_ID, COLLECTIONS.SYMPTOMS, ID.unique(), data);
+    const doc = await databases.createDocument(DB_ID, COLLECTIONS.SYMPTOMS, ID.unique(), data, userPerms);
     return cast<SymptomEntry>(doc as Record<string, unknown>);
   },
   delete: async (id: string): Promise<void> => {
@@ -122,7 +127,7 @@ export const sleepDb = {
     return res.documents.map((d) => cast<SleepEntry>(d as Record<string, unknown>));
   },
   create: async (data: Omit<SleepEntry, '$id'>): Promise<SleepEntry> => {
-    const doc = await databases.createDocument(DB_ID, COLLECTIONS.SLEEP, ID.unique(), data);
+    const doc = await databases.createDocument(DB_ID, COLLECTIONS.SLEEP, ID.unique(), data, userPerms);
     return cast<SleepEntry>(doc as Record<string, unknown>);
   },
   delete: async (id: string): Promise<void> => {
@@ -141,7 +146,7 @@ export const appointmentsDb = {
     return res.documents.map((d) => cast<AppointmentEntry>(d as Record<string, unknown>));
   },
   create: async (data: Omit<AppointmentEntry, '$id'>): Promise<AppointmentEntry> => {
-    const doc = await databases.createDocument(DB_ID, COLLECTIONS.APPOINTMENTS, ID.unique(), data);
+    const doc = await databases.createDocument(DB_ID, COLLECTIONS.APPOINTMENTS, ID.unique(), data, userPerms);
     return cast<AppointmentEntry>(doc as Record<string, unknown>);
   },
   delete: async (id: string): Promise<void> => {
@@ -160,7 +165,7 @@ export const notesDb = {
     return res.documents.map((d) => cast<NoteEntry>(d as Record<string, unknown>));
   },
   create: async (data: Omit<NoteEntry, '$id'>): Promise<NoteEntry> => {
-    const doc = await databases.createDocument(DB_ID, COLLECTIONS.NOTES, ID.unique(), data);
+    const doc = await databases.createDocument(DB_ID, COLLECTIONS.NOTES, ID.unique(), data, userPerms);
     return cast<NoteEntry>(doc as Record<string, unknown>);
   },
   delete: async (id: string): Promise<void> => {

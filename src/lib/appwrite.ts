@@ -1,5 +1,4 @@
-// I configure the Appwrite client for Mylestone
-import { Client, Account, Databases, ID, Query } from 'appwrite';
+import { Client, Account, Databases, ID, Query, Permission, Role } from 'appwrite';
 
 const client = new Client()
   .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
@@ -7,7 +6,7 @@ const client = new Client()
 
 export const account = new Account(client);
 export const databases = new Databases(client);
-export { ID, Query };
+export { ID, Query, Permission, Role };
 
 export const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID || '';
 export const COLLECTIONS = {

@@ -1,6 +1,5 @@
-// I manage the selected baby profile and fetch baby data from Appwrite
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { databases, DB_ID, COLLECTIONS, ID, Query } from './appwrite';
+import { databases, DB_ID, COLLECTIONS, ID, Query, Permission, Role } from './appwrite';
 import { useAuth } from './AuthContext';
 import { Baby } from '../types';
 
@@ -37,7 +36,6 @@ export function BabyProvider({ children }: { children: React.ReactNode }) {
       const fetchedBabies = res.documents as unknown as Baby[];
       setBabies(fetchedBabies);
 
-      // I restore the previously selected baby from localStorage
       const savedId = localStorage.getItem(SELECTED_BABY_KEY);
       const found = fetchedBabies.find((b) => b.$id === savedId);
       setSelectedBabyState(found || fetchedBabies[0] || null);
@@ -58,7 +56,12 @@ export function BabyProvider({ children }: { children: React.ReactNode }) {
   };
 
   const addBaby = async (data: Omit<Baby, '$id'>): Promise<Baby> => {
-    const doc = await databases.createDocument(DB_ID, COLLECTIONS.BABIES, ID.unique(), data);
+    const perms = [
+      Permission.read(Role.users()),
+      Permission.update(Role.users()),
+      Permission.delete(Role.users()),
+    ];
+    const doc = await databases.createDocument(DB_ID, COLLECTIONS.BABIES, ID.unique(), data, perms);
     const baby = doc as unknown as Baby;
     setBabies((prev) => [...prev, baby]);
     setSelectedBaby(baby);
