@@ -28,7 +28,7 @@ export function RegisterForm() {
     setError(null);
     try {
       await register(name, email, password);
-      navigate('/');
+      navigate('/app');
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Registration failed. Please try again.';
       setError(msg);

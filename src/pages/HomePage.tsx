@@ -42,6 +42,7 @@ export function HomePage() {
   const [babyName, setBabyName] = useState('');
   const [babyDob, setBabyDob] = useState(localDateNow());
   const [babyGender, setBabyGender] = useState('');
+  const [babyDiagnosis, setBabyDiagnosis] = useState('');
   const [babyLoading, setBabyLoading] = useState(false);
   const [babyError, setBabyError] = useState<string | null>(null);
 
@@ -100,7 +101,7 @@ export function HomePage() {
         dateOfBirth: babyDob,
         userId: user?.$id || '',
         gender: (babyGender as 'male' | 'female' | 'other') || undefined,
-        diagnosis: 'Tetralogy of Fallot',
+        diagnosis: babyDiagnosis || undefined,
       });
       setAddBabyOpen(false);
       setBabyName('');
@@ -282,9 +283,13 @@ export function HomePage() {
             ]}
             placeholder="Select gender"
           />
-          <p className="text-sm text-gray-500 bg-brand-light rounded-xl px-4 py-3">
-            Diagnosis will be set to <strong>Tetralogy of Fallot</strong> by default.
-          </p>
+          <Input
+            label="Medical notes / diagnosis (optional)"
+            type="text"
+            value={babyDiagnosis}
+            onChange={(e) => setBabyDiagnosis(e.target.value)}
+            placeholder="e.g. Tetralogy of Fallot, premature, healthy"
+          />
           {babyError && (
             <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-3">{babyError}</p>
           )}

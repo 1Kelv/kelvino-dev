@@ -15,7 +15,7 @@ import {
 import { cn } from '../../lib/utils';
 
 const navItems = [
-  { to: '/', icon: House, label: 'Home', exact: true },
+  { to: '/app', icon: House, label: 'Home', exact: true },
   { to: '/feeds', icon: Droplets, label: 'Feeds' },
   { to: '/nappies', icon: Baby, label: 'Nappies' },
   { to: '/medications', icon: Pill, label: 'Meds' },

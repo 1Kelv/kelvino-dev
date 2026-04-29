@@ -14,7 +14,7 @@ export function LoginPage() {
           </div>
           <h1 className="text-3xl font-extrabold text-gray-900">Mylestone</h1>
           <p className="text-gray-500 text-sm mt-1 text-center">
-            Baby care tracking for medically complex infants
+            Every milestone, remembered.
           </p>
         </div>
 

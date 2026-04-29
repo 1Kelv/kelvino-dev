@@ -1,7 +1,7 @@
-// I configure all routes for the Mylestone app
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './lib/AuthContext';
+import { LandingPage } from './pages/LandingPage';
 import { HomePage } from './pages/HomePage';
 import { FeedsPage } from './pages/FeedsPage';
 import { NappiesPage } from './pages/NappiesPage';
@@ -14,7 +14,6 @@ import { NotesPage } from './pages/NotesPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 
-// I protect routes that require authentication
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
 
@@ -36,83 +35,28 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (user) return <Navigate to="/app" replace />;
+  return <>{children}</>;
+}
+
 export default function App() {
   return (
     <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <HomePage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/feeds"
-        element={
-          <ProtectedRoute>
-            <FeedsPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/nappies"
-        element={
-          <ProtectedRoute>
-            <NappiesPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/medications"
-        element={
-          <ProtectedRoute>
-            <MedicationsPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/growth"
-        element={
-          <ProtectedRoute>
-            <GrowthPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/symptoms"
-        element={
-          <ProtectedRoute>
-            <SymptomsPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/sleep"
-        element={
-          <ProtectedRoute>
-            <SleepPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/appointments"
-        element={
-          <ProtectedRoute>
-            <AppointmentsPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/notes"
-        element={
-          <ProtectedRoute>
-            <NotesPage />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/" element={<PublicOnlyRoute><LandingPage /></PublicOnlyRoute>} />
+      <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+      <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
+      <Route path="/app" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+      <Route path="/feeds" element={<ProtectedRoute><FeedsPage /></ProtectedRoute>} />
+      <Route path="/nappies" element={<ProtectedRoute><NappiesPage /></ProtectedRoute>} />
+      <Route path="/medications" element={<ProtectedRoute><MedicationsPage /></ProtectedRoute>} />
+      <Route path="/growth" element={<ProtectedRoute><GrowthPage /></ProtectedRoute>} />
+      <Route path="/symptoms" element={<ProtectedRoute><SymptomsPage /></ProtectedRoute>} />
+      <Route path="/sleep" element={<ProtectedRoute><SleepPage /></ProtectedRoute>} />
+      <Route path="/appointments" element={<ProtectedRoute><AppointmentsPage /></ProtectedRoute>} />
+      <Route path="/notes" element={<ProtectedRoute><NotesPage /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

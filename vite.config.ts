@@ -13,7 +13,7 @@ export default defineConfig({
       manifest: {
         name: 'Mylestone',
         short_name: 'Mylestone',
-        description: 'Baby care tracking for medically complex infants',
+        description: 'Every milestone, remembered. Track feeds, sleep, growth, and every precious moment.',
         theme_color: '#4ECDC4',
         background_color: '#ffffff',
         display: 'standalone',

@@ -23,7 +23,7 @@ export function LoginForm() {
     setError(null);
     try {
       await login(email, password);
-      navigate('/');
+      navigate('/app');
     } catch {
       setError('Invalid email or password. Please try again.');
     } finally {
