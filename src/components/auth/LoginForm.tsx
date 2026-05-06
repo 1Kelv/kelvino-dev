@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, MailCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
-import { useAuth } from '../../lib/AuthContext';
+import { useAuth, EMAIL_NOT_VERIFIED } from '../../lib/AuthContext';
 
 const formVariants = {
   hidden: { opacity: 0 },
@@ -17,26 +17,48 @@ const itemVariants = {
 };
 
 export function LoginForm() {
-  const { login } = useAuth();
+  const { login, resendVerificationEmail } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [emailNotVerified, setEmailNotVerified] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendSent, setResendSent] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) { setError('Please enter your email and password.'); return; }
     setLoading(true);
     setError(null);
+    setEmailNotVerified(false);
+    setResendSent(false);
     try {
       await login(email, password);
       navigate('/app');
-    } catch {
-      setError('Invalid email or password. Please try again.');
+    } catch (err: any) {
+      if (err?.message === EMAIL_NOT_VERIFIED) {
+        setEmailNotVerified(true);
+      } else {
+        setError('Invalid email or password. Please try again.');
+      }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (!email) { setError('Enter your email address above first.'); return; }
+    setResendLoading(true);
+    try {
+      await resendVerificationEmail(email);
+      setResendSent(true);
+    } catch {
+      setError('Could not resend the verification email. Please try again.');
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -85,6 +107,32 @@ export function LoginForm() {
           Forgot password?
         </Link>
       </motion.div>
+      {emailNotVerified && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col gap-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-xl px-4 py-3"
+        >
+          <div className="flex items-start gap-2">
+            <MailCheck size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-amber-800 dark:text-amber-300">
+              Your email hasn't been verified yet. Check your inbox for the verification link we sent when you signed up.
+            </p>
+          </div>
+          {resendSent ? (
+            <p className="text-sm text-brand-mint font-semibold">Verification email sent — check your inbox.</p>
+          ) : (
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={resendLoading}
+              className="text-sm text-brand-mint font-semibold hover:underline disabled:opacity-50 text-left"
+            >
+              {resendLoading ? 'Sending…' : 'Resend verification email'}
+            </button>
+          )}
+        </motion.div>
+      )}
       {error && (
         <motion.p
           initial={{ opacity: 0, scale: 0.95 }}
