@@ -15,7 +15,7 @@ export function FeedbackForm({ userId, userEmail }: FeedbackFormProps) {
   const [category, setCategory] = useState<FeedbackEntry['category']>('general');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
-  const [email, setEmail] = useState(userEmail);
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
