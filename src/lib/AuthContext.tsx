@@ -73,19 +73,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const resendVerificationEmail = async (email: string) => {
-    try {
-      const stored = localStorage.getItem('pendingVerification');
-      if (stored) {
+    const stored = localStorage.getItem('pendingVerification');
+    if (stored) {
+      try {
         const parsed = JSON.parse(stored);
         if (parsed.email === email) {
           await account.createMagicURLToken(parsed.userId, email, `${window.location.origin}/verify`);
           return;
         }
-      }
-    } catch {}
-    // If no stored userId (e.g. different device), generate a new token attempt.
-    // Appwrite will send to the email if the account exists.
-    await account.createMagicURLToken(ID.unique(), email, `${window.location.origin}/verify`);
+      } catch {}
+    }
+    // No stored userId on this device — cannot resend without it.
+    // Guide user to use forgot password instead.
+    throw new Error('NO_STORED_USER');
   };
 
   const logout = async () => {

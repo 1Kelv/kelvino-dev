@@ -55,8 +55,12 @@ export function LoginForm() {
     try {
       await resendVerificationEmail(email);
       setResendSent(true);
-    } catch {
-      setError('Could not resend the verification email. Please try again.');
+    } catch (err: any) {
+      if (err?.message === 'NO_STORED_USER') {
+        setResendSent(true); // Show as "sent" to avoid confusion; guide via forgot password below
+      } else {
+        setError('Could not resend the verification email. Please try again.');
+      }
     } finally {
       setResendLoading(false);
     }
@@ -116,11 +120,14 @@ export function LoginForm() {
           <div className="flex items-start gap-2">
             <MailCheck size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-amber-800 dark:text-amber-300">
-              Your email hasn't been verified yet. Check your inbox for the verification link we sent when you signed up.
+              Your email hasn't been verified yet. Check your inbox for the verification link we sent when you signed up, or request a new one below.
             </p>
           </div>
           {resendSent ? (
-            <p className="text-sm text-brand-mint font-semibold">Verification email sent — check your inbox.</p>
+            <div className="flex flex-col gap-1">
+              <p className="text-sm text-brand-mint font-semibold">Verification email sent — check your inbox and click the link.</p>
+              <p className="text-xs text-amber-700 dark:text-amber-400">No email? Use <Link to="/forgot-password" className="underline font-semibold">Forgot password?</Link> to regain access instead.</p>
+            </div>
           ) : (
             <button
               type="button"
