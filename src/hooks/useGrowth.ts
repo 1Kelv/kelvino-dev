@@ -1,4 +1,3 @@
-// I fetch and manage growth entries for a given baby
 import { useState, useEffect, useCallback } from 'react';
 import { growthDb } from '../lib/db';
 import { GrowthEntry } from '../types';
@@ -8,6 +7,7 @@ interface UseGrowthReturn {
   loading: boolean;
   error: string | null;
   addEntry: (data: Omit<GrowthEntry, '$id'>) => Promise<void>;
+  updateEntry: (id: string, data: Partial<Omit<GrowthEntry, '$id'>>) => Promise<void>;
   removeEntry: (id: string) => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -31,20 +31,28 @@ export function useGrowth(babyId: string | undefined): UseGrowthReturn {
     }
   }, [babyId]);
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
+  useEffect(() => { fetch(); }, [fetch]);
 
   const addEntry = async (data: Omit<GrowthEntry, '$id'>) => {
     const tempId = `temp_${Date.now()}`;
-    const optimistic: GrowthEntry = { ...data, $id: tempId };
-    setEntries((prev) => [optimistic, ...prev]);
+    setEntries((prev) => [{ ...data, $id: tempId }, ...prev]);
     try {
       const created = await growthDb.create(data);
       setEntries((prev) => prev.map((e) => (e.$id === tempId ? created : e)));
     } catch {
       setEntries((prev) => prev.filter((e) => e.$id !== tempId));
       throw new Error('Failed to save growth entry.');
+    }
+  };
+
+  const updateEntry = async (id: string, data: Partial<Omit<GrowthEntry, '$id'>>) => {
+    setEntries((prev) => prev.map((e) => (e.$id === id ? { ...e, ...data } : e)));
+    try {
+      const updated = await growthDb.update(id, data);
+      setEntries((prev) => prev.map((e) => (e.$id === id ? updated : e)));
+    } catch {
+      await fetch();
+      throw new Error('Failed to update growth entry.');
     }
   };
 
@@ -58,5 +66,5 @@ export function useGrowth(babyId: string | undefined): UseGrowthReturn {
     }
   };
 
-  return { entries, loading, error, addEntry, removeEntry, refresh: fetch };
+  return { entries, loading, error, addEntry, updateEntry, removeEntry, refresh: fetch };
 }

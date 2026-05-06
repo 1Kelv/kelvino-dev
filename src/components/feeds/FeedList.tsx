@@ -9,6 +9,7 @@ import { formatDateTime, formatDuration } from '../../lib/utils';
 interface FeedListProps {
   entries: FeedEntry[];
   onDelete: (id: string) => Promise<void>;
+  onEdit?: (entry: FeedEntry) => void;
   onAdd?: () => void;
 }
 
@@ -24,7 +25,7 @@ const typeLabel = (type: FeedEntry['type']) => {
   return 'Mixed';
 };
 
-export function FeedList({ entries, onDelete, onAdd }: FeedListProps) {
+export function FeedList({ entries, onDelete, onEdit, onAdd }: FeedListProps) {
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -52,6 +53,7 @@ export function FeedList({ entries, onDelete, onAdd }: FeedListProps) {
           badge={
             <Badge colour={typeBadgeColour(entry.type)}>{typeLabel(entry.type)}</Badge>
           }
+          onEdit={onEdit ? () => onEdit(entry) : undefined}
           onDelete={() => onDelete(entry.$id)}
         />
       ))}

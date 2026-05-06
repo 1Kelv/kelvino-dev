@@ -1,4 +1,3 @@
-// I fetch and manage feed entries for a given baby
 import { useState, useEffect, useCallback } from 'react';
 import { feedsDb } from '../lib/db';
 import { FeedEntry } from '../types';
@@ -15,6 +14,7 @@ interface UseFeedsReturn {
   error: string | null;
   stats: WeeklyFeedStats;
   addEntry: (data: Omit<FeedEntry, '$id'>) => Promise<void>;
+  updateEntry: (id: string, data: Partial<Omit<FeedEntry, '$id'>>) => Promise<void>;
   removeEntry: (id: string) => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -38,21 +38,28 @@ export function useFeeds(babyId: string | undefined): UseFeedsReturn {
     }
   }, [babyId]);
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
+  useEffect(() => { fetch(); }, [fetch]);
 
   const addEntry = async (data: Omit<FeedEntry, '$id'>) => {
-    // I optimistically add the entry to local state first
     const tempId = `temp_${Date.now()}`;
-    const optimistic: FeedEntry = { ...data, $id: tempId };
-    setEntries((prev) => [optimistic, ...prev]);
+    setEntries((prev) => [{ ...data, $id: tempId }, ...prev]);
     try {
       const created = await feedsDb.create(data);
       setEntries((prev) => prev.map((e) => (e.$id === tempId ? created : e)));
     } catch {
       setEntries((prev) => prev.filter((e) => e.$id !== tempId));
       throw new Error('Failed to save feed entry.');
+    }
+  };
+
+  const updateEntry = async (id: string, data: Partial<Omit<FeedEntry, '$id'>>) => {
+    setEntries((prev) => prev.map((e) => (e.$id === id ? { ...e, ...data } : e)));
+    try {
+      const updated = await feedsDb.update(id, data);
+      setEntries((prev) => prev.map((e) => (e.$id === id ? updated : e)));
+    } catch {
+      await fetch();
+      throw new Error('Failed to update feed entry.');
     }
   };
 
@@ -66,7 +73,6 @@ export function useFeeds(babyId: string | undefined): UseFeedsReturn {
     }
   };
 
-  // I compute weekly stats from the last 7 days of entries
   const stats: WeeklyFeedStats = (() => {
     const now = new Date();
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -79,9 +85,5 @@ export function useFeeds(babyId: string | undefined): UseFeedsReturn {
     };
   })();
 
-  // I expose today stats for quick reference on the page
-  const todayEntries = entries.filter((e) => isToday(e.datetime));
-  void todayEntries;
-
-  return { entries, loading, error, stats, addEntry, removeEntry, refresh: fetch };
+  return { entries, loading, error, stats, addEntry, updateEntry, removeEntry, refresh: fetch };
 }

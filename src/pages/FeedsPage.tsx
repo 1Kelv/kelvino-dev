@@ -22,12 +22,14 @@ import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useFeeds } from '../hooks/useFeeds';
 import { babyAge, isToday, formatTime } from '../lib/utils';
+import { FeedEntry } from '../types';
 
 export function FeedsPage() {
   const { selectedBaby } = useBabyContext();
   const { user } = useAuth();
-  const { entries, loading, error, stats, addEntry, removeEntry } = useFeeds(selectedBaby?.$id);
+  const { entries, loading, error, stats, addEntry, updateEntry, removeEntry } = useFeeds(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingEntry, setEditingEntry] = useState<FeedEntry | null>(null);
 
   const todayEntries = entries.filter((e) => isToday(e.datetime));
   const todayMl = todayEntries.reduce((sum, e) => sum + e.amountMl, 0);
@@ -131,6 +133,7 @@ export function FeedsPage() {
           <FeedList
             entries={entries}
             onDelete={removeEntry}
+            onEdit={(entry) => setEditingEntry(entry)}
             onAdd={() => setModalOpen(true)}
           />
         )}
@@ -145,6 +148,19 @@ export function FeedsPage() {
           onSubmit={addEntry}
           onClose={() => setModalOpen(false)}
         />
+      </Modal>
+
+      <Modal open={!!editingEntry} onClose={() => setEditingEntry(null)} title="Edit Feed">
+        {editingEntry && (
+          <FeedForm
+            babyId={selectedBaby.$id}
+            userId={user?.$id || ''}
+            onSubmit={addEntry}
+            onUpdate={(data) => updateEntry(editingEntry.$id, data)}
+            onClose={() => setEditingEntry(null)}
+            initialValues={editingEntry}
+          />
+        )}
       </Modal>
     </AppShell>
   );

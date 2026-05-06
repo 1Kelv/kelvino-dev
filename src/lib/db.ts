@@ -14,7 +14,6 @@ function cast<T>(doc: Record<string, unknown>): T {
   return doc as unknown as T;
 }
 
-// Permissions every document gets on creation — any authenticated user can CRUD their own docs
 const userPerms = [
   Permission.read(Role.users()),
   Permission.update(Role.users()),
@@ -33,6 +32,10 @@ export const feedsDb = {
   },
   create: async (data: Omit<FeedEntry, '$id'>): Promise<FeedEntry> => {
     const doc = await databases.createDocument(DB_ID, COLLECTIONS.FEEDS, ID.unique(), data, userPerms);
+    return cast<FeedEntry>(doc as Record<string, unknown>);
+  },
+  update: async (id: string, data: Partial<Omit<FeedEntry, '$id'>>): Promise<FeedEntry> => {
+    const doc = await databases.updateDocument(DB_ID, COLLECTIONS.FEEDS, id, data);
     return cast<FeedEntry>(doc as Record<string, unknown>);
   },
   delete: async (id: string): Promise<void> => {
@@ -54,6 +57,10 @@ export const nappiesDb = {
     const doc = await databases.createDocument(DB_ID, COLLECTIONS.NAPPIES, ID.unique(), data, userPerms);
     return cast<NappyEntry>(doc as Record<string, unknown>);
   },
+  update: async (id: string, data: Partial<Omit<NappyEntry, '$id'>>): Promise<NappyEntry> => {
+    const doc = await databases.updateDocument(DB_ID, COLLECTIONS.NAPPIES, id, data);
+    return cast<NappyEntry>(doc as Record<string, unknown>);
+  },
   delete: async (id: string): Promise<void> => {
     await databases.deleteDocument(DB_ID, COLLECTIONS.NAPPIES, id);
   },
@@ -71,6 +78,10 @@ export const medicationsDb = {
   },
   create: async (data: Omit<MedicationEntry, '$id'>): Promise<MedicationEntry> => {
     const doc = await databases.createDocument(DB_ID, COLLECTIONS.MEDICATIONS, ID.unique(), data, userPerms);
+    return cast<MedicationEntry>(doc as Record<string, unknown>);
+  },
+  update: async (id: string, data: Partial<Omit<MedicationEntry, '$id'>>): Promise<MedicationEntry> => {
+    const doc = await databases.updateDocument(DB_ID, COLLECTIONS.MEDICATIONS, id, data);
     return cast<MedicationEntry>(doc as Record<string, unknown>);
   },
   delete: async (id: string): Promise<void> => {
@@ -92,6 +103,10 @@ export const growthDb = {
     const doc = await databases.createDocument(DB_ID, COLLECTIONS.GROWTH, ID.unique(), data, userPerms);
     return cast<GrowthEntry>(doc as Record<string, unknown>);
   },
+  update: async (id: string, data: Partial<Omit<GrowthEntry, '$id'>>): Promise<GrowthEntry> => {
+    const doc = await databases.updateDocument(DB_ID, COLLECTIONS.GROWTH, id, data);
+    return cast<GrowthEntry>(doc as Record<string, unknown>);
+  },
   delete: async (id: string): Promise<void> => {
     await databases.deleteDocument(DB_ID, COLLECTIONS.GROWTH, id);
   },
@@ -109,6 +124,10 @@ export const symptomsDb = {
   },
   create: async (data: Omit<SymptomEntry, '$id'>): Promise<SymptomEntry> => {
     const doc = await databases.createDocument(DB_ID, COLLECTIONS.SYMPTOMS, ID.unique(), data, userPerms);
+    return cast<SymptomEntry>(doc as Record<string, unknown>);
+  },
+  update: async (id: string, data: Partial<Omit<SymptomEntry, '$id'>>): Promise<SymptomEntry> => {
+    const doc = await databases.updateDocument(DB_ID, COLLECTIONS.SYMPTOMS, id, data);
     return cast<SymptomEntry>(doc as Record<string, unknown>);
   },
   delete: async (id: string): Promise<void> => {
@@ -130,6 +149,10 @@ export const sleepDb = {
     const doc = await databases.createDocument(DB_ID, COLLECTIONS.SLEEP, ID.unique(), data, userPerms);
     return cast<SleepEntry>(doc as Record<string, unknown>);
   },
+  update: async (id: string, data: Partial<Omit<SleepEntry, '$id'>>): Promise<SleepEntry> => {
+    const doc = await databases.updateDocument(DB_ID, COLLECTIONS.SLEEP, id, data);
+    return cast<SleepEntry>(doc as Record<string, unknown>);
+  },
   delete: async (id: string): Promise<void> => {
     await databases.deleteDocument(DB_ID, COLLECTIONS.SLEEP, id);
   },
@@ -149,6 +172,10 @@ export const appointmentsDb = {
     const doc = await databases.createDocument(DB_ID, COLLECTIONS.APPOINTMENTS, ID.unique(), data, userPerms);
     return cast<AppointmentEntry>(doc as Record<string, unknown>);
   },
+  update: async (id: string, data: Partial<Omit<AppointmentEntry, '$id'>>): Promise<AppointmentEntry> => {
+    const doc = await databases.updateDocument(DB_ID, COLLECTIONS.APPOINTMENTS, id, data);
+    return cast<AppointmentEntry>(doc as Record<string, unknown>);
+  },
   delete: async (id: string): Promise<void> => {
     await databases.deleteDocument(DB_ID, COLLECTIONS.APPOINTMENTS, id);
   },
@@ -166,6 +193,10 @@ export const notesDb = {
   },
   create: async (data: Omit<NoteEntry, '$id'>): Promise<NoteEntry> => {
     const doc = await databases.createDocument(DB_ID, COLLECTIONS.NOTES, ID.unique(), data, userPerms);
+    return cast<NoteEntry>(doc as Record<string, unknown>);
+  },
+  update: async (id: string, data: Partial<Omit<NoteEntry, '$id'>>): Promise<NoteEntry> => {
+    const doc = await databases.updateDocument(DB_ID, COLLECTIONS.NOTES, id, data);
     return cast<NoteEntry>(doc as Record<string, unknown>);
   },
   delete: async (id: string): Promise<void> => {

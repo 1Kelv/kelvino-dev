@@ -1,4 +1,3 @@
-// I fetch and manage nappy entries for a given baby
 import { useState, useEffect, useCallback } from 'react';
 import { nappiesDb } from '../lib/db';
 import { NappyEntry } from '../types';
@@ -8,6 +7,7 @@ interface UseNappiesReturn {
   loading: boolean;
   error: string | null;
   addEntry: (data: Omit<NappyEntry, '$id'>) => Promise<void>;
+  updateEntry: (id: string, data: Partial<Omit<NappyEntry, '$id'>>) => Promise<void>;
   removeEntry: (id: string) => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -31,20 +31,28 @@ export function useNappies(babyId: string | undefined): UseNappiesReturn {
     }
   }, [babyId]);
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
+  useEffect(() => { fetch(); }, [fetch]);
 
   const addEntry = async (data: Omit<NappyEntry, '$id'>) => {
     const tempId = `temp_${Date.now()}`;
-    const optimistic: NappyEntry = { ...data, $id: tempId };
-    setEntries((prev) => [optimistic, ...prev]);
+    setEntries((prev) => [{ ...data, $id: tempId }, ...prev]);
     try {
       const created = await nappiesDb.create(data);
       setEntries((prev) => prev.map((e) => (e.$id === tempId ? created : e)));
     } catch {
       setEntries((prev) => prev.filter((e) => e.$id !== tempId));
       throw new Error('Failed to save nappy entry.');
+    }
+  };
+
+  const updateEntry = async (id: string, data: Partial<Omit<NappyEntry, '$id'>>) => {
+    setEntries((prev) => prev.map((e) => (e.$id === id ? { ...e, ...data } : e)));
+    try {
+      const updated = await nappiesDb.update(id, data);
+      setEntries((prev) => prev.map((e) => (e.$id === id ? updated : e)));
+    } catch {
+      await fetch();
+      throw new Error('Failed to update nappy entry.');
     }
   };
 
@@ -58,5 +66,5 @@ export function useNappies(babyId: string | undefined): UseNappiesReturn {
     }
   };
 
-  return { entries, loading, error, addEntry, removeEntry, refresh: fetch };
+  return { entries, loading, error, addEntry, updateEntry, removeEntry, refresh: fetch };
 }

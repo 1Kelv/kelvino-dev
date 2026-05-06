@@ -1,4 +1,3 @@
-// I fetch and manage medication entries for a given baby
 import { useState, useEffect, useCallback } from 'react';
 import { medicationsDb } from '../lib/db';
 import { MedicationEntry } from '../types';
@@ -8,6 +7,7 @@ interface UseMedicationsReturn {
   loading: boolean;
   error: string | null;
   addEntry: (data: Omit<MedicationEntry, '$id'>) => Promise<void>;
+  updateEntry: (id: string, data: Partial<Omit<MedicationEntry, '$id'>>) => Promise<void>;
   removeEntry: (id: string) => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -31,20 +31,28 @@ export function useMedications(babyId: string | undefined): UseMedicationsReturn
     }
   }, [babyId]);
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
+  useEffect(() => { fetch(); }, [fetch]);
 
   const addEntry = async (data: Omit<MedicationEntry, '$id'>) => {
     const tempId = `temp_${Date.now()}`;
-    const optimistic: MedicationEntry = { ...data, $id: tempId };
-    setEntries((prev) => [optimistic, ...prev]);
+    setEntries((prev) => [{ ...data, $id: tempId }, ...prev]);
     try {
       const created = await medicationsDb.create(data);
       setEntries((prev) => prev.map((e) => (e.$id === tempId ? created : e)));
     } catch {
       setEntries((prev) => prev.filter((e) => e.$id !== tempId));
       throw new Error('Failed to save medication entry.');
+    }
+  };
+
+  const updateEntry = async (id: string, data: Partial<Omit<MedicationEntry, '$id'>>) => {
+    setEntries((prev) => prev.map((e) => (e.$id === id ? { ...e, ...data } : e)));
+    try {
+      const updated = await medicationsDb.update(id, data);
+      setEntries((prev) => prev.map((e) => (e.$id === id ? updated : e)));
+    } catch {
+      await fetch();
+      throw new Error('Failed to update medication entry.');
     }
   };
 
@@ -58,5 +66,5 @@ export function useMedications(babyId: string | undefined): UseMedicationsReturn
     }
   };
 
-  return { entries, loading, error, addEntry, removeEntry, refresh: fetch };
+  return { entries, loading, error, addEntry, updateEntry, removeEntry, refresh: fetch };
 }

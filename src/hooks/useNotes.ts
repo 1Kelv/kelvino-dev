@@ -1,4 +1,3 @@
-// I fetch and manage note entries for a given baby
 import { useState, useEffect, useCallback } from 'react';
 import { notesDb } from '../lib/db';
 import { NoteEntry } from '../types';
@@ -8,6 +7,7 @@ interface UseNotesReturn {
   loading: boolean;
   error: string | null;
   addEntry: (data: Omit<NoteEntry, '$id'>) => Promise<void>;
+  updateEntry: (id: string, data: Partial<Omit<NoteEntry, '$id'>>) => Promise<void>;
   removeEntry: (id: string) => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -31,20 +31,28 @@ export function useNotes(babyId: string | undefined): UseNotesReturn {
     }
   }, [babyId]);
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
+  useEffect(() => { fetch(); }, [fetch]);
 
   const addEntry = async (data: Omit<NoteEntry, '$id'>) => {
     const tempId = `temp_${Date.now()}`;
-    const optimistic: NoteEntry = { ...data, $id: tempId };
-    setEntries((prev) => [optimistic, ...prev]);
+    setEntries((prev) => [{ ...data, $id: tempId }, ...prev]);
     try {
       const created = await notesDb.create(data);
       setEntries((prev) => prev.map((e) => (e.$id === tempId ? created : e)));
     } catch {
       setEntries((prev) => prev.filter((e) => e.$id !== tempId));
       throw new Error('Failed to save note.');
+    }
+  };
+
+  const updateEntry = async (id: string, data: Partial<Omit<NoteEntry, '$id'>>) => {
+    setEntries((prev) => prev.map((e) => (e.$id === id ? { ...e, ...data } : e)));
+    try {
+      const updated = await notesDb.update(id, data);
+      setEntries((prev) => prev.map((e) => (e.$id === id ? updated : e)));
+    } catch {
+      await fetch();
+      throw new Error('Failed to update note.');
     }
   };
 
@@ -58,5 +66,5 @@ export function useNotes(babyId: string | undefined): UseNotesReturn {
     }
   };
 
-  return { entries, loading, error, addEntry, removeEntry, refresh: fetch };
+  return { entries, loading, error, addEntry, updateEntry, removeEntry, refresh: fetch };
 }

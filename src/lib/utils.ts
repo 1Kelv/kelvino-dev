@@ -87,3 +87,15 @@ export function localDateTimeNow(): string {
 export function localDateNow(): string {
   return localDateTimeNow().slice(0, 10);
 }
+
+// I convert an ISO datetime string to the format required for datetime-local inputs
+export function toLocalDateTimeInput(iso: string): string {
+  const d = new Date(iso);
+  const offset = d.getTimezoneOffset();
+  return new Date(d.getTime() - offset * 60000).toISOString().slice(0, 16);
+}
+
+// I convert an ISO date string to the format required for date inputs
+export function toLocalDateInput(iso: string): string {
+  return toLocalDateTimeInput(iso).slice(0, 10);
+}

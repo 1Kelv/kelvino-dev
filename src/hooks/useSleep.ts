@@ -1,4 +1,3 @@
-// I fetch and manage sleep entries for a given baby
 import { useState, useEffect, useCallback } from 'react';
 import { sleepDb } from '../lib/db';
 import { SleepEntry } from '../types';
@@ -8,6 +7,7 @@ interface UseSleepReturn {
   loading: boolean;
   error: string | null;
   addEntry: (data: Omit<SleepEntry, '$id'>) => Promise<void>;
+  updateEntry: (id: string, data: Partial<Omit<SleepEntry, '$id'>>) => Promise<void>;
   removeEntry: (id: string) => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -31,20 +31,28 @@ export function useSleep(babyId: string | undefined): UseSleepReturn {
     }
   }, [babyId]);
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
+  useEffect(() => { fetch(); }, [fetch]);
 
   const addEntry = async (data: Omit<SleepEntry, '$id'>) => {
     const tempId = `temp_${Date.now()}`;
-    const optimistic: SleepEntry = { ...data, $id: tempId };
-    setEntries((prev) => [optimistic, ...prev]);
+    setEntries((prev) => [{ ...data, $id: tempId }, ...prev]);
     try {
       const created = await sleepDb.create(data);
       setEntries((prev) => prev.map((e) => (e.$id === tempId ? created : e)));
     } catch {
       setEntries((prev) => prev.filter((e) => e.$id !== tempId));
       throw new Error('Failed to save sleep entry.');
+    }
+  };
+
+  const updateEntry = async (id: string, data: Partial<Omit<SleepEntry, '$id'>>) => {
+    setEntries((prev) => prev.map((e) => (e.$id === id ? { ...e, ...data } : e)));
+    try {
+      const updated = await sleepDb.update(id, data);
+      setEntries((prev) => prev.map((e) => (e.$id === id ? updated : e)));
+    } catch {
+      await fetch();
+      throw new Error('Failed to update sleep entry.');
     }
   };
 
@@ -58,5 +66,5 @@ export function useSleep(babyId: string | undefined): UseSleepReturn {
     }
   };
 
-  return { entries, loading, error, addEntry, removeEntry, refresh: fetch };
+  return { entries, loading, error, addEntry, updateEntry, removeEntry, refresh: fetch };
 }
