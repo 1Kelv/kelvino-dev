@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Droplets, Baby, Pill, Calendar, Plus, LogOut, ChevronRight, Activity, Sun, Moon } from 'lucide-react';
+import { Heart, Droplets, Baby, Pill, Calendar, Plus, LogOut, ChevronRight, Activity, Sun, Moon, MessageSquarePlus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AppShell } from '../components/layout/AppShell';
 import { Modal } from '../components/ui/Modal';
@@ -280,6 +280,25 @@ export function HomePage() {
             )}
           </>
         )}
+        <motion.div variants={itemVariants}>
+          <Link to="/feedback">
+            <motion.div
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+              className="flex items-center gap-3 bg-white dark:bg-gray-800 rounded-2xl px-4 py-4 shadow-sm border border-gray-100 dark:border-gray-700"
+            >
+              <div className="w-10 h-10 rounded-xl bg-brand-light flex items-center justify-center flex-shrink-0">
+                <MessageSquarePlus size={20} className="text-brand-mint" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">Share your feedback</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Feature requests, bugs, or just say hello</p>
+              </div>
+              <ChevronRight size={16} className="text-gray-400" />
+            </motion.div>
+          </Link>
+        </motion.div>
       </motion.div>
 
       <Modal open={addBabyOpen} onClose={() => setAddBabyOpen(false)} title="Add Baby Profile">

@@ -130,17 +130,30 @@ export function AiPage() {
         body: JSON.stringify({ message: text.trim(), fileBase64, fileMediaType, fileName }),
       });
 
-      const data = await res.json();
+      let data: { response?: string; error?: string };
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error('routing');
+      }
+
       const reply = data.response || data.error || 'Sorry, something went wrong.';
 
       setMessages((prev) => [
         ...prev,
         { id: Date.now().toString() + '_ai', role: 'assistant', text: reply },
       ]);
-    } catch {
+    } catch (err: any) {
+      const isRoutingError = err?.message === 'routing';
       setMessages((prev) => [
         ...prev,
-        { id: Date.now().toString() + '_err', role: 'assistant', text: 'Sorry, I couldn\'t reach the AI right now. Please try again.' },
+        {
+          id: Date.now().toString() + '_err',
+          role: 'assistant',
+          text: isRoutingError
+            ? 'AI service is temporarily unavailable. If you just deployed the app, please ensure the API routing is configured correctly in vercel.json.'
+            : 'Sorry, I couldn\'t reach the AI right now. Please try again.',
+        },
       ]);
     } finally {
       setLoading(false);

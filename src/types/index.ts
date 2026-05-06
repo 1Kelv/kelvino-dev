@@ -100,3 +100,13 @@ export interface NoteEntry {
   category: 'discharge' | 'consultant' | 'general' | 'medication';
   date: string;
 }
+
+
+export interface FeedbackEntry {
+  $id: string;
+  userId: string;
+  userEmail: string;
+  category: 'feature_request' | 'bug_report' | 'general';
+  subject: string;
+  message: string;
+}

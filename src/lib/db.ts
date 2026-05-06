@@ -8,6 +8,7 @@ import type {
   SleepEntry,
   AppointmentEntry,
   NoteEntry,
+  FeedbackEntry,
 } from '../types';
 
 function cast<T>(doc: Record<string, unknown>): T {
@@ -201,5 +202,11 @@ export const notesDb = {
   },
   delete: async (id: string): Promise<void> => {
     await databases.deleteDocument(DB_ID, COLLECTIONS.NOTES, id);
+  },
+};
+
+export const feedbackDb = {
+  create: async (data: Omit<FeedbackEntry, '$id'>): Promise<void> => {
+    await databases.createDocument(DB_ID, COLLECTIONS.FEEDBACK, ID.unique(), data, userPerms);
   },
 };

@@ -19,4 +19,5 @@ export const COLLECTIONS = {
   SLEEP: import.meta.env.VITE_APPWRITE_COLLECTION_SLEEP || 'sleep',
   APPOINTMENTS: import.meta.env.VITE_APPWRITE_COLLECTION_APPOINTMENTS || 'appointments',
   NOTES: import.meta.env.VITE_APPWRITE_COLLECTION_NOTES || 'notes',
+  FEEDBACK: import.meta.env.VITE_APPWRITE_COLLECTION_FEEDBACK || 'feedback',
 };

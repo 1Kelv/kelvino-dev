@@ -12,6 +12,7 @@ import { SleepPage } from './pages/SleepPage';
 import { AppointmentsPage } from './pages/AppointmentsPage';
 import { NotesPage } from './pages/NotesPage';
 import { AiPage } from './pages/AiPage';
+import { FeedbackPage } from './pages/FeedbackPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
@@ -62,6 +63,7 @@ export default function App() {
       <Route path="/appointments" element={<ProtectedRoute><AppointmentsPage /></ProtectedRoute>} />
       <Route path="/notes" element={<ProtectedRoute><NotesPage /></ProtectedRoute>} />
       <Route path="/ai" element={<ProtectedRoute><AiPage /></ProtectedRoute>} />
+      <Route path="/feedback" element={<ProtectedRoute><FeedbackPage /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

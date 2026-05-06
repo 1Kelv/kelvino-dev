@@ -26,11 +26,14 @@ IMPORTANT RULES:
 
 Remember: you are a helpful companion, not a doctor.`;
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.error('ANTHROPIC_API_KEY is not set');
+    return res.status(500).json({ error: 'AI service is not configured. Please contact support.' });
   }
 
   const { message, fileBase64, fileMediaType, fileName } = req.body || {};
@@ -39,6 +42,7 @@ export default async function handler(req: any, res: any) {
     return res.status(400).json({ error: 'No message or file provided' });
   }
 
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const content: Anthropic.MessageParam['content'] = [];
 
   if (fileBase64 && fileMediaType) {
