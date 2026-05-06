@@ -9,6 +9,7 @@ import { formatDate } from '../../lib/utils';
 interface NoteListProps {
   entries: NoteEntry[];
   onDelete: (id: string) => Promise<void>;
+  onEdit?: (entry: NoteEntry) => void;
   onAdd?: () => void;
 }
 
@@ -21,7 +22,7 @@ const categoryConfig = (cat: NoteEntry['category']) => {
   }
 };
 
-export function NoteList({ entries, onDelete, onAdd }: NoteListProps) {
+export function NoteList({ entries, onDelete, onEdit, onAdd }: NoteListProps) {
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -46,6 +47,7 @@ export function NoteList({ entries, onDelete, onAdd }: NoteListProps) {
             subtitle={entry.body.length > 100 ? entry.body.slice(0, 100) + '…' : entry.body}
             badge={<Badge colour={cat.colour}>{cat.label}</Badge>}
             onDelete={() => onDelete(entry.$id)}
+            onEdit={onEdit ? () => onEdit(entry) : undefined}
           />
         );
       })}

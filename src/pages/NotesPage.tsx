@@ -1,4 +1,3 @@
-// I render the notes page
 import React, { useState } from 'react';
 import { FileText } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
@@ -12,12 +11,14 @@ import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useNotes } from '../hooks/useNotes';
 import { babyAge } from '../lib/utils';
+import { NoteEntry } from '../types';
 
 export function NotesPage() {
   const { selectedBaby } = useBabyContext();
   const { user } = useAuth();
-  const { entries, loading, error, addEntry, removeEntry } = useNotes(selectedBaby?.$id);
+  const { entries, loading, error, addEntry, updateEntry, removeEntry } = useNotes(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingEntry, setEditingEntry] = useState<NoteEntry | null>(null);
 
   const dischargeNotes = entries.filter((e) => e.category === 'discharge').length;
   const consultantNotes = entries.filter((e) => e.category === 'consultant').length;
@@ -33,11 +34,7 @@ export function NotesPage() {
 
   return (
     <AppShell>
-      <PageHeader
-        title="Notes"
-        babyName={selectedBaby.name}
-        babyAge={babyAge(selectedBaby.dateOfBirth)}
-      />
+      <PageHeader title="Notes" babyName={selectedBaby.name} babyAge={babyAge(selectedBaby.dateOfBirth)} />
       <div className="p-5 flex flex-col gap-5">
         <div className="grid grid-cols-3 gap-3">
           <StatCard icon={<FileText size={18} />} label="Total notes" value={entries.length} colour="mint" />
@@ -52,19 +49,27 @@ export function NotesPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <NoteList entries={entries} onDelete={removeEntry} onAdd={() => setModalOpen(true)} />
+          <NoteList entries={entries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 
       <FAB onClick={() => setModalOpen(true)} label="Add a note" />
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Add Note">
-        <NoteForm
-          babyId={selectedBaby.$id}
-          userId={user?.$id || ''}
-          onSubmit={addEntry}
-          onClose={() => setModalOpen(false)}
-        />
+        <NoteForm babyId={selectedBaby.$id} userId={user?.$id || ''} onSubmit={addEntry} onClose={() => setModalOpen(false)} />
+      </Modal>
+
+      <Modal open={!!editingEntry} onClose={() => setEditingEntry(null)} title="Edit Note">
+        {editingEntry && (
+          <NoteForm
+            babyId={selectedBaby.$id}
+            userId={user?.$id || ''}
+            onSubmit={addEntry}
+            onUpdate={(data) => updateEntry(editingEntry.$id, data)}
+            onClose={() => setEditingEntry(null)}
+            initialValues={editingEntry}
+          />
+        )}
       </Modal>
     </AppShell>
   );

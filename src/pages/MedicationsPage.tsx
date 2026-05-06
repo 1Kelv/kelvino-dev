@@ -1,4 +1,3 @@
-// I render the medications tracking page
 import React, { useState } from 'react';
 import { Pill } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
@@ -12,17 +11,17 @@ import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useMedications } from '../hooks/useMedications';
 import { babyAge, isToday, formatTime } from '../lib/utils';
+import { MedicationEntry } from '../types';
 
 export function MedicationsPage() {
   const { selectedBaby } = useBabyContext();
   const { user } = useAuth();
-  const { entries, loading, error, addEntry, removeEntry } = useMedications(selectedBaby?.$id);
+  const { entries, loading, error, addEntry, updateEntry, removeEntry } = useMedications(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingEntry, setEditingEntry] = useState<MedicationEntry | null>(null);
 
   const todayEntries = entries.filter((e) => isToday(e.datetime));
   const lastMed = entries[0];
-
-  // I count unique medications given today
   const uniqueMedsToday = new Set(todayEntries.map((e) => e.medicationName)).size;
 
   if (!selectedBaby) {
@@ -36,21 +35,12 @@ export function MedicationsPage() {
 
   return (
     <AppShell>
-      <PageHeader
-        title="Medications"
-        babyName={selectedBaby.name}
-        babyAge={babyAge(selectedBaby.dateOfBirth)}
-      />
+      <PageHeader title="Medications" babyName={selectedBaby.name} babyAge={babyAge(selectedBaby.dateOfBirth)} />
       <div className="p-5 flex flex-col gap-5">
         <div className="grid grid-cols-3 gap-3">
           <StatCard icon={<Pill size={18} />} label="Doses today" value={todayEntries.length} colour="mint" />
           <StatCard icon={<Pill size={18} />} label="Medications" value={uniqueMedsToday} colour="purple" />
-          <StatCard
-            icon={<Pill size={18} />}
-            label="Last dose"
-            value={lastMed ? formatTime(lastMed.datetime) : '—'}
-            colour="sky"
-          />
+          <StatCard icon={<Pill size={18} />} label="Last dose" value={lastMed ? formatTime(lastMed.datetime) : '—'} colour="sky" />
         </div>
 
         {error && <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
@@ -60,20 +50,28 @@ export function MedicationsPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <MedicationList entries={entries} onDelete={removeEntry} onAdd={() => setModalOpen(true)} />
+          <MedicationList entries={entries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 
       <FAB onClick={() => setModalOpen(true)} label="Log a medication" />
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Log a Medication">
-        <MedicationForm
-          babyId={selectedBaby.$id}
-          userId={user?.$id || ''}
-          userName={user?.name || ''}
-          onSubmit={addEntry}
-          onClose={() => setModalOpen(false)}
-        />
+        <MedicationForm babyId={selectedBaby.$id} userId={user?.$id || ''} userName={user?.name || ''} onSubmit={addEntry} onClose={() => setModalOpen(false)} />
+      </Modal>
+
+      <Modal open={!!editingEntry} onClose={() => setEditingEntry(null)} title="Edit Medication">
+        {editingEntry && (
+          <MedicationForm
+            babyId={selectedBaby.$id}
+            userId={user?.$id || ''}
+            userName={user?.name || ''}
+            onSubmit={addEntry}
+            onUpdate={(data) => updateEntry(editingEntry.$id, data)}
+            onClose={() => setEditingEntry(null)}
+            initialValues={editingEntry}
+          />
+        )}
       </Modal>
     </AppShell>
   );

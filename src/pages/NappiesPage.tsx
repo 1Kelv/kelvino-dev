@@ -1,4 +1,3 @@
-// I render the nappies tracking page
 import React, { useState } from 'react';
 import { Baby } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
@@ -12,12 +11,14 @@ import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useNappies } from '../hooks/useNappies';
 import { babyAge, isToday, formatTime } from '../lib/utils';
+import { NappyEntry } from '../types';
 
 export function NappiesPage() {
   const { selectedBaby } = useBabyContext();
   const { user } = useAuth();
-  const { entries, loading, error, addEntry, removeEntry } = useNappies(selectedBaby?.$id);
+  const { entries, loading, error, addEntry, updateEntry, removeEntry } = useNappies(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingEntry, setEditingEntry] = useState<NappyEntry | null>(null);
 
   const todayEntries = entries.filter((e) => isToday(e.datetime));
   const lastNappy = entries[0];
@@ -35,11 +36,7 @@ export function NappiesPage() {
 
   return (
     <AppShell>
-      <PageHeader
-        title="Nappies"
-        babyName={selectedBaby.name}
-        babyAge={babyAge(selectedBaby.dateOfBirth)}
-      />
+      <PageHeader title="Nappies" babyName={selectedBaby.name} babyAge={babyAge(selectedBaby.dateOfBirth)} />
       <div className="p-5 flex flex-col gap-5">
         <div className="grid grid-cols-3 gap-3">
           <StatCard icon={<Baby size={18} />} label="Today" value={todayEntries.length} colour="mint" />
@@ -62,19 +59,27 @@ export function NappiesPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <NappyList entries={entries} onDelete={removeEntry} onAdd={() => setModalOpen(true)} />
+          <NappyList entries={entries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 
       <FAB onClick={() => setModalOpen(true)} label="Log a nappy change" />
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Log a Nappy Change">
-        <NappyForm
-          babyId={selectedBaby.$id}
-          userId={user?.$id || ''}
-          onSubmit={addEntry}
-          onClose={() => setModalOpen(false)}
-        />
+        <NappyForm babyId={selectedBaby.$id} userId={user?.$id || ''} onSubmit={addEntry} onClose={() => setModalOpen(false)} />
+      </Modal>
+
+      <Modal open={!!editingEntry} onClose={() => setEditingEntry(null)} title="Edit Nappy Entry">
+        {editingEntry && (
+          <NappyForm
+            babyId={selectedBaby.$id}
+            userId={user?.$id || ''}
+            onSubmit={addEntry}
+            onUpdate={(data) => updateEntry(editingEntry.$id, data)}
+            onClose={() => setEditingEntry(null)}
+            initialValues={editingEntry}
+          />
+        )}
       </Modal>
     </AppShell>
   );

@@ -8,6 +8,7 @@ interface UseSymptomsReturn {
   loading: boolean;
   error: string | null;
   addEntry: (data: Omit<SymptomEntry, '$id'>) => Promise<void>;
+  updateEntry: (id: string, data: Partial<Omit<SymptomEntry, '$id'>>) => Promise<void>;
   removeEntry: (id: string) => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -48,6 +49,17 @@ export function useSymptoms(babyId: string | undefined): UseSymptomsReturn {
     }
   };
 
+  const updateEntry = async (id: string, data: Partial<Omit<SymptomEntry, '$id'>>) => {
+    setEntries((prev) => prev.map((e) => (e.$id === id ? { ...e, ...data } : e)));
+    try {
+      const updated = await symptomsDb.update(id, data);
+      setEntries((prev) => prev.map((e) => (e.$id === id ? updated : e)));
+    } catch {
+      await fetch();
+      throw new Error('Failed to update symptom entry.');
+    }
+  };
+
   const removeEntry = async (id: string) => {
     setEntries((prev) => prev.filter((e) => e.$id !== id));
     try {
@@ -58,5 +70,5 @@ export function useSymptoms(babyId: string | undefined): UseSymptomsReturn {
     }
   };
 
-  return { entries, loading, error, addEntry, removeEntry, refresh: fetch };
+  return { entries, loading, error, addEntry, updateEntry, removeEntry, refresh: fetch };
 }

@@ -9,6 +9,7 @@ import { formatDateTime } from '../../lib/utils';
 interface MedicationListProps {
   entries: MedicationEntry[];
   onDelete: (id: string) => Promise<void>;
+  onEdit?: (entry: MedicationEntry) => void;
   onAdd?: () => void;
 }
 
@@ -22,7 +23,7 @@ const routeColour = (route: MedicationEntry['route']) => {
   }
 };
 
-export function MedicationList({ entries, onDelete, onAdd }: MedicationListProps) {
+export function MedicationList({ entries, onDelete, onEdit, onAdd }: MedicationListProps) {
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -45,6 +46,7 @@ export function MedicationList({ entries, onDelete, onAdd }: MedicationListProps
           subtitle={`${entry.route.toUpperCase()} · by ${entry.administeredBy}${entry.notes ? ` · ${entry.notes}` : ''}`}
           badge={<Badge colour={routeColour(entry.route)}>{entry.route}</Badge>}
           onDelete={() => onDelete(entry.$id)}
+          onEdit={onEdit ? () => onEdit(entry) : undefined}
         />
       ))}
     </div>

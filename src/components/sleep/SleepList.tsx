@@ -9,6 +9,7 @@ import { formatDate, formatDuration } from '../../lib/utils';
 interface SleepListProps {
   entries: SleepEntry[];
   onDelete: (id: string) => Promise<void>;
+  onEdit?: (entry: SleepEntry) => void;
   onAdd?: () => void;
 }
 
@@ -21,7 +22,7 @@ const moodColour = (rating: SleepEntry['moodRating']) => {
   return 'orange' as const;
 };
 
-export function SleepList({ entries, onDelete, onAdd }: SleepListProps) {
+export function SleepList({ entries, onDelete, onEdit, onAdd }: SleepListProps) {
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -44,6 +45,7 @@ export function SleepList({ entries, onDelete, onAdd }: SleepListProps) {
           subtitle={`Woke ${entry.wakeCount} time${entry.wakeCount !== 1 ? 's' : ''}${entry.notes ? ` · ${entry.notes}` : ''}`}
           badge={<Badge colour={moodColour(entry.moodRating)}>{moodEmoji(entry.moodRating)} Mood {entry.moodRating}/5</Badge>}
           onDelete={() => onDelete(entry.$id)}
+          onEdit={onEdit ? () => onEdit(entry) : undefined}
         />
       ))}
     </div>

@@ -9,6 +9,7 @@ import { formatDateTime } from '../../lib/utils';
 interface SymptomListProps {
   entries: SymptomEntry[];
   onDelete: (id: string) => Promise<void>;
+  onEdit?: (entry: SymptomEntry) => void;
   onAdd?: () => void;
 }
 
@@ -22,7 +23,7 @@ const skinColourBadge = (c: SymptomEntry['skinColour']) => {
   }
 };
 
-export function SymptomList({ entries, onDelete, onAdd }: SymptomListProps) {
+export function SymptomList({ entries, onDelete, onEdit, onAdd }: SymptomListProps) {
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -57,6 +58,7 @@ export function SymptomList({ entries, onDelete, onAdd }: SymptomListProps) {
             subtitle={details}
             badge={<Badge colour={skinBadge.colour}>{skinBadge.label}</Badge>}
             onDelete={() => onDelete(entry.$id)}
+            onEdit={onEdit ? () => onEdit(entry) : undefined}
           />
         );
       })}

@@ -1,4 +1,3 @@
-// I render the appointments page
 import React, { useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
@@ -12,12 +11,14 @@ import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useAppointments } from '../hooks/useAppointments';
 import { babyAge, formatDate } from '../lib/utils';
+import { AppointmentEntry } from '../types';
 
 export function AppointmentsPage() {
   const { selectedBaby } = useBabyContext();
   const { user } = useAuth();
-  const { entries, loading, error, addEntry, removeEntry } = useAppointments(selectedBaby?.$id);
+  const { entries, loading, error, addEntry, updateEntry, removeEntry } = useAppointments(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingEntry, setEditingEntry] = useState<AppointmentEntry | null>(null);
 
   const now = new Date();
   const upcoming = entries.filter((e) => new Date(e.datetime) >= now);
@@ -34,21 +35,12 @@ export function AppointmentsPage() {
 
   return (
     <AppShell>
-      <PageHeader
-        title="Appointments"
-        babyName={selectedBaby.name}
-        babyAge={babyAge(selectedBaby.dateOfBirth)}
-      />
+      <PageHeader title="Appointments" babyName={selectedBaby.name} babyAge={babyAge(selectedBaby.dateOfBirth)} />
       <div className="p-5 flex flex-col gap-5">
         <div className="grid grid-cols-3 gap-3">
           <StatCard icon={<Calendar size={18} />} label="Upcoming" value={upcoming.length} colour="mint" />
           <StatCard icon={<Calendar size={18} />} label="Total" value={entries.length} colour="sky" />
-          <StatCard
-            icon={<Calendar size={18} />}
-            label="Next appt"
-            value={nextAppt ? formatDate(nextAppt.datetime) : '—'}
-            colour="purple"
-          />
+          <StatCard icon={<Calendar size={18} />} label="Next appt" value={nextAppt ? formatDate(nextAppt.datetime) : '—'} colour="purple" />
         </div>
 
         {nextAppt && (
@@ -66,19 +58,27 @@ export function AppointmentsPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <AppointmentList entries={entries} onDelete={removeEntry} onAdd={() => setModalOpen(true)} />
+          <AppointmentList entries={entries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 
       <FAB onClick={() => setModalOpen(true)} label="Add appointment" />
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Add Appointment">
-        <AppointmentForm
-          babyId={selectedBaby.$id}
-          userId={user?.$id || ''}
-          onSubmit={addEntry}
-          onClose={() => setModalOpen(false)}
-        />
+        <AppointmentForm babyId={selectedBaby.$id} userId={user?.$id || ''} onSubmit={addEntry} onClose={() => setModalOpen(false)} />
+      </Modal>
+
+      <Modal open={!!editingEntry} onClose={() => setEditingEntry(null)} title="Edit Appointment">
+        {editingEntry && (
+          <AppointmentForm
+            babyId={selectedBaby.$id}
+            userId={user?.$id || ''}
+            onSubmit={addEntry}
+            onUpdate={(data) => updateEntry(editingEntry.$id, data)}
+            onClose={() => setEditingEntry(null)}
+            initialValues={editingEntry}
+          />
+        )}
       </Modal>
     </AppShell>
   );

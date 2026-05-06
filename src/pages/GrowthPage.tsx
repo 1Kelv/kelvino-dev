@@ -1,4 +1,3 @@
-// I render the growth tracking page with chart and measurement list
 import React, { useState } from 'react';
 import { TrendingUp } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
@@ -13,14 +12,16 @@ import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useGrowth } from '../hooks/useGrowth';
 import { babyAge, formatDate } from '../lib/utils';
+import { GrowthEntry } from '../types';
 
 const UNIT_KEY = 'mylestone_growth_unit';
 
 export function GrowthPage() {
   const { selectedBaby } = useBabyContext();
   const { user } = useAuth();
-  const { entries, loading, error, addEntry, removeEntry } = useGrowth(selectedBaby?.$id);
+  const { entries, loading, error, addEntry, updateEntry, removeEntry } = useGrowth(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingEntry, setEditingEntry] = useState<GrowthEntry | null>(null);
   const [useKg, setUseKg] = useState(() => localStorage.getItem(UNIT_KEY) !== 'lbs');
 
   const toggleUnit = () => {
@@ -31,7 +32,6 @@ export function GrowthPage() {
 
   const latest = entries[0];
   const oldest = entries[entries.length - 1];
-
   const totalGain = latest && oldest && oldest.$id !== latest.$id
     ? useKg
       ? `+${(latest.weightKg - oldest.weightKg).toFixed(2)} kg`
@@ -54,35 +54,16 @@ export function GrowthPage() {
         babyName={selectedBaby.name}
         babyAge={babyAge(selectedBaby.dateOfBirth)}
         action={
-          <button
-            onClick={toggleUnit}
-            className="text-sm font-semibold text-brand-mint bg-brand-light px-3 py-2 rounded-xl min-h-[44px]"
-          >
+          <button onClick={toggleUnit} className="text-sm font-semibold text-brand-mint bg-brand-light px-3 py-2 rounded-xl min-h-[44px]">
             {useKg ? 'kg' : 'lbs'}
           </button>
         }
       />
       <div className="p-5 flex flex-col gap-5">
         <div className="grid grid-cols-3 gap-3">
-          <StatCard
-            icon={<TrendingUp size={18} />}
-            label="Current weight"
-            value={latest ? (useKg ? `${latest.weightKg.toFixed(2)} kg` : `${latest.weightLbs.toFixed(2)} lbs`) : '—'}
-            colour="mint"
-          />
-          <StatCard
-            icon={<TrendingUp size={18} />}
-            label="Last measured"
-            value={latest ? formatDate(latest.date) : '—'}
-            colour="sky"
-          />
-          <StatCard
-            icon={<TrendingUp size={18} />}
-            label="Total gain"
-            value={totalGain || '—'}
-            colour="green"
-            trendUp={true}
-          />
+          <StatCard icon={<TrendingUp size={18} />} label="Current weight" value={latest ? (useKg ? `${latest.weightKg.toFixed(2)} kg` : `${latest.weightLbs.toFixed(2)} lbs`) : '—'} colour="mint" />
+          <StatCard icon={<TrendingUp size={18} />} label="Last measured" value={latest ? formatDate(latest.date) : '—'} colour="sky" />
+          <StatCard icon={<TrendingUp size={18} />} label="Total gain" value={totalGain || '—'} colour="green" trendUp={true} />
         </div>
 
         {entries.length > 1 && <GrowthChart entries={entries} useKg={useKg} />}
@@ -94,19 +75,27 @@ export function GrowthPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <GrowthList entries={entries} useKg={useKg} onDelete={removeEntry} onAdd={() => setModalOpen(true)} />
+          <GrowthList entries={entries} useKg={useKg} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 
       <FAB onClick={() => setModalOpen(true)} label="Add growth measurement" />
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Add Growth Measurement">
-        <GrowthForm
-          babyId={selectedBaby.$id}
-          userId={user?.$id || ''}
-          onSubmit={addEntry}
-          onClose={() => setModalOpen(false)}
-        />
+        <GrowthForm babyId={selectedBaby.$id} userId={user?.$id || ''} onSubmit={addEntry} onClose={() => setModalOpen(false)} />
+      </Modal>
+
+      <Modal open={!!editingEntry} onClose={() => setEditingEntry(null)} title="Edit Growth Measurement">
+        {editingEntry && (
+          <GrowthForm
+            babyId={selectedBaby.$id}
+            userId={user?.$id || ''}
+            onSubmit={addEntry}
+            onUpdate={(data) => updateEntry(editingEntry.$id, data)}
+            onClose={() => setEditingEntry(null)}
+            initialValues={editingEntry}
+          />
+        )}
       </Modal>
     </AppShell>
   );

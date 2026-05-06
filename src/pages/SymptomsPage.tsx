@@ -1,4 +1,3 @@
-// I render the symptoms tracking page
 import React, { useState } from 'react';
 import { Activity } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
@@ -12,16 +11,16 @@ import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useSymptoms } from '../hooks/useSymptoms';
 import { babyAge, isToday } from '../lib/utils';
+import { SymptomEntry } from '../types';
 
 export function SymptomsPage() {
   const { selectedBaby } = useBabyContext();
   const { user } = useAuth();
-  const { entries, loading, error, addEntry, removeEntry } = useSymptoms(selectedBaby?.$id);
+  const { entries, loading, error, addEntry, updateEntry, removeEntry } = useSymptoms(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingEntry, setEditingEntry] = useState<SymptomEntry | null>(null);
 
   const todayEntries = entries.filter((e) => isToday(e.datetime));
-
-  // I count cyanotic (blue) episodes today for safety awareness
   const cyanoticToday = todayEntries.filter((e) => e.skinColour === 'blue').length;
   const normalToday = todayEntries.filter((e) => e.skinColour === 'normal').length;
 
@@ -36,22 +35,12 @@ export function SymptomsPage() {
 
   return (
     <AppShell>
-      <PageHeader
-        title="Symptoms"
-        subtitle="Track skin colour, energy, and breathing"
-        babyName={selectedBaby.name}
-        babyAge={babyAge(selectedBaby.dateOfBirth)}
-      />
+      <PageHeader title="Symptoms" subtitle="Track skin colour, energy, and breathing" babyName={selectedBaby.name} babyAge={babyAge(selectedBaby.dateOfBirth)} />
       <div className="p-5 flex flex-col gap-5">
         <div className="grid grid-cols-3 gap-3">
           <StatCard icon={<Activity size={18} />} label="Logged today" value={todayEntries.length} colour="mint" />
           <StatCard icon={<Activity size={18} />} label="Normal today" value={normalToday} colour="green" />
-          <StatCard
-            icon={<Activity size={18} />}
-            label="Cyanotic today"
-            value={cyanoticToday}
-            colour={cyanoticToday > 0 ? 'orange' : 'mint'}
-          />
+          <StatCard icon={<Activity size={18} />} label="Cyanotic today" value={cyanoticToday} colour={cyanoticToday > 0 ? 'orange' : 'mint'} />
         </div>
 
         {cyanoticToday > 0 && (
@@ -69,19 +58,27 @@ export function SymptomsPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <SymptomList entries={entries} onDelete={removeEntry} onAdd={() => setModalOpen(true)} />
+          <SymptomList entries={entries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 
       <FAB onClick={() => setModalOpen(true)} label="Log a symptom observation" />
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Log Symptom Observation">
-        <SymptomForm
-          babyId={selectedBaby.$id}
-          userId={user?.$id || ''}
-          onSubmit={addEntry}
-          onClose={() => setModalOpen(false)}
-        />
+        <SymptomForm babyId={selectedBaby.$id} userId={user?.$id || ''} onSubmit={addEntry} onClose={() => setModalOpen(false)} />
+      </Modal>
+
+      <Modal open={!!editingEntry} onClose={() => setEditingEntry(null)} title="Edit Symptom Observation">
+        {editingEntry && (
+          <SymptomForm
+            babyId={selectedBaby.$id}
+            userId={user?.$id || ''}
+            onSubmit={addEntry}
+            onUpdate={(data) => updateEntry(editingEntry.$id, data)}
+            onClose={() => setEditingEntry(null)}
+            initialValues={editingEntry}
+          />
+        )}
       </Modal>
     </AppShell>
   );

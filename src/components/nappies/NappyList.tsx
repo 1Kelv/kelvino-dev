@@ -9,6 +9,7 @@ import { formatDateTime } from '../../lib/utils';
 interface NappyListProps {
   entries: NappyEntry[];
   onDelete: (id: string) => Promise<void>;
+  onEdit?: (entry: NappyEntry) => void;
   onAdd?: () => void;
 }
 
@@ -21,7 +22,7 @@ const kindConfig = (kind: NappyEntry['kind']) => {
   }
 };
 
-export function NappyList({ entries, onDelete, onAdd }: NappyListProps) {
+export function NappyList({ entries, onDelete, onEdit, onAdd }: NappyListProps) {
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -46,6 +47,7 @@ export function NappyList({ entries, onDelete, onAdd }: NappyListProps) {
             subtitle={entry.notes || undefined}
             badge={<Badge colour={config.colour}>{config.label}</Badge>}
             onDelete={() => onDelete(entry.$id)}
+            onEdit={onEdit ? () => onEdit(entry) : undefined}
           />
         );
       })}

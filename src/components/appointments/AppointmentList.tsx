@@ -9,10 +9,11 @@ import { formatDateTime } from '../../lib/utils';
 interface AppointmentListProps {
   entries: AppointmentEntry[];
   onDelete: (id: string) => Promise<void>;
+  onEdit?: (entry: AppointmentEntry) => void;
   onAdd?: () => void;
 }
 
-export function AppointmentList({ entries, onDelete, onAdd }: AppointmentListProps) {
+export function AppointmentList({ entries, onDelete, onEdit, onAdd }: AppointmentListProps) {
   const now = new Date();
   const upcoming = entries
     .filter((e) => new Date(e.datetime) >= now)
@@ -49,6 +50,7 @@ export function AppointmentList({ entries, onDelete, onAdd }: AppointmentListPro
                 subtitle={`Dr. ${entry.consultantName}${entry.notes ? ` · ${entry.notes}` : ''}`}
                 badge={<Badge colour="mint">Upcoming</Badge>}
                 onDelete={() => onDelete(entry.$id)}
+                onEdit={onEdit ? () => onEdit(entry) : undefined}
                 className="border-brand-mint/30 bg-brand-light/50"
               />
             ))}
@@ -69,6 +71,7 @@ export function AppointmentList({ entries, onDelete, onAdd }: AppointmentListPro
                 subtitle={`Dr. ${entry.consultantName}${entry.notes ? ` · ${entry.notes}` : ''}`}
                 badge={<Badge colour="gray">Past</Badge>}
                 onDelete={() => onDelete(entry.$id)}
+                onEdit={onEdit ? () => onEdit(entry) : undefined}
               />
             ))}
           </div>
