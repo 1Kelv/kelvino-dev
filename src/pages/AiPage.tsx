@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Paperclip, X, Sparkles, FileText, AlertTriangle } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
@@ -19,7 +21,7 @@ const SUGGESTED = [
   "What does this prescription mean?",
 ];
 
-const MAX_FILE_BYTES = 3 * 1024 * 1024; // 3 MB raw → ~4 MB base64, safe under Vercel's 4.5 MB limit
+const MAX_FILE_BYTES = 3 * 1024 * 1024;
 
 function TypingDots() {
   return (
@@ -46,6 +48,17 @@ function AiAvatar() {
       <Sparkles size={14} className="text-white" />
     </motion.div>
   );
+}
+
+// Safely convert a file ArrayBuffer to base64 without stack-overflowing on large files
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  const chunkSize = 8192;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.slice(i, i + chunkSize));
+  }
+  return btoa(binary);
 }
 
 export function AiPage() {
@@ -107,6 +120,9 @@ export function AiPage() {
       fileName: file?.type === 'application/pdf' ? file.name : undefined,
     };
 
+    // Snapshot history before updating state (exclude temp messages, use only settled ones)
+    const historySnapshot = messages.map((m) => ({ role: m.role, text: m.text }));
+
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
     clearFile();
@@ -119,7 +135,7 @@ export function AiPage() {
 
       if (file) {
         const buffer = await file.arrayBuffer();
-        fileBase64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+        fileBase64 = arrayBufferToBase64(buffer);
         fileMediaType = file.type;
         fileName = file.name;
       }
@@ -127,7 +143,13 @@ export function AiPage() {
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text.trim(), fileBase64, fileMediaType, fileName }),
+        body: JSON.stringify({
+          message: text.trim(),
+          fileBase64,
+          fileMediaType,
+          fileName,
+          history: historySnapshot,
+        }),
       });
 
       let data: { response?: string; error?: string };
@@ -178,7 +200,6 @@ export function AiPage() {
     <AppShell>
       <PageHeader title="Mylo — AI Companion" />
 
-      {/* disclaimer */}
       <div className="mx-4 mt-2 mb-3 flex items-start gap-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-2xl px-4 py-3">
         <AlertTriangle size={15} className="text-amber-500 flex-shrink-0 mt-0.5" />
         <p className="text-xs text-amber-700 dark:text-amber-300 leading-snug">
@@ -186,7 +207,6 @@ export function AiPage() {
         </p>
       </div>
 
-      {/* chat area */}
       <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-4">
         {isEmpty && (
           <motion.div
@@ -249,13 +269,32 @@ export function AiPage() {
                 )}
                 {msg.text && (
                   <div
-                    className={`rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
+                    className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                       msg.role === 'user'
-                        ? 'bg-brand-mint text-white rounded-tr-sm'
+                        ? 'bg-brand-mint text-white rounded-tr-sm whitespace-pre-wrap'
                         : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-gray-700 rounded-tl-sm shadow-sm'
                     }`}
                   >
-                    {msg.text}
+                    {msg.role === 'assistant' ? (
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                          ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
+                          ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
+                          li: ({ children }) => <li className="text-sm">{children}</li>,
+                          strong: ({ children }) => <strong className="font-semibold text-gray-900 dark:text-white">{children}</strong>,
+                          em: ({ children }) => <em className="italic">{children}</em>,
+                          h3: ({ children }) => <h3 className="font-bold text-gray-900 dark:text-white mb-1 mt-2">{children}</h3>,
+                          h4: ({ children }) => <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-1">{children}</h4>,
+                          hr: () => <hr className="my-2 border-gray-200 dark:border-gray-600" />,
+                        }}
+                      >
+                        {msg.text}
+                      </ReactMarkdown>
+                    ) : (
+                      msg.text
+                    )}
                   </div>
                 )}
               </div>
@@ -279,7 +318,6 @@ export function AiPage() {
         <div ref={bottomRef} />
       </div>
 
-      {/* input area */}
       <div className="px-4 pb-4 pt-2 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
         {fileError && (
           <p className="text-xs text-red-500 mb-2">{fileError}</p>
