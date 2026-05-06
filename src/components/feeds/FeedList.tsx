@@ -43,7 +43,7 @@ export function FeedList({ entries, onDelete, onAdd }: FeedListProps) {
         <LogItem
           key={entry.$id}
           timestamp={formatDateTime(entry.datetime)}
-          title={`${entry.amountMl} ml`}
+          title={entry.amountMl > 0 ? `${entry.amountMl} ml` : 'Not measured'}
           subtitle={
             entry.durationMins
               ? `Duration: ${formatDuration(entry.durationMins)}${entry.notes ? ` · ${entry.notes}` : ''}`

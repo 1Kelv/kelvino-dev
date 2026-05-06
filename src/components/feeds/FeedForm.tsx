@@ -22,14 +22,20 @@ export function FeedForm({ babyId, userId, onSubmit, onClose }: FeedFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isBreastMilk = type === 'breast_milk';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!datetime || !amountMl) {
-      setError('Please fill in the date/time and amount.');
+    if (!datetime) {
+      setError('Please fill in the date/time.');
       return;
     }
-    const amount = parseFloat(amountMl);
-    if (isNaN(amount) || amount <= 0) {
+    if (!isBreastMilk && !amountMl) {
+      setError('Please fill in the amount.');
+      return;
+    }
+    const amount = amountMl ? parseFloat(amountMl) : 0;
+    if (!isBreastMilk && (isNaN(amount) || amount <= 0)) {
       setError('Please enter a valid amount greater than 0.');
       return;
     }
@@ -62,25 +68,25 @@ export function FeedForm({ babyId, userId, onSubmit, onClose }: FeedFormProps) {
         onChange={(e) => setDatetime(e.target.value)}
         required
       />
-      <Input
-        label="Amount (ml)"
-        type="number"
-        value={amountMl}
-        onChange={(e) => setAmountMl(e.target.value)}
-        placeholder="e.g. 90"
-        min="0"
-        step="1"
-        required
-      />
       <Select
         label="Feed type"
         value={type}
-        onChange={(e) => setType(e.target.value as FeedEntry['type'])}
+        onChange={(e) => { setType(e.target.value as FeedEntry['type']); setAmountMl(''); }}
         options={[
           { value: 'formula', label: 'Formula' },
           { value: 'breast_milk', label: 'Breast Milk' },
           { value: 'mixed', label: 'Mixed' },
         ]}
+      />
+      <Input
+        label={isBreastMilk ? 'Amount (ml, optional)' : 'Amount (ml)'}
+        type="number"
+        value={amountMl}
+        onChange={(e) => setAmountMl(e.target.value)}
+        placeholder={isBreastMilk ? 'Leave blank if not measured' : 'e.g. 90'}
+        min="0"
+        step="1"
+        required={!isBreastMilk}
       />
       <Input
         label="Duration (mins, optional)"
