@@ -163,7 +163,7 @@ export function AiPage() {
 
   return (
     <AppShell>
-      <PageHeader title="AI Health Companion" />
+      <PageHeader title="Mylo — AI Companion" />
 
       {/* disclaimer */}
       <div className="mx-4 mt-2 mb-3 flex items-start gap-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-2xl px-4 py-3">
@@ -189,9 +189,9 @@ export function AiPage() {
             >
               <Sparkles size={30} className="text-white" />
             </motion.div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Hi, I'm your AI companion</h2>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Hi, I'm Mylo</h2>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-xs mx-auto">
-              Upload a photo of a rash, a medical letter, or just ask me anything about your baby's health.
+              Your Mylestone AI companion. Upload a photo of a rash, a medical letter, or ask me anything about your baby's health.
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               {SUGGESTED.map((s) => (
@@ -320,7 +320,7 @@ export function AiPage() {
               e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Ask about your baby's health…"
+            placeholder="Ask Mylo about your baby's health…"
             className="flex-1 resize-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-mint/50 focus:border-brand-mint transition-colors min-h-[42px] max-h-[120px] overflow-y-auto"
           />
 
