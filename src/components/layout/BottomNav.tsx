@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { House, Droplets, Baby, Pill, TrendingUp, Moon, Calendar, FileText, Activity } from 'lucide-react';
+import { House, Droplets, Baby, Pill, TrendingUp, Moon, Calendar, FileText, Activity, Sparkles } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const navItems = [
@@ -13,6 +13,7 @@ const navItems = [
   { to: '/sleep', icon: Moon, label: 'Sleep' },
   { to: '/appointments', icon: Calendar, label: 'Appts' },
   { to: '/notes', icon: FileText, label: 'Notes' },
+  { to: '/ai', icon: Sparkles, label: 'AI' },
 ];
 
 export function BottomNav() {
