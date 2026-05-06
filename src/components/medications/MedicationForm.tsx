@@ -5,24 +5,34 @@ import { Button } from '../ui/Button';
 import { MedicationEntry } from '../../types';
 import { localDateTimeNow, toLocalDateTimeInput } from '../../lib/utils';
 
+const PREDEFINED_ROLES = ['Dad', 'Mum', 'Doctor', 'Nurse', 'Community Health Worker', 'Local GP'];
+
 interface MedicationFormProps {
   babyId: string;
   userId: string;
-  userName: string;
   onSubmit: (data: Omit<MedicationEntry, '$id'>) => Promise<void>;
   onUpdate?: (data: Partial<Omit<MedicationEntry, '$id'>>) => Promise<void>;
   onClose: () => void;
   initialValues?: MedicationEntry;
 }
 
-export function MedicationForm({ babyId, userId, userName, onSubmit, onUpdate, onClose, initialValues }: MedicationFormProps) {
+export function MedicationForm({ babyId, userId, onSubmit, onUpdate, onClose, initialValues }: MedicationFormProps) {
   const isEdit = !!initialValues;
   const [datetime, setDatetime] = useState(initialValues ? toLocalDateTimeInput(initialValues.datetime) : localDateTimeNow());
   const [medicationName, setMedicationName] = useState(initialValues?.medicationName ?? '');
   const [dose, setDose] = useState(initialValues?.dose ? String(initialValues.dose) : '');
   const [unit, setUnit] = useState(initialValues?.unit ?? 'mg');
   const [route, setRoute] = useState<MedicationEntry['route']>(initialValues?.route ?? 'oral');
-  const [administeredBy, setAdministeredBy] = useState(initialValues?.administeredBy ?? userName);
+
+  const initRole = PREDEFINED_ROLES.includes(initialValues?.administeredBy ?? '')
+    ? (initialValues?.administeredBy ?? '')
+    : (initialValues?.administeredBy ? 'other' : '');
+  const initCustom = !PREDEFINED_ROLES.includes(initialValues?.administeredBy ?? '') && initialValues?.administeredBy
+    ? initialValues.administeredBy
+    : '';
+
+  const [administeredByRole, setAdministeredByRole] = useState(initRole);
+  const [administeredByCustom, setAdministeredByCustom] = useState(initCustom);
   const [notes, setNotes] = useState(initialValues?.notes ?? '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,6 +42,12 @@ export function MedicationForm({ babyId, userId, userName, onSubmit, onUpdate, o
     if (!medicationName || !dose) { setError('Please enter medication name and dose.'); return; }
     const doseNum = parseFloat(dose);
     if (isNaN(doseNum) || doseNum <= 0) { setError('Please enter a valid dose.'); return; }
+    if (!administeredByRole) { setError('Please select who administered the medication.'); return; }
+    if (administeredByRole === 'other' && !administeredByCustom.trim()) {
+      setError('Please enter the name of who administered the medication.');
+      return;
+    }
+    const administeredBy = administeredByRole === 'other' ? administeredByCustom.trim() : administeredByRole;
     setLoading(true);
     setError(null);
     try {
@@ -53,14 +69,49 @@ export function MedicationForm({ babyId, userId, userName, onSubmit, onUpdate, o
         <div className="flex-1">
           <Input label="Dose" type="number" value={dose} onChange={(e) => setDose(e.target.value)} placeholder="0" min="0" step="0.01" required />
         </div>
-        <div className="w-24">
+        <div className="w-28">
           <Select label="Unit" value={unit} onChange={(e) => setUnit(e.target.value)}
-            options={[{ value: 'mg', label: 'mg' }, { value: 'ml', label: 'ml' }, { value: 'mcg', label: 'mcg' }, { value: 'units', label: 'units' }]} />
+            options={[
+              { value: 'mg', label: 'mg' },
+              { value: 'ml', label: 'ml' },
+              { value: 'mcg', label: 'mcg' },
+              { value: 'drops', label: 'drops' },
+              { value: 'units', label: 'units' },
+            ]} />
         </div>
       </div>
       <Select label="Route" value={route} onChange={(e) => setRoute(e.target.value as MedicationEntry['route'])}
-        options={[{ value: 'oral', label: 'Oral' }, { value: 'IV', label: 'IV' }, { value: 'topical', label: 'Topical' }, { value: 'inhaled', label: 'Inhaled' }, { value: 'other', label: 'Other' }]} />
-      <Input label="Administered by" type="text" value={administeredBy} onChange={(e) => setAdministeredBy(e.target.value)} placeholder="Your name" required />
+        options={[
+          { value: 'oral', label: 'Oral' },
+          { value: 'IV', label: 'IV' },
+          { value: 'topical', label: 'Topical' },
+          { value: 'inhaled', label: 'Inhaled' },
+          { value: 'other', label: 'Other' },
+        ]} />
+      <Select
+        label="Administered by"
+        value={administeredByRole}
+        onChange={(e) => setAdministeredByRole(e.target.value)}
+        placeholder="Select who administered..."
+        options={[
+          { value: 'Dad', label: 'Dad' },
+          { value: 'Mum', label: 'Mum' },
+          { value: 'Doctor', label: 'Doctor' },
+          { value: 'Nurse', label: 'Nurse' },
+          { value: 'Community Health Worker', label: 'Community Health Worker' },
+          { value: 'Local GP', label: 'Local GP' },
+          { value: 'other', label: 'Other' },
+        ]}
+      />
+      {administeredByRole === 'other' && (
+        <Input
+          label="Please specify"
+          type="text"
+          value={administeredByCustom}
+          onChange={(e) => setAdministeredByCustom(e.target.value)}
+          placeholder="e.g. Grandma, Childminder..."
+        />
+      )}
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Notes (optional)</label>
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any observations..." rows={3}

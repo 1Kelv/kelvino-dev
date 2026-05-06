@@ -57,7 +57,7 @@ export function MedicationsPage() {
       <FAB onClick={() => setModalOpen(true)} label="Log a medication" />
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Log a Medication">
-        <MedicationForm babyId={selectedBaby.$id} userId={user?.$id || ''} userName={user?.name || ''} onSubmit={addEntry} onClose={() => setModalOpen(false)} />
+        <MedicationForm babyId={selectedBaby.$id} userId={user?.$id || ''} onSubmit={addEntry} onClose={() => setModalOpen(false)} />
       </Modal>
 
       <Modal open={!!editingEntry} onClose={() => setEditingEntry(null)} title="Edit Medication">
@@ -65,7 +65,6 @@ export function MedicationsPage() {
           <MedicationForm
             babyId={selectedBaby.$id}
             userId={user?.$id || ''}
-            userName={user?.name || ''}
             onSubmit={addEntry}
             onUpdate={(data) => updateEntry(editingEntry.$id, data)}
             onClose={() => setEditingEntry(null)}
