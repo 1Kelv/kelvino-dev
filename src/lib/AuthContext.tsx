@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Models } from 'appwrite';
-import { account, client, ID } from './appwrite';
-
-const SESSION_KEY = 'aw_session';
+import { account, ID } from './appwrite';
 
 export const VERIFY_EMAIL_REQUIRED = 'VERIFY_EMAIL_REQUIRED';
 export const EMAIL_NOT_VERIFIED = 'EMAIL_NOT_VERIFIED';
@@ -26,9 +24,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Restore session from localStorage to bypass cross-origin cookie blocking
-    const saved = localStorage.getItem(SESSION_KEY);
-    if (saved) client.setSession(saved);
     account.get()
       .then(setUser)
       .catch(() => setUser(null))
@@ -37,9 +32,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const session = await account.createEmailPasswordSession(email, password);
-      client.setSession(session.secret);
-      localStorage.setItem(SESSION_KEY, session.secret);
+      await account.createEmailPasswordSession(email, password);
+      // SDK stores cookieFallback in localStorage automatically.
+      // Hard-reload so the useEffect account.get() runs with the settled session.
+      localStorage.removeItem('pendingVerification');
+      window.location.replace('/app');
     } catch (err: any) {
       // Appwrite v1.4+ returns type 'user_email_not_verified' for unverified accounts
       if (err?.type === 'user_email_not_verified') {
@@ -57,21 +54,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       throw err;
     }
-    const currentUser = await account.get();
-    setUser(currentUser);
-    localStorage.removeItem('pendingVerification');
   };
 
   const register = async (name: string, email: string, password: string) => {
     const userId = ID.unique();
     await account.create(userId, email, password, name);
     try {
-      const session = await account.createEmailPasswordSession(email, password);
-      client.setSession(session.secret);
-      localStorage.setItem(SESSION_KEY, session.secret);
-      const currentUser = await account.get();
-      setUser(currentUser);
+      await account.createEmailPasswordSession(email, password);
       localStorage.removeItem('pendingVerification');
+      window.location.replace('/app');
     } catch {
       // Appwrite requires email verification before sessions can be created.
       // Send a magic-link email so the user can verify and log in by clicking it.
@@ -99,8 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     await account.deleteSession('current');
-    client.setSession('');
-    localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem('cookieFallback');
     setUser(null);
   };
 
@@ -113,11 +103,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const createSessionFromToken = async (userId: string, secret: string) => {
-    const session = await account.createSession(userId, secret);
-    client.setSession(session.secret);
-    localStorage.setItem(SESSION_KEY, session.secret);
-    const currentUser = await account.get();
-    setUser(currentUser);
+    await account.createSession(userId, secret);
+    // Hard-reload so the useEffect account.get() runs with the settled session.
+    window.location.replace('/app');
   };
 
   return (
