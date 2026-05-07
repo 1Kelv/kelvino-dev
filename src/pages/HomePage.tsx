@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Droplets, Baby, Pill, Calendar, Plus, LogOut, ChevronRight, Activity, Sun, Moon, MessageSquarePlus, Pencil, UserCircle } from 'lucide-react';
+import { Heart, Droplets, Baby, Pill, Calendar, Plus, LogOut, ChevronRight, Activity, Sun, Moon, MessageSquarePlus, Pencil, UserCircle, Share2, Copy, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AppShell } from '../components/layout/AppShell';
 import { Modal } from '../components/ui/Modal';
@@ -30,7 +30,7 @@ const itemVariants = {
 };
 
 export function HomePage() {
-  const { selectedBaby, babies, addBaby, updateBaby } = useBabyContext();
+  const { selectedBaby, babies, addBaby, updateBaby, generateShareCode, joinWithCode } = useBabyContext();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -40,7 +40,9 @@ export function HomePage() {
   const { entries: appointments } = useAppointments(selectedBaby?.$id);
   const { entries: symptoms } = useSymptoms(selectedBaby?.$id);
 
+  // Add baby modal
   const [addBabyOpen, setAddBabyOpen] = useState(false);
+  const [addBabyTab, setAddBabyTab] = useState<'new' | 'join'>('new');
   const [babyName, setBabyName] = useState('');
   const [babyDob, setBabyDob] = useState(localDateNow());
   const [babyGender, setBabyGender] = useState('');
@@ -48,6 +50,12 @@ export function HomePage() {
   const [babyLoading, setBabyLoading] = useState(false);
   const [babyError, setBabyError] = useState<string | null>(null);
 
+  // Join with code
+  const [joinCode, setJoinCode] = useState('');
+  const [joinLoading, setJoinLoading] = useState(false);
+  const [joinError, setJoinError] = useState<string | null>(null);
+
+  // Edit baby modal
   const [editBabyOpen, setEditBabyOpen] = useState(false);
   const [editName, setEditName] = useState('');
   const [editDob, setEditDob] = useState('');
@@ -55,6 +63,19 @@ export function HomePage() {
   const [editDiagnosis, setEditDiagnosis] = useState('');
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
+
+  // Share modal
+  const [shareBabyOpen, setShareBabyOpen] = useState(false);
+  const [shareLoading, setShareLoading] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
+
+  const openAddBaby = (tab: 'new' | 'join' = 'new') => {
+    setAddBabyTab(tab);
+    setBabyError(null);
+    setJoinError(null);
+    setJoinCode('');
+    setAddBabyOpen(true);
+  };
 
   const openEditBaby = () => {
     if (!selectedBaby) return;
@@ -87,6 +108,74 @@ export function HomePage() {
     }
   };
 
+  const handleAddBaby = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!babyName || !babyDob) { setBabyError('Please enter baby name and date of birth.'); return; }
+    setBabyLoading(true);
+    setBabyError(null);
+    try {
+      await addBaby({
+        name: babyName,
+        dateOfBirth: babyDob,
+        userId: user?.$id || '',
+        gender: (babyGender as 'male' | 'female' | 'other') || undefined,
+        diagnosis: babyDiagnosis || undefined,
+      });
+      setAddBabyOpen(false);
+      setBabyName('');
+    } catch {
+      setBabyError('Failed to save baby profile. Please try again.');
+    } finally {
+      setBabyLoading(false);
+    }
+  };
+
+  const handleJoinWithCode = async () => {
+    if (joinCode.trim().length < 6) { setJoinError('Please enter the full 6-character code.'); return; }
+    setJoinLoading(true);
+    setJoinError(null);
+    try {
+      await joinWithCode(joinCode);
+      setAddBabyOpen(false);
+      setJoinCode('');
+    } catch (err: any) {
+      if (err.message === 'INVALID_CODE') setJoinError("Code not found. Double-check and try again.");
+      else if (err.message === 'OWN_BABY') setJoinError("That's your own baby — no need to join!");
+      else if (err.message === 'ALREADY_JOINED') setJoinError("You're already linked to this baby.");
+      else setJoinError('Something went wrong. Please try again.');
+    } finally {
+      setJoinLoading(false);
+    }
+  };
+
+  const handleGenerateCode = async () => {
+    if (!selectedBaby) return;
+    setShareLoading(true);
+    try {
+      await generateShareCode(selectedBaby.$id);
+    } catch {
+      // silent fail — user can retry
+    } finally {
+      setShareLoading(false);
+    }
+  };
+
+  const handleCopyCode = async () => {
+    if (!selectedBaby?.shareCode) return;
+    try {
+      await navigator.clipboard.writeText(selectedBaby.shareCode);
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    } catch {
+      // clipboard may be unavailable (old browser)
+    }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
+
   const showNoBabyState = babies.length === 0 && !addBabyOpen;
 
   const todayFeeds = feeds.filter((e) => isToday(e.datetime));
@@ -115,35 +204,10 @@ export function HomePage() {
     .sort((a, b) => new Date(b.datetime).getTime() - new Date(a.datetime).getTime())
     .slice(0, 5);
 
-  const handleAddBaby = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!babyName || !babyDob) { setBabyError('Please enter baby name and date of birth.'); return; }
-    setBabyLoading(true);
-    setBabyError(null);
-    try {
-      await addBaby({
-        name: babyName,
-        dateOfBirth: babyDob,
-        userId: user?.$id || '',
-        gender: (babyGender as 'male' | 'female' | 'other') || undefined,
-        diagnosis: babyDiagnosis || undefined,
-      });
-      setAddBabyOpen(false);
-      setBabyName('');
-    } catch {
-      setBabyError('Failed to save baby profile. Please try again.');
-    } finally {
-      setBabyLoading(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
-  };
-
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+
+  const isOwner = selectedBaby?.userId === user?.$id;
 
   return (
     <AppShell>
@@ -204,14 +268,26 @@ export function HomePage() {
                 {babyAge(selectedBaby.dateOfBirth)}{selectedBaby.diagnosis ? ` · ${selectedBaby.diagnosis}` : ''}
               </p>
             </div>
-            <motion.button
-              onClick={openEditBaby}
-              whileTap={{ scale: 0.9 }}
-              className="p-1.5 rounded-lg bg-white/20 text-white flex-shrink-0"
-              aria-label="Edit baby profile"
-            >
-              <Pencil size={14} />
-            </motion.button>
+            {isOwner && (
+              <motion.button
+                onClick={() => { setCodeCopied(false); setShareBabyOpen(true); }}
+                whileTap={{ scale: 0.9 }}
+                className="p-1.5 rounded-lg bg-white/20 text-white flex-shrink-0"
+                aria-label="Share baby"
+              >
+                <Share2 size={14} />
+              </motion.button>
+            )}
+            {isOwner && (
+              <motion.button
+                onClick={openEditBaby}
+                whileTap={{ scale: 0.9 }}
+                className="p-1.5 rounded-lg bg-white/20 text-white flex-shrink-0"
+                aria-label="Edit baby profile"
+              >
+                <Pencil size={14} />
+              </motion.button>
+            )}
           </motion.div>
         )}
       </div>
@@ -235,10 +311,18 @@ export function HomePage() {
               👶
             </motion.div>
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Add your baby's profile</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
               Set up your baby's profile to start tracking feeds, nappies, medications, and more.
             </p>
-            <Button onClick={() => setAddBabyOpen(true)} size="md">Add baby profile</Button>
+            <div className="flex flex-col gap-2 items-center">
+              <Button onClick={() => openAddBaby('new')} size="md">Add baby profile</Button>
+              <button
+                onClick={() => openAddBaby('join')}
+                className="text-sm text-brand-mint font-semibold hover:underline py-1"
+              >
+                Join with a code instead
+              </button>
+            </div>
           </motion.div>
         )}
 
@@ -356,6 +440,49 @@ export function HomePage() {
         </motion.div>
       </motion.div>
 
+      {/* Share baby modal */}
+      <Modal open={shareBabyOpen} onClose={() => setShareBabyOpen(false)} title="Share Baby's Data">
+        <div className="flex flex-col gap-4">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Give the other parent a code so they can see and track {selectedBaby?.name}'s data from their own account.
+          </p>
+          {selectedBaby?.shareCode ? (
+            <div className="flex flex-col items-center gap-3">
+              <div className="bg-brand-light dark:bg-brand-dark/30 rounded-2xl px-8 py-5 text-center w-full">
+                <p className="text-3xl font-mono font-bold text-brand-dark dark:text-brand-mint tracking-[0.25em]">
+                  {selectedBaby.shareCode}
+                </p>
+              </div>
+              <button
+                onClick={handleCopyCode}
+                className="flex items-center gap-2 text-sm text-brand-mint font-semibold hover:underline"
+              >
+                {codeCopied ? <><Check size={14} /> Copied!</> : <><Copy size={14} /> Copy code</>}
+              </button>
+              <p className="text-xs text-gray-400 dark:text-gray-500 text-center">
+                The other parent enters this code under "Join with a code" in the app.
+              </p>
+              <button
+                onClick={handleGenerateCode}
+                disabled={shareLoading}
+                className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:opacity-50"
+              >
+                {shareLoading ? 'Generating…' : 'Generate a new code'}
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3 items-center">
+              <div className="text-4xl">🔗</div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+                No code yet. Generate one to share with the other parent.
+              </p>
+              <Button onClick={handleGenerateCode} loading={shareLoading}>Generate Code</Button>
+            </div>
+          )}
+        </div>
+      </Modal>
+
+      {/* Edit baby modal */}
       <Modal open={editBabyOpen} onClose={() => setEditBabyOpen(false)} title="Edit Baby Profile">
         <form onSubmit={handleEditBaby} className="flex flex-col gap-4">
           <Input
@@ -401,54 +528,105 @@ export function HomePage() {
         </form>
       </Modal>
 
-      <Modal open={addBabyOpen} onClose={() => setAddBabyOpen(false)} title="Add Baby Profile">
-        <form onSubmit={handleAddBaby} className="flex flex-col gap-4">
-          <Input
-            label="Baby's name"
-            type="text"
-            value={babyName}
-            onChange={(e) => setBabyName(e.target.value)}
-            placeholder="e.g. Oliver"
-            required
-          />
-          <Input
-            label="Date of birth"
-            type="date"
-            value={babyDob}
-            onChange={(e) => setBabyDob(e.target.value)}
-            required
-          />
-          <Select
-            label="Gender (optional)"
-            value={babyGender}
-            onChange={(e) => setBabyGender(e.target.value)}
-            options={[
-              { value: 'male', label: 'Male' },
-              { value: 'female', label: 'Female' },
-              { value: 'other', label: 'Other' },
-            ]}
-            placeholder="Select gender"
-          />
-          <Input
-            label="Medical notes / diagnosis (optional)"
-            type="text"
-            value={babyDiagnosis}
-            onChange={(e) => setBabyDiagnosis(e.target.value)}
-            placeholder="e.g. premature, healthy, or any notes"
-          />
-          {babyError && (
-            <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/30 rounded-xl px-4 py-3">{babyError}</p>
-          )}
-          <div className="flex gap-3 pt-2">
-            <Button variant="secondary" type="button" onClick={() => setAddBabyOpen(false)} className="flex-1">Cancel</Button>
-            <Button type="submit" loading={babyLoading} className="flex-1">Save Profile</Button>
+      {/* Add baby / join with code modal */}
+      <Modal open={addBabyOpen} onClose={() => setAddBabyOpen(false)} title="Add Baby">
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setAddBabyTab('new')}
+              className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-colors ${
+                addBabyTab === 'new'
+                  ? 'bg-brand-mint text-white'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+              }`}
+            >
+              New baby
+            </button>
+            <button
+              type="button"
+              onClick={() => setAddBabyTab('join')}
+              className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-colors ${
+                addBabyTab === 'join'
+                  ? 'bg-brand-mint text-white'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+              }`}
+            >
+              Join with code
+            </button>
           </div>
-        </form>
+
+          {addBabyTab === 'new' ? (
+            <form onSubmit={handleAddBaby} className="flex flex-col gap-4">
+              <Input
+                label="Baby's name"
+                type="text"
+                value={babyName}
+                onChange={(e) => setBabyName(e.target.value)}
+                placeholder="e.g. Oliver"
+                required
+              />
+              <Input
+                label="Date of birth"
+                type="date"
+                value={babyDob}
+                onChange={(e) => setBabyDob(e.target.value)}
+                required
+              />
+              <Select
+                label="Gender (optional)"
+                value={babyGender}
+                onChange={(e) => setBabyGender(e.target.value)}
+                options={[
+                  { value: 'male', label: 'Male' },
+                  { value: 'female', label: 'Female' },
+                  { value: 'other', label: 'Other' },
+                ]}
+                placeholder="Select gender"
+              />
+              <Input
+                label="Medical notes / diagnosis (optional)"
+                type="text"
+                value={babyDiagnosis}
+                onChange={(e) => setBabyDiagnosis(e.target.value)}
+                placeholder="e.g. premature, healthy, or any notes"
+              />
+              {babyError && (
+                <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/30 rounded-xl px-4 py-3">{babyError}</p>
+              )}
+              <div className="flex gap-3 pt-2">
+                <Button variant="secondary" type="button" onClick={() => setAddBabyOpen(false)} className="flex-1">Cancel</Button>
+                <Button type="submit" loading={babyLoading} className="flex-1">Save Profile</Button>
+              </div>
+            </form>
+          ) : (
+            <div className="flex flex-col gap-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Enter the 6-character code shared with you to link your account to the baby's data.
+              </p>
+              <Input
+                label="6-character code"
+                type="text"
+                value={joinCode}
+                onChange={(e) => { setJoinCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '')); setJoinError(null); }}
+                placeholder="ABC123"
+                maxLength={6}
+              />
+              {joinError && (
+                <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/30 rounded-xl px-4 py-3">{joinError}</p>
+              )}
+              <div className="flex gap-3 pt-2">
+                <Button variant="secondary" type="button" onClick={() => setAddBabyOpen(false)} className="flex-1">Cancel</Button>
+                <Button type="button" loading={joinLoading} onClick={handleJoinWithCode} className="flex-1">Join</Button>
+              </div>
+            </div>
+          )}
+        </div>
       </Modal>
 
       {selectedBaby && (
         <motion.button
-          onClick={() => setAddBabyOpen(true)}
+          onClick={() => openAddBaby('new')}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           whileHover={{ scale: 1.1 }}

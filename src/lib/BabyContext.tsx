@@ -10,12 +10,19 @@ interface BabyContextType {
   loading: boolean;
   addBaby: (data: Omit<Baby, '$id'>) => Promise<Baby>;
   updateBaby: (id: string, data: Partial<Omit<Baby, '$id'>>) => Promise<void>;
+  generateShareCode: (babyId: string) => Promise<Baby>;
+  joinWithCode: (code: string) => Promise<Baby>;
   refresh: () => Promise<void>;
 }
 
 const BabyContext = createContext<BabyContextType | null>(null);
 
 const SELECTED_BABY_KEY = 'mylestone_selected_baby_id';
+
+function makeShareCode(): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
 
 export function BabyProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
@@ -32,7 +39,10 @@ export function BabyProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
     try {
       const res = await databases.listDocuments(DB_ID, COLLECTIONS.BABIES, [
-        Query.equal('userId', user.$id),
+        Query.or([
+          Query.equal('userId', user.$id),
+          Query.contains('sharedWith', user.$id),
+        ]),
       ]);
       const fetchedBabies = res.documents as unknown as Baby[];
       setBabies(fetchedBabies);
@@ -76,9 +86,37 @@ export function BabyProvider({ children }: { children: React.ReactNode }) {
     if (selectedBaby?.$id === id) setSelectedBabyState(updated);
   };
 
+  const generateShareCode = async (babyId: string): Promise<Baby> => {
+    const code = makeShareCode();
+    const doc = await databases.updateDocument(DB_ID, COLLECTIONS.BABIES, babyId, { shareCode: code });
+    const updated = doc as unknown as Baby;
+    setBabies((prev) => prev.map((b) => (b.$id === babyId ? updated : b)));
+    if (selectedBaby?.$id === babyId) setSelectedBabyState(updated);
+    return updated;
+  };
+
+  const joinWithCode = async (code: string): Promise<Baby> => {
+    const trimmed = code.trim().toUpperCase();
+    const res = await databases.listDocuments(DB_ID, COLLECTIONS.BABIES, [
+      Query.equal('shareCode', trimmed),
+    ]);
+    if (res.documents.length === 0) throw new Error('INVALID_CODE');
+    const baby = res.documents[0] as unknown as Baby;
+    if (baby.userId === user!.$id) throw new Error('OWN_BABY');
+    if (baby.sharedWith?.includes(user!.$id)) throw new Error('ALREADY_JOINED');
+    const updatedSharedWith = [...(baby.sharedWith || []), user!.$id];
+    const doc = await databases.updateDocument(DB_ID, COLLECTIONS.BABIES, baby.$id, {
+      sharedWith: updatedSharedWith,
+    });
+    const updated = doc as unknown as Baby;
+    setBabies((prev) => [...prev, updated]);
+    setSelectedBaby(updated);
+    return updated;
+  };
+
   return (
     <BabyContext.Provider
-      value={{ babies, selectedBaby, setSelectedBaby, loading, addBaby, updateBaby, refresh: fetchBabies }}
+      value={{ babies, selectedBaby, setSelectedBaby, loading, addBaby, updateBaby, generateShareCode, joinWithCode, refresh: fetchBabies }}
     >
       {children}
     </BabyContext.Provider>

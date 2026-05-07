@@ -7,6 +7,8 @@ export interface Baby {
   userId: string;
   gender?: 'male' | 'female' | 'other';
   diagnosis?: string;
+  shareCode?: string;
+  sharedWith?: string[];
 }
 
 export interface FeedEntry {
