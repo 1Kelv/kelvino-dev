@@ -9,6 +9,7 @@ interface BabyContextType {
   setSelectedBaby: (baby: Baby) => void;
   loading: boolean;
   addBaby: (data: Omit<Baby, '$id'>) => Promise<Baby>;
+  updateBaby: (id: string, data: Partial<Omit<Baby, '$id'>>) => Promise<void>;
   refresh: () => Promise<void>;
 }
 
@@ -68,9 +69,16 @@ export function BabyProvider({ children }: { children: React.ReactNode }) {
     return baby;
   };
 
+  const updateBaby = async (id: string, data: Partial<Omit<Baby, '$id'>>) => {
+    const doc = await databases.updateDocument(DB_ID, COLLECTIONS.BABIES, id, data);
+    const updated = doc as unknown as Baby;
+    setBabies((prev) => prev.map((b) => (b.$id === id ? updated : b)));
+    if (selectedBaby?.$id === id) setSelectedBabyState(updated);
+  };
+
   return (
     <BabyContext.Provider
-      value={{ babies, selectedBaby, setSelectedBaby, loading, addBaby, refresh: fetchBabies }}
+      value={{ babies, selectedBaby, setSelectedBaby, loading, addBaby, updateBaby, refresh: fetchBabies }}
     >
       {children}
     </BabyContext.Provider>

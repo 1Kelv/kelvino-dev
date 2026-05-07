@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Droplets, Baby, Pill, Calendar, Plus, LogOut, ChevronRight, Activity, Sun, Moon, MessageSquarePlus } from 'lucide-react';
+import { Heart, Droplets, Baby, Pill, Calendar, Plus, LogOut, ChevronRight, Activity, Sun, Moon, MessageSquarePlus, Pencil, UserCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AppShell } from '../components/layout/AppShell';
 import { Modal } from '../components/ui/Modal';
@@ -30,7 +30,7 @@ const itemVariants = {
 };
 
 export function HomePage() {
-  const { selectedBaby, babies, addBaby } = useBabyContext();
+  const { selectedBaby, babies, addBaby, updateBaby } = useBabyContext();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -47,6 +47,45 @@ export function HomePage() {
   const [babyDiagnosis, setBabyDiagnosis] = useState('');
   const [babyLoading, setBabyLoading] = useState(false);
   const [babyError, setBabyError] = useState<string | null>(null);
+
+  const [editBabyOpen, setEditBabyOpen] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editDob, setEditDob] = useState('');
+  const [editGender, setEditGender] = useState('');
+  const [editDiagnosis, setEditDiagnosis] = useState('');
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
+
+  const openEditBaby = () => {
+    if (!selectedBaby) return;
+    setEditName(selectedBaby.name);
+    setEditDob(selectedBaby.dateOfBirth);
+    setEditGender(selectedBaby.gender || '');
+    setEditDiagnosis(selectedBaby.diagnosis || '');
+    setEditError(null);
+    setEditBabyOpen(true);
+  };
+
+  const handleEditBaby = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editName || !editDob) { setEditError('Name and date of birth are required.'); return; }
+    if (!selectedBaby) return;
+    setEditLoading(true);
+    setEditError(null);
+    try {
+      await updateBaby(selectedBaby.$id, {
+        name: editName.trim(),
+        dateOfBirth: editDob,
+        gender: (editGender as 'male' | 'female' | 'other') || undefined,
+        diagnosis: editDiagnosis.trim() || undefined,
+      });
+      setEditBabyOpen(false);
+    } catch {
+      setEditError('Failed to update baby profile. Please try again.');
+    } finally {
+      setEditLoading(false);
+    }
+  };
 
   const showNoBabyState = babies.length === 0 && !addBabyOpen;
 
@@ -128,6 +167,14 @@ export function HomePage() {
               {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             </motion.button>
             <motion.button
+              onClick={() => navigate('/profile')}
+              whileTap={{ scale: 0.9 }}
+              className="p-2 rounded-xl bg-white/20 text-white min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label="Profile & settings"
+            >
+              <UserCircle size={20} />
+            </motion.button>
+            <motion.button
               onClick={handleLogout}
               whileTap={{ scale: 0.9 }}
               className="p-2 rounded-xl bg-white/20 text-white min-w-[44px] min-h-[44px] flex items-center justify-center"
@@ -145,18 +192,26 @@ export function HomePage() {
             transition={{ type: 'spring', stiffness: 300, damping: 24, delay: 0.1 }}
           >
             <motion.div
-              className="w-10 h-10 rounded-full bg-white/30 flex items-center justify-center"
+              className="w-10 h-10 rounded-full bg-white/30 flex items-center justify-center flex-shrink-0"
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
             >
               <Heart size={20} className="text-white" />
             </motion.div>
-            <div>
+            <div className="flex-1 min-w-0">
               <p className="text-white font-bold">{selectedBaby.name}</p>
               <p className="text-white/80 text-xs">
                 {babyAge(selectedBaby.dateOfBirth)}{selectedBaby.diagnosis ? ` · ${selectedBaby.diagnosis}` : ''}
               </p>
             </div>
+            <motion.button
+              onClick={openEditBaby}
+              whileTap={{ scale: 0.9 }}
+              className="p-1.5 rounded-lg bg-white/20 text-white flex-shrink-0"
+              aria-label="Edit baby profile"
+            >
+              <Pencil size={14} />
+            </motion.button>
           </motion.div>
         )}
       </div>
@@ -300,6 +355,51 @@ export function HomePage() {
           </Link>
         </motion.div>
       </motion.div>
+
+      <Modal open={editBabyOpen} onClose={() => setEditBabyOpen(false)} title="Edit Baby Profile">
+        <form onSubmit={handleEditBaby} className="flex flex-col gap-4">
+          <Input
+            label="Baby's name"
+            type="text"
+            value={editName}
+            onChange={(e) => setEditName(e.target.value)}
+            placeholder="e.g. Oliver"
+            required
+          />
+          <Input
+            label="Date of birth"
+            type="date"
+            value={editDob}
+            onChange={(e) => setEditDob(e.target.value)}
+            required
+          />
+          <Select
+            label="Gender (optional)"
+            value={editGender}
+            onChange={(e) => setEditGender(e.target.value)}
+            options={[
+              { value: 'male', label: 'Male' },
+              { value: 'female', label: 'Female' },
+              { value: 'other', label: 'Other' },
+            ]}
+            placeholder="Select gender"
+          />
+          <Input
+            label="Medical notes / diagnosis (optional)"
+            type="text"
+            value={editDiagnosis}
+            onChange={(e) => setEditDiagnosis(e.target.value)}
+            placeholder="e.g. premature, healthy, or any notes"
+          />
+          {editError && (
+            <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/30 rounded-xl px-4 py-3">{editError}</p>
+          )}
+          <div className="flex gap-3 pt-2">
+            <Button variant="secondary" type="button" onClick={() => setEditBabyOpen(false)} className="flex-1">Cancel</Button>
+            <Button type="submit" loading={editLoading} className="flex-1">Save Changes</Button>
+          </div>
+        </form>
+      </Modal>
 
       <Modal open={addBabyOpen} onClose={() => setAddBabyOpen(false)} title="Add Baby Profile">
         <form onSubmit={handleAddBaby} className="flex flex-col gap-4">
