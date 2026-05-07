@@ -1,4 +1,3 @@
-// I render the feeds tracking page with stats, chart, and log
 import React, { useState } from 'react';
 import { Droplets } from 'lucide-react';
 import { format, subDays } from 'date-fns';
@@ -16,12 +15,13 @@ import { PageHeader } from '../components/layout/PageHeader';
 import { FAB } from '../components/layout/FAB';
 import { Modal } from '../components/ui/Modal';
 import { StatCard } from '../components/ui/StatCard';
+import { DateNavigator } from '../components/ui/DateNavigator';
 import { FeedForm } from '../components/feeds/FeedForm';
 import { FeedList } from '../components/feeds/FeedList';
 import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useFeeds } from '../hooks/useFeeds';
-import { babyAge, isToday, formatTime } from '../lib/utils';
+import { babyAge, isOnDate, formatTime } from '../lib/utils';
 import { FeedEntry } from '../types';
 
 export function FeedsPage() {
@@ -30,18 +30,17 @@ export function FeedsPage() {
   const { entries, loading, error, stats, addEntry, updateEntry, removeEntry } = useFeeds(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<FeedEntry | null>(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const todayEntries = entries.filter((e) => isToday(e.datetime));
-  const todayMl = todayEntries.reduce((sum, e) => sum + e.amountMl, 0);
+  const dayEntries = entries.filter((e) => isOnDate(e.datetime, selectedDate));
+  const dayMl = dayEntries.reduce((sum, e) => sum + e.amountMl, 0);
   const lastFeed = entries[0];
 
-  // I build the weekly bar chart data for the last 7 days
   const weeklyData = Array.from({ length: 7 }, (_, i) => {
     const day = subDays(new Date(), 6 - i);
     const dayStr = format(day, 'yyyy-MM-dd');
-    const dayEntries = entries.filter((e) => e.datetime.startsWith(dayStr));
-    const total = dayEntries.reduce((sum, e) => sum + e.amountMl, 0);
-    return { day: format(day, 'EEE'), ml: total };
+    const dayTotal = entries.filter((e) => e.datetime.startsWith(dayStr)).reduce((sum, e) => sum + e.amountMl, 0);
+    return { day: format(day, 'EEE'), ml: dayTotal };
   });
 
   if (!selectedBaby) {
@@ -61,18 +60,17 @@ export function FeedsPage() {
         babyAge={babyAge(selectedBaby.dateOfBirth)}
       />
       <div className="p-5 flex flex-col gap-5">
-        {/* Stat cards */}
         <div className="grid grid-cols-3 gap-3">
           <StatCard
             icon={<Droplets size={18} />}
-            label="Today's ml"
-            value={todayMl > 0 ? `${todayMl} ml` : '—'}
+            label="Total ml"
+            value={dayMl > 0 ? `${dayMl} ml` : '—'}
             colour="mint"
           />
           <StatCard
             icon={<Droplets size={18} />}
-            label="Feeds today"
-            value={todayEntries.length}
+            label="Feeds"
+            value={dayEntries.length}
             colour="sky"
           />
           <StatCard
@@ -83,7 +81,6 @@ export function FeedsPage() {
           />
         </div>
 
-        {/* Avg stats */}
         {stats.avgFeedsPerDay > 0 && (
           <div className="bg-brand-light rounded-2xl px-4 py-3 flex justify-between">
             <div className="text-center">
@@ -97,10 +94,9 @@ export function FeedsPage() {
           </div>
         )}
 
-        {/* Weekly chart */}
         {entries.length > 0 && (
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-            <p className="text-sm font-semibold text-gray-600 mb-3">ml per day (last 7 days)</p>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
+            <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-3">ml per day (last 7 days)</p>
             <ResponsiveContainer width="100%" height={160}>
               <BarChart data={weeklyData} margin={{ top: 0, right: 5, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
@@ -116,22 +112,21 @@ export function FeedsPage() {
           </div>
         )}
 
-        {/* Error state */}
+        <DateNavigator date={selectedDate} onChange={setSelectedDate} />
+
         {error && (
           <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-3">{error}</p>
         )}
 
-        {/* Loading */}
         {loading && (
           <div className="flex justify-center py-8">
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         )}
 
-        {/* Feed list */}
         {!loading && (
           <FeedList
-            entries={entries}
+            entries={dayEntries}
             onDelete={removeEntry}
             onEdit={(entry) => setEditingEntry(entry)}
             onAdd={() => setModalOpen(true)}

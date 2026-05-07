@@ -5,13 +5,14 @@ import { PageHeader } from '../components/layout/PageHeader';
 import { FAB } from '../components/layout/FAB';
 import { Modal } from '../components/ui/Modal';
 import { StatCard } from '../components/ui/StatCard';
+import { DateNavigator } from '../components/ui/DateNavigator';
 import { GrowthForm } from '../components/growth/GrowthForm';
 import { GrowthList } from '../components/growth/GrowthList';
 import { GrowthChart } from '../components/growth/GrowthChart';
 import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useGrowth } from '../hooks/useGrowth';
-import { babyAge, formatDate } from '../lib/utils';
+import { babyAge, isOnDate, formatDate } from '../lib/utils';
 import { GrowthEntry } from '../types';
 
 const UNIT_KEY = 'mylestone_growth_unit';
@@ -23,6 +24,7 @@ export function GrowthPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<GrowthEntry | null>(null);
   const [useKg, setUseKg] = useState(() => localStorage.getItem(UNIT_KEY) !== 'lbs');
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const toggleUnit = () => {
     const next = !useKg;
@@ -37,6 +39,9 @@ export function GrowthPage() {
       ? `+${(latest.weightKg - oldest.weightKg).toFixed(2)} kg`
       : `+${(latest.weightLbs - oldest.weightLbs).toFixed(2)} lbs`
     : null;
+
+  // Growth uses `date` (YYYY-MM-DD); filter list by selected date
+  const dayEntries = entries.filter((e) => isOnDate(e.date, selectedDate));
 
   if (!selectedBaby) {
     return (
@@ -68,6 +73,8 @@ export function GrowthPage() {
 
         {entries.length > 1 && <GrowthChart entries={entries} useKg={useKg} />}
 
+        <DateNavigator date={selectedDate} onChange={setSelectedDate} />
+
         {error && <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
 
         {loading ? (
@@ -75,7 +82,7 @@ export function GrowthPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <GrowthList entries={entries} useKg={useKg} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
+          <GrowthList entries={dayEntries} useKg={useKg} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 

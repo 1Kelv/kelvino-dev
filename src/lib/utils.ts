@@ -75,6 +75,16 @@ export function isToday(dt: string): boolean {
   );
 }
 
+// I check if a datetime/date string falls on a given Date
+export function isOnDate(dt: string, date: Date): boolean {
+  const d = new Date(dt);
+  return (
+    d.getFullYear() === date.getFullYear() &&
+    d.getMonth() === date.getMonth() &&
+    d.getDate() === date.getDate()
+  );
+}
+
 // I get the current local datetime in the format required for datetime-local inputs
 export function localDateTimeNow(): string {
   const now = new Date();

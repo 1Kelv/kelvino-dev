@@ -58,7 +58,13 @@ export function AppointmentsPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <AppointmentList entries={entries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
+          <AppointmentList
+            entries={entries}
+            onDelete={removeEntry}
+            onEdit={(entry) => setEditingEntry(entry)}
+            onStatusChange={(id, status) => updateEntry(id, { status })}
+            onAdd={() => setModalOpen(true)}
+          />
         )}
       </div>
 

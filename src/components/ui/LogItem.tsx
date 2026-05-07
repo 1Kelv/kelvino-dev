@@ -8,12 +8,13 @@ interface LogItemProps {
   title: string;
   subtitle?: string;
   badge?: React.ReactNode;
+  extra?: React.ReactNode;
   onDelete: () => Promise<void>;
   onEdit?: () => void;
   className?: string;
 }
 
-export function LogItem({ timestamp, title, subtitle, badge, onDelete, onEdit, className }: LogItemProps) {
+export function LogItem({ timestamp, title, subtitle, badge, extra, onDelete, onEdit, className }: LogItemProps) {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,6 +49,7 @@ export function LogItem({ timestamp, title, subtitle, badge, onDelete, onEdit, c
         </div>
         <p className="font-semibold text-gray-900 dark:text-white mt-0.5 truncate">{title}</p>
         {subtitle && <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">{subtitle}</p>}
+        {extra}
         {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
       </div>
       <div className="flex gap-1 flex-shrink-0">

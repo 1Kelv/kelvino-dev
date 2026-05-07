@@ -91,6 +91,7 @@ export interface AppointmentEntry {
   department: string;
   consultantName: string;
   notes?: string;
+  status?: 'attended' | 'missed';
 }
 
 export interface NoteEntry {

@@ -5,12 +5,13 @@ import { PageHeader } from '../components/layout/PageHeader';
 import { FAB } from '../components/layout/FAB';
 import { Modal } from '../components/ui/Modal';
 import { StatCard } from '../components/ui/StatCard';
+import { DateNavigator } from '../components/ui/DateNavigator';
 import { MedicationForm } from '../components/medications/MedicationForm';
 import { MedicationList } from '../components/medications/MedicationList';
 import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useMedications } from '../hooks/useMedications';
-import { babyAge, isToday, formatTime } from '../lib/utils';
+import { babyAge, isOnDate, formatTime } from '../lib/utils';
 import { MedicationEntry } from '../types';
 
 export function MedicationsPage() {
@@ -19,10 +20,11 @@ export function MedicationsPage() {
   const { entries, loading, error, addEntry, updateEntry, removeEntry } = useMedications(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<MedicationEntry | null>(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const todayEntries = entries.filter((e) => isToday(e.datetime));
+  const dayEntries = entries.filter((e) => isOnDate(e.datetime, selectedDate));
   const lastMed = entries[0];
-  const uniqueMedsToday = new Set(todayEntries.map((e) => e.medicationName)).size;
+  const uniqueMeds = new Set(dayEntries.map((e) => e.medicationName)).size;
 
   if (!selectedBaby) {
     return (
@@ -38,10 +40,12 @@ export function MedicationsPage() {
       <PageHeader title="Medications" babyName={selectedBaby.name} babyAge={babyAge(selectedBaby.dateOfBirth)} />
       <div className="p-5 flex flex-col gap-5">
         <div className="grid grid-cols-3 gap-3">
-          <StatCard icon={<Pill size={18} />} label="Doses today" value={todayEntries.length} colour="mint" />
-          <StatCard icon={<Pill size={18} />} label="Medications" value={uniqueMedsToday} colour="purple" />
+          <StatCard icon={<Pill size={18} />} label="Doses" value={dayEntries.length} colour="mint" />
+          <StatCard icon={<Pill size={18} />} label="Medications" value={uniqueMeds} colour="purple" />
           <StatCard icon={<Pill size={18} />} label="Last dose" value={lastMed ? formatTime(lastMed.datetime) : '—'} colour="sky" />
         </div>
+
+        <DateNavigator date={selectedDate} onChange={setSelectedDate} />
 
         {error && <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
 
@@ -50,7 +54,7 @@ export function MedicationsPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <MedicationList entries={entries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
+          <MedicationList entries={dayEntries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 

@@ -5,12 +5,13 @@ import { PageHeader } from '../components/layout/PageHeader';
 import { FAB } from '../components/layout/FAB';
 import { Modal } from '../components/ui/Modal';
 import { StatCard } from '../components/ui/StatCard';
+import { DateNavigator } from '../components/ui/DateNavigator';
 import { NappyForm } from '../components/nappies/NappyForm';
 import { NappyList } from '../components/nappies/NappyList';
 import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useNappies } from '../hooks/useNappies';
-import { babyAge, isToday, formatTime } from '../lib/utils';
+import { babyAge, isOnDate, formatTime } from '../lib/utils';
 import { NappyEntry } from '../types';
 
 export function NappiesPage() {
@@ -19,11 +20,12 @@ export function NappiesPage() {
   const { entries, loading, error, addEntry, updateEntry, removeEntry } = useNappies(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<NappyEntry | null>(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const todayEntries = entries.filter((e) => isToday(e.datetime));
+  const dayEntries = entries.filter((e) => isOnDate(e.datetime, selectedDate));
   const lastNappy = entries[0];
-  const wetToday = todayEntries.filter((e) => e.kind === 'wet' || e.kind === 'both').length;
-  const dirtyToday = todayEntries.filter((e) => e.kind === 'dirty' || e.kind === 'both').length;
+  const wetCount = dayEntries.filter((e) => e.kind === 'wet' || e.kind === 'both').length;
+  const dirtyCount = dayEntries.filter((e) => e.kind === 'dirty' || e.kind === 'both').length;
 
   if (!selectedBaby) {
     return (
@@ -39,9 +41,9 @@ export function NappiesPage() {
       <PageHeader title="Nappies" babyName={selectedBaby.name} babyAge={babyAge(selectedBaby.dateOfBirth)} />
       <div className="p-5 flex flex-col gap-5">
         <div className="grid grid-cols-3 gap-3">
-          <StatCard icon={<Baby size={18} />} label="Today" value={todayEntries.length} colour="mint" />
-          <StatCard icon={<Baby size={18} />} label="Wet today" value={wetToday} colour="sky" />
-          <StatCard icon={<Baby size={18} />} label="Dirty today" value={dirtyToday} colour="orange" />
+          <StatCard icon={<Baby size={18} />} label="Changes" value={dayEntries.length} colour="mint" />
+          <StatCard icon={<Baby size={18} />} label="Wet" value={wetCount} colour="sky" />
+          <StatCard icon={<Baby size={18} />} label="Dirty" value={dirtyCount} colour="orange" />
         </div>
 
         {lastNappy && (
@@ -52,6 +54,8 @@ export function NappiesPage() {
           </div>
         )}
 
+        <DateNavigator date={selectedDate} onChange={setSelectedDate} />
+
         {error && <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
 
         {loading ? (
@@ -59,7 +63,7 @@ export function NappiesPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <NappyList entries={entries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
+          <NappyList entries={dayEntries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 

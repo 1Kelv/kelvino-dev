@@ -5,12 +5,13 @@ import { PageHeader } from '../components/layout/PageHeader';
 import { FAB } from '../components/layout/FAB';
 import { Modal } from '../components/ui/Modal';
 import { StatCard } from '../components/ui/StatCard';
+import { DateNavigator } from '../components/ui/DateNavigator';
 import { SleepForm } from '../components/sleep/SleepForm';
 import { SleepList } from '../components/sleep/SleepList';
 import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useSleep } from '../hooks/useSleep';
-import { babyAge, formatDuration } from '../lib/utils';
+import { babyAge, isOnDate, formatDuration } from '../lib/utils';
 import { SleepEntry } from '../types';
 
 export function SleepPage() {
@@ -19,15 +20,13 @@ export function SleepPage() {
   const { entries, loading, error, addEntry, updateEntry, removeEntry } = useSleep(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<SleepEntry | null>(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const recentEntries = entries.slice(0, 7);
-  const avgDuration = recentEntries.length > 0
-    ? Math.round(recentEntries.reduce((sum, e) => sum + e.durationMins, 0) / recentEntries.length)
-    : 0;
+  // Sleep uses `date` (YYYY-MM-DD) and `sleepStart` (datetime); filter on sleepStart for accuracy
+  const dayEntries = entries.filter((e) => isOnDate(e.sleepStart, selectedDate));
+  const dayDuration = dayEntries.reduce((sum, e) => sum + e.durationMins, 0);
+  const dayWakes = dayEntries.reduce((sum, e) => sum + e.wakeCount, 0);
   const lastSleep = entries[0];
-  const avgWakes = recentEntries.length > 0
-    ? Math.round(recentEntries.reduce((sum, e) => sum + e.wakeCount, 0) / recentEntries.length)
-    : 0;
 
   if (!selectedBaby) {
     return (
@@ -43,10 +42,12 @@ export function SleepPage() {
       <PageHeader title="Sleep" babyName={selectedBaby.name} babyAge={babyAge(selectedBaby.dateOfBirth)} />
       <div className="p-5 flex flex-col gap-5">
         <div className="grid grid-cols-3 gap-3">
-          <StatCard icon={<Moon size={18} />} label="Avg duration" value={avgDuration > 0 ? formatDuration(avgDuration) : '—'} colour="mint" />
-          <StatCard icon={<Moon size={18} />} label="Avg wakes" value={recentEntries.length > 0 ? avgWakes : '—'} colour="purple" />
+          <StatCard icon={<Moon size={18} />} label="Total sleep" value={dayDuration > 0 ? formatDuration(dayDuration) : '—'} colour="mint" />
+          <StatCard icon={<Moon size={18} />} label="Wake-ups" value={dayEntries.length > 0 ? dayWakes : '—'} colour="purple" />
           <StatCard icon={<Moon size={18} />} label="Last session" value={lastSleep ? formatDuration(lastSleep.durationMins) : '—'} colour="sky" />
         </div>
+
+        <DateNavigator date={selectedDate} onChange={setSelectedDate} />
 
         {error && <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
 
@@ -55,7 +56,7 @@ export function SleepPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <SleepList entries={entries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
+          <SleepList entries={dayEntries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 
