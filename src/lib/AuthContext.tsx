@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Models } from 'appwrite';
-import { account, ID } from './appwrite';
+import { account, client, ID } from './appwrite';
+
+const SESSION_KEY = 'aw_session';
 
 export const VERIFY_EMAIL_REQUIRED = 'VERIFY_EMAIL_REQUIRED';
 export const EMAIL_NOT_VERIFIED = 'EMAIL_NOT_VERIFIED';
@@ -24,6 +26,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Restore session from localStorage to bypass cross-origin cookie blocking
+    const saved = localStorage.getItem(SESSION_KEY);
+    if (saved) client.setSession(saved);
     account.get()
       .then(setUser)
       .catch(() => setUser(null))
@@ -32,7 +37,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      await account.createEmailPasswordSession(email, password);
+      const session = await account.createEmailPasswordSession(email, password);
+      client.setSession(session.secret);
+      localStorage.setItem(SESSION_KEY, session.secret);
     } catch (err: any) {
       // Appwrite v1.4+ returns type 'user_email_not_verified' for unverified accounts
       if (err?.type === 'user_email_not_verified') {
@@ -59,7 +66,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const userId = ID.unique();
     await account.create(userId, email, password, name);
     try {
-      await account.createEmailPasswordSession(email, password);
+      const session = await account.createEmailPasswordSession(email, password);
+      client.setSession(session.secret);
+      localStorage.setItem(SESSION_KEY, session.secret);
       const currentUser = await account.get();
       setUser(currentUser);
       localStorage.removeItem('pendingVerification');
@@ -90,6 +99,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     await account.deleteSession('current');
+    client.setSession('');
+    localStorage.removeItem(SESSION_KEY);
     setUser(null);
   };
 
@@ -102,7 +113,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const createSessionFromToken = async (userId: string, secret: string) => {
-    await account.createSession(userId, secret);
+    const session = await account.createSession(userId, secret);
+    client.setSession(session.secret);
+    localStorage.setItem(SESSION_KEY, session.secret);
     const currentUser = await account.get();
     setUser(currentUser);
   };
