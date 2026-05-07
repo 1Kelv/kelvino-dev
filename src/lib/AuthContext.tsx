@@ -7,7 +7,7 @@ export const VERIFY_EMAIL_REQUIRED = 'VERIFY_EMAIL_REQUIRED';
 export const EMAIL_NOT_VERIFIED = 'EMAIL_NOT_VERIFIED';
 
 const JWT_KEY = 'aw_jwt';
-const JWT_REFRESH_MS = 14 * 60 * 1000; // refresh 1 minute before 15-min expiry
+const JWT_REFRESH_MS = 14 * 60 * 1000;
 
 interface AuthContextType {
   user: Models.User<Models.Preferences> | null;
@@ -24,10 +24,25 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-async function storeJWT() {
+// Store a JWT for environments where session cookies are blocked (Mac ITP).
+// Sets the JWT globally on the Appwrite client for all subsequent requests.
+async function activateJWT() {
   const { jwt } = await account.createJWT();
   localStorage.setItem(JWT_KEY, jwt);
   client.setJWT(jwt);
+}
+
+// After a successful session creation, try cookie auth first.
+// If that fails (cross-origin cookie blocked), fall back to JWT.
+// This avoids the "JWT and cookie in same request" error on mobile.
+async function getSessionUser(): Promise<Models.User<Models.Preferences>> {
+  try {
+    return await account.get();
+  } catch {
+    // Cookie blocked — generate JWT and retry
+    await activateJWT();
+    return await account.get();
+  }
 }
 
 async function loadSession(): Promise<Models.User<Models.Preferences> | null> {
@@ -36,15 +51,15 @@ async function loadSession(): Promise<Models.User<Models.Preferences> | null> {
     client.setJWT(jwt);
     try {
       const u = await account.get();
-      // Attempt rolling refresh — works if Appwrite accepts JWT-authed createJWT calls
-      try { await storeJWT(); } catch { /* keep existing JWT */ }
+      // Attempt rolling refresh while JWT auth is active
+      try { await activateJWT(); } catch { /* keep existing JWT */ }
       return u;
     } catch {
       client.setJWT('');
       localStorage.removeItem(JWT_KEY);
     }
   }
-  // Fallback: try cookie/cookieFallback-based auth
+  // No JWT stored — try cookie-based auth (works on mobile/non-ITP browsers)
   try {
     return await account.get();
   } catch {
@@ -61,7 +76,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const startRefresh = () => {
     if (refreshTimer.current) clearInterval(refreshTimer.current);
     refreshTimer.current = setInterval(async () => {
-      try { await storeJWT(); } catch { /* session may have expired */ }
+      // Only refresh if we're in JWT mode (not cookie mode)
+      if (!localStorage.getItem(JWT_KEY)) return;
+      try { await activateJWT(); } catch { /* session expired */ }
     }, JWT_REFRESH_MS);
   };
 
@@ -82,9 +99,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       await account.createEmailPasswordSession(email, password);
-      await storeJWT();
       localStorage.removeItem('pendingVerification');
-      const u = await account.get();
+      const u = await getSessionUser();
       setUser(u);
       startRefresh();
       navigate('/app');
@@ -108,9 +124,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await account.create(userId, email, password, name);
     try {
       await account.createEmailPasswordSession(email, password);
-      await storeJWT();
       localStorage.removeItem('pendingVerification');
-      const u = await account.get();
+      const u = await getSessionUser();
       setUser(u);
       startRefresh();
       navigate('/app');
@@ -159,8 +174,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const createSessionFromToken = async (userId: string, secret: string) => {
     await account.createSession(userId, secret);
-    await storeJWT();
-    const u = await account.get();
+    const u = await getSessionUser();
     setUser(u);
     startRefresh();
     navigate('/app', { replace: true });
