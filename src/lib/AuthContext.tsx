@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Models } from 'appwrite';
 import { account, client, ID } from './appwrite';
 
@@ -18,6 +19,7 @@ interface AuthContextType {
   resetPassword: (userId: string, secret: string, password: string) => Promise<void>;
   createSessionFromToken: (userId: string, secret: string) => Promise<void>;
   resendVerificationEmail: (email: string) => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -51,6 +53,7 @@ async function loadSession(): Promise<Models.User<Models.Preferences> | null> {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const navigate = useNavigate();
   const [user, setUser] = useState<Models.User<Models.Preferences> | null>(null);
   const [loading, setLoading] = useState(true);
   const refreshTimer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -84,6 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const u = await account.get();
       setUser(u);
       startRefresh();
+      navigate('/app');
     } catch (err: any) {
       if (err?.type === 'user_email_not_verified') throw new Error(EMAIL_NOT_VERIFIED);
       try {
@@ -109,6 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const u = await account.get();
       setUser(u);
       startRefresh();
+      navigate('/app');
     } catch {
       await account.createMagicURLToken(userId, email, `${window.location.origin}/verify`);
       localStorage.setItem('pendingVerification', JSON.stringify({ userId, email }));
@@ -147,16 +152,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await account.updateRecovery(userId, secret, password);
   };
 
+  const refreshUser = async () => {
+    const u = await account.get();
+    setUser(u);
+  };
+
   const createSessionFromToken = async (userId: string, secret: string) => {
     await account.createSession(userId, secret);
     await storeJWT();
     const u = await account.get();
     setUser(u);
     startRefresh();
+    navigate('/app', { replace: true });
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, forgotPassword, resetPassword, createSessionFromToken, resendVerificationEmail }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, forgotPassword, resetPassword, createSessionFromToken, resendVerificationEmail, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
