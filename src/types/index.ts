@@ -5,9 +5,9 @@ export interface Baby {
   name: string;
   dateOfBirth: string;
   userId: string;
-  gender?: 'male' | 'female' | 'other';
-  diagnosis?: string;
-  shareCode?: string;
+  gender?: 'male' | 'female' | 'other' | null;
+  diagnosis?: string | null;
+  shareCode?: string | null;
   sharedWith?: string[];
 }
 

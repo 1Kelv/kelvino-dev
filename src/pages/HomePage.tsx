@@ -97,8 +97,8 @@ export function HomePage() {
       await updateBaby(selectedBaby.$id, {
         name: editName.trim(),
         dateOfBirth: editDob,
-        gender: (editGender as 'male' | 'female' | 'other') || undefined,
-        diagnosis: editDiagnosis.trim() || undefined,
+        gender: (editGender as 'male' | 'female' | 'other') || null,
+        diagnosis: editDiagnosis.trim() || null,
       });
       setEditBabyOpen(false);
     } catch {
