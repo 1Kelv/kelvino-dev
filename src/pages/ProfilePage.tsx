@@ -47,9 +47,9 @@ export function ProfilePage() {
   const [nameSuccess, setNameSuccess] = useState(false);
 
   const [relationship, setRelationship] = useState<string>(user?.prefs?.relationship || '');
+  const [relEditing, setRelEditing] = useState(!user?.prefs?.relationship);
   const [relLoading, setRelLoading] = useState(false);
   const [relError, setRelError] = useState<string | null>(null);
-  const [relSuccess, setRelSuccess] = useState(false);
 
   const [newEmail, setNewEmail] = useState('');
   const [emailPassword, setEmailPassword] = useState('');
@@ -86,11 +86,10 @@ export function ProfilePage() {
     if (!relationship) { setRelError('Please select your relationship to the baby.'); return; }
     setRelLoading(true);
     setRelError(null);
-    setRelSuccess(false);
     try {
       await account.updatePrefs({ ...user?.prefs, relationship });
       await refreshUser();
-      setRelSuccess(true);
+      setRelEditing(false);
     } catch {
       setRelError('Failed to save. Please try again.');
     } finally {
@@ -176,27 +175,47 @@ export function ProfilePage() {
         </Section>
 
         <Section title="Relationship to Baby" icon={<Heart size={16} />}>
-          <form onSubmit={handleUpdateRelationship} className="flex flex-col gap-3">
-            <div className="flex flex-wrap gap-2">
-              {RELATIONSHIPS.map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => { setRelationship(r); setRelSuccess(false); }}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium border transition-colors ${
-                    relationship === r
-                      ? 'bg-brand-mint border-brand-mint text-white'
-                      : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-brand-mint'
-                  }`}
-                >
-                  {r}
-                </button>
-              ))}
+          {!relEditing ? (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Role:</span>
+                <span className="text-sm font-semibold text-brand-dark dark:text-brand-mint">{relationship}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setRelEditing(true)}
+                className="text-xs text-brand-mint font-semibold hover:underline"
+              >
+                Change
+              </button>
             </div>
-            {relError && <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/30 rounded-xl px-4 py-2">{relError}</p>}
-            {relSuccess && <SuccessBadge message="Relationship saved" />}
-            <Button type="submit" loading={relLoading}>Save Relationship</Button>
-          </form>
+          ) : (
+            <form onSubmit={handleUpdateRelationship} className="flex flex-col gap-3">
+              <div className="flex flex-wrap gap-2">
+                {RELATIONSHIPS.map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => { setRelationship(r); setRelError(null); }}
+                    className={`px-4 py-2 rounded-xl text-sm font-medium border transition-colors ${
+                      relationship === r
+                        ? 'bg-brand-mint border-brand-mint text-white'
+                        : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-brand-mint'
+                    }`}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
+              {relError && <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/30 rounded-xl px-4 py-2">{relError}</p>}
+              <div className="flex gap-2">
+                {user?.prefs?.relationship && (
+                  <Button variant="secondary" type="button" onClick={() => { setRelationship(user.prefs.relationship); setRelEditing(false); }} className="flex-1">Cancel</Button>
+                )}
+                <Button type="submit" loading={relLoading} className="flex-1">Save</Button>
+              </div>
+            </form>
+          )}
         </Section>
 
         <Section title="Email Address" icon={<Mail size={16} />}>
