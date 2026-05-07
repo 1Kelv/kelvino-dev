@@ -1,9 +1,12 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { Models } from 'appwrite';
-import { account, ID } from './appwrite';
+import { account, client, ID } from './appwrite';
 
 export const VERIFY_EMAIL_REQUIRED = 'VERIFY_EMAIL_REQUIRED';
 export const EMAIL_NOT_VERIFIED = 'EMAIL_NOT_VERIFIED';
+
+const JWT_KEY = 'aw_jwt';
+const JWT_REFRESH_MS = 14 * 60 * 1000; // refresh 1 minute before 15-min expiry
 
 interface AuthContextType {
   user: Models.User<Models.Preferences> | null;
@@ -19,30 +22,70 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+async function storeJWT() {
+  const { jwt } = await account.createJWT();
+  localStorage.setItem(JWT_KEY, jwt);
+  client.setJWT(jwt);
+}
+
+async function loadSession(): Promise<Models.User<Models.Preferences> | null> {
+  const jwt = localStorage.getItem(JWT_KEY);
+  if (jwt) {
+    client.setJWT(jwt);
+    try {
+      const u = await account.get();
+      // Attempt rolling refresh — works if Appwrite accepts JWT-authed createJWT calls
+      try { await storeJWT(); } catch { /* keep existing JWT */ }
+      return u;
+    } catch {
+      client.setJWT('');
+      localStorage.removeItem(JWT_KEY);
+    }
+  }
+  // Fallback: try cookie/cookieFallback-based auth
+  try {
+    return await account.get();
+  } catch {
+    return null;
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<Models.User<Models.Preferences> | null>(null);
   const [loading, setLoading] = useState(true);
+  const refreshTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startRefresh = () => {
+    if (refreshTimer.current) clearInterval(refreshTimer.current);
+    refreshTimer.current = setInterval(async () => {
+      try { await storeJWT(); } catch { /* session may have expired */ }
+    }, JWT_REFRESH_MS);
+  };
+
+  const stopRefresh = () => {
+    if (refreshTimer.current) { clearInterval(refreshTimer.current); refreshTimer.current = null; }
+  };
 
   useEffect(() => {
-    account.get()
-      .then(setUser)
-      .catch(() => setUser(null))
+    loadSession()
+      .then((u) => {
+        setUser(u);
+        if (u) startRefresh();
+      })
       .finally(() => setLoading(false));
+    return stopRefresh;
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
       await account.createEmailPasswordSession(email, password);
-      // SDK stores cookieFallback in localStorage automatically.
-      // Hard-reload so the useEffect account.get() runs with the settled session.
+      await storeJWT();
       localStorage.removeItem('pendingVerification');
-      window.location.replace('/app');
+      const u = await account.get();
+      setUser(u);
+      startRefresh();
     } catch (err: any) {
-      // Appwrite v1.4+ returns type 'user_email_not_verified' for unverified accounts
-      if (err?.type === 'user_email_not_verified') {
-        throw new Error(EMAIL_NOT_VERIFIED);
-      }
-      // Fallback: if we stored a pending verification for this email on this device, surface it
+      if (err?.type === 'user_email_not_verified') throw new Error(EMAIL_NOT_VERIFIED);
       try {
         const stored = localStorage.getItem('pendingVerification');
         if (stored) {
@@ -61,11 +104,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await account.create(userId, email, password, name);
     try {
       await account.createEmailPasswordSession(email, password);
+      await storeJWT();
       localStorage.removeItem('pendingVerification');
-      window.location.replace('/app');
+      const u = await account.get();
+      setUser(u);
+      startRefresh();
     } catch {
-      // Appwrite requires email verification before sessions can be created.
-      // Send a magic-link email so the user can verify and log in by clicking it.
       await account.createMagicURLToken(userId, email, `${window.location.origin}/verify`);
       localStorage.setItem('pendingVerification', JSON.stringify({ userId, email }));
       throw new Error(VERIFY_EMAIL_REQUIRED);
@@ -83,13 +127,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       } catch {}
     }
-    // No stored userId on this device — cannot resend without it.
-    // Guide user to use forgot password instead.
     throw new Error('NO_STORED_USER');
   };
 
   const logout = async () => {
-    await account.deleteSession('current');
+    stopRefresh();
+    try { await account.deleteSession('current'); } catch { /* session may already be gone */ }
+    client.setJWT('');
+    localStorage.removeItem(JWT_KEY);
     localStorage.removeItem('cookieFallback');
     setUser(null);
   };
@@ -104,8 +149,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const createSessionFromToken = async (userId: string, secret: string) => {
     await account.createSession(userId, secret);
-    // Hard-reload so the useEffect account.get() runs with the settled session.
-    window.location.replace('/app');
+    await storeJWT();
+    const u = await account.get();
+    setUser(u);
+    startRefresh();
   };
 
   return (
