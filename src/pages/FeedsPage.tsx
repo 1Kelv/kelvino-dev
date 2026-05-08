@@ -21,8 +21,10 @@ import { FeedList } from '../components/feeds/FeedList';
 import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useFeeds } from '../hooks/useFeeds';
-import { babyAge, isOnDate, formatTime } from '../lib/utils';
+import { babyAge, isOnDate, formatTime, formatDateTime, formatDuration } from '../lib/utils';
 import { FeedEntry } from '../types';
+import { EntryDetailModal } from '../components/ui/EntryDetailModal';
+import { Badge } from '../components/ui/Badge';
 
 export function FeedsPage() {
   const { selectedBaby } = useBabyContext();
@@ -30,6 +32,7 @@ export function FeedsPage() {
   const { entries, loading, error, stats, addEntry, updateEntry, removeEntry } = useFeeds(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<FeedEntry | null>(null);
+  const [viewingEntry, setViewingEntry] = useState<FeedEntry | null>(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const dayEntries = entries.filter((e) => isOnDate(e.datetime, selectedDate));
@@ -129,6 +132,7 @@ export function FeedsPage() {
             entries={dayEntries}
             onDelete={removeEntry}
             onEdit={(entry) => setEditingEntry(entry)}
+            onView={(entry) => setViewingEntry(entry)}
             onAdd={() => setModalOpen(true)}
           />
         )}
@@ -157,6 +161,24 @@ export function FeedsPage() {
           />
         )}
       </Modal>
+
+      {viewingEntry && (
+        <EntryDetailModal
+          open={!!viewingEntry}
+          onClose={() => setViewingEntry(null)}
+          onEdit={() => { setViewingEntry(null); setEditingEntry(viewingEntry); }}
+          title={viewingEntry.amountMl > 0 ? `${viewingEntry.amountMl} ml` : 'Not measured'}
+          timestamp={formatDateTime(viewingEntry.datetime)}
+          badge={<Badge colour={viewingEntry.type === 'formula' ? 'sky' : viewingEntry.type === 'breast_milk' ? 'purple' : 'mint'}>{viewingEntry.type === 'formula' ? 'Formula' : viewingEntry.type === 'breast_milk' ? 'Breast Milk' : 'Mixed'}</Badge>}
+          fields={[
+            { label: 'Type', value: viewingEntry.type === 'formula' ? 'Formula' : viewingEntry.type === 'breast_milk' ? 'Breast Milk' : 'Mixed' },
+            { label: 'Amount', value: viewingEntry.amountMl > 0 ? `${viewingEntry.amountMl} ml` : 'Not measured' },
+            { label: 'Duration', value: viewingEntry.durationMins ? `${formatDuration(viewingEntry.durationMins)} mins` : undefined },
+            { label: 'Notes', value: viewingEntry.notes || undefined },
+            { label: 'Time', value: formatDateTime(viewingEntry.datetime) },
+          ]}
+        />
+      )}
     </AppShell>
   );
 }

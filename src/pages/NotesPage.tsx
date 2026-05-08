@@ -10,8 +10,9 @@ import { NoteList } from '../components/notes/NoteList';
 import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useNotes } from '../hooks/useNotes';
-import { babyAge } from '../lib/utils';
+import { babyAge, formatDate } from '../lib/utils';
 import { NoteEntry } from '../types';
+import { EntryDetailModal } from '../components/ui/EntryDetailModal';
 
 export function NotesPage() {
   const { selectedBaby } = useBabyContext();
@@ -19,6 +20,7 @@ export function NotesPage() {
   const { entries, loading, error, addEntry, updateEntry, removeEntry } = useNotes(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<NoteEntry | null>(null);
+  const [viewingEntry, setViewingEntry] = useState<NoteEntry | null>(null);
 
   const dischargeNotes = entries.filter((e) => e.category === 'discharge').length;
   const consultantNotes = entries.filter((e) => e.category === 'consultant').length;
@@ -49,7 +51,7 @@ export function NotesPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <NoteList entries={entries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
+          <NoteList entries={entries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onView={(entry) => setViewingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 
@@ -71,6 +73,21 @@ export function NotesPage() {
           />
         )}
       </Modal>
+
+      {viewingEntry && (
+        <EntryDetailModal
+          open={!!viewingEntry}
+          onClose={() => setViewingEntry(null)}
+          onEdit={() => { setViewingEntry(null); setEditingEntry(viewingEntry); }}
+          title={viewingEntry.title}
+          timestamp={formatDate(viewingEntry.date)}
+          fields={[
+            { label: 'Category', value: viewingEntry.category },
+            { label: 'Note', value: viewingEntry.body },
+            { label: 'Date', value: formatDate(viewingEntry.date) },
+          ]}
+        />
+      )}
     </AppShell>
   );
 }

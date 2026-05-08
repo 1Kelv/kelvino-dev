@@ -10,10 +10,11 @@ interface GrowthListProps {
   useKg: boolean;
   onDelete: (id: string) => Promise<void>;
   onEdit?: (entry: GrowthEntry) => void;
+  onView?: (entry: GrowthEntry) => void;
   onAdd?: () => void;
 }
 
-export function GrowthList({ entries, useKg, onDelete, onEdit, onAdd }: GrowthListProps) {
+export function GrowthList({ entries, useKg, onDelete, onEdit, onView, onAdd }: GrowthListProps) {
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -48,7 +49,7 @@ export function GrowthList({ entries, useKg, onDelete, onEdit, onAdd }: GrowthLi
             subtitle={details || undefined}
             onDelete={() => onDelete(entry.$id)}
             onEdit={onEdit ? () => onEdit(entry) : undefined}
-            onClick={onEdit ? () => onEdit(entry) : undefined}
+            onClick={onView ? () => onView(entry) : undefined}
           />
         );
       })}

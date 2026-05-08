@@ -11,8 +11,9 @@ import { NappyList } from '../components/nappies/NappyList';
 import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useNappies } from '../hooks/useNappies';
-import { babyAge, isOnDate, formatTime } from '../lib/utils';
+import { babyAge, isOnDate, formatTime, formatDateTime } from '../lib/utils';
 import { NappyEntry } from '../types';
+import { EntryDetailModal } from '../components/ui/EntryDetailModal';
 
 export function NappiesPage() {
   const { selectedBaby } = useBabyContext();
@@ -20,6 +21,7 @@ export function NappiesPage() {
   const { entries, loading, error, addEntry, updateEntry, removeEntry } = useNappies(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<NappyEntry | null>(null);
+  const [viewingEntry, setViewingEntry] = useState<NappyEntry | null>(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const dayEntries = entries.filter((e) => isOnDate(e.datetime, selectedDate));
@@ -63,7 +65,7 @@ export function NappiesPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <NappyList entries={dayEntries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
+          <NappyList entries={dayEntries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onView={(entry) => setViewingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 
@@ -85,6 +87,21 @@ export function NappiesPage() {
           />
         )}
       </Modal>
+
+      {viewingEntry && (
+        <EntryDetailModal
+          open={!!viewingEntry}
+          onClose={() => setViewingEntry(null)}
+          onEdit={() => { setViewingEntry(null); setEditingEntry(viewingEntry); }}
+          title={viewingEntry.kind.charAt(0).toUpperCase() + viewingEntry.kind.slice(1)}
+          timestamp={formatDateTime(viewingEntry.datetime)}
+          fields={[
+            { label: 'Type', value: viewingEntry.kind },
+            { label: 'Notes', value: viewingEntry.notes || undefined },
+            { label: 'Time', value: formatDateTime(viewingEntry.datetime) },
+          ]}
+        />
+      )}
     </AppShell>
   );
 }

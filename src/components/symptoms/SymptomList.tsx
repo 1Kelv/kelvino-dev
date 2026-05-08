@@ -10,6 +10,7 @@ interface SymptomListProps {
   entries: SymptomEntry[];
   onDelete: (id: string) => Promise<void>;
   onEdit?: (entry: SymptomEntry) => void;
+  onView?: (entry: SymptomEntry) => void;
   onAdd?: () => void;
 }
 
@@ -23,7 +24,7 @@ const skinColourBadge = (c: SymptomEntry['skinColour']) => {
   }
 };
 
-export function SymptomList({ entries, onDelete, onEdit, onAdd }: SymptomListProps) {
+export function SymptomList({ entries, onDelete, onEdit, onView, onAdd }: SymptomListProps) {
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -59,7 +60,7 @@ export function SymptomList({ entries, onDelete, onEdit, onAdd }: SymptomListPro
             badge={<Badge colour={skinBadge.colour}>{skinBadge.label}</Badge>}
             onDelete={() => onDelete(entry.$id)}
             onEdit={onEdit ? () => onEdit(entry) : undefined}
-            onClick={onEdit ? () => onEdit(entry) : undefined}
+            onClick={onView ? () => onView(entry) : undefined}
           />
         );
       })}

@@ -5,7 +5,9 @@ interface MHeartIconProps {
   className?: string;
 }
 
-// Heart silhouette with M-shaped top profile — two defined peaks with a deeper valley
+// M-shaped heart: two sharp peaks with a deep open valley between them.
+// Unlike a regular heart (shallow dip, round bumps), the top profile
+// clearly resembles the letter M — high pointed peaks, valley drops deep.
 export function MHeartIcon({ size = 32, className = '' }: MHeartIconProps) {
   return (
     <svg
@@ -16,14 +18,24 @@ export function MHeartIcon({ size = 32, className = '' }: MHeartIconProps) {
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
+      {/*
+        Path traces clockwise from bottom point:
+        - Bottom tip at (50, 92)
+        - Up the left exterior to the left M-peak at (27, 7)
+        - Sharp diagonal DOWN into the M-valley at (50, 48)
+        - Sharp diagonal UP to the right M-peak at (73, 7)
+        - Down the right exterior back to bottom tip
+
+        Peak y=7, valley y=48 → 41px drop = very pronounced M notch
+      */}
       <path d="
-        M 50 89
-        C 22 73, 2 57, 2 36
-        C 2 17, 14 6, 28 11
-        C 37 15, 45 27, 50 35
-        C 55 27, 63 15, 72 11
-        C 86 6, 98 17, 98 36
-        C 98 57, 78 73, 50 89
+        M 50 92
+        C 18 75, 2 58, 2 36
+        C 2 14, 13 3, 27 7
+        C 37 11, 44 30, 50 48
+        C 56 30, 63 11, 73 7
+        C 87 3, 98 14, 98 36
+        C 98 58, 82 75, 50 92
         Z
       " />
     </svg>

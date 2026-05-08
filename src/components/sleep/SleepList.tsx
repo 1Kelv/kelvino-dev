@@ -10,6 +10,7 @@ interface SleepListProps {
   entries: SleepEntry[];
   onDelete: (id: string) => Promise<void>;
   onEdit?: (entry: SleepEntry) => void;
+  onView?: (entry: SleepEntry) => void;
   onAdd?: () => void;
 }
 
@@ -22,7 +23,7 @@ const moodColour = (rating: SleepEntry['moodRating']) => {
   return 'orange' as const;
 };
 
-export function SleepList({ entries, onDelete, onEdit, onAdd }: SleepListProps) {
+export function SleepList({ entries, onDelete, onEdit, onView, onAdd }: SleepListProps) {
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -46,7 +47,7 @@ export function SleepList({ entries, onDelete, onEdit, onAdd }: SleepListProps) 
           badge={<Badge colour={moodColour(entry.moodRating)}>{moodEmoji(entry.moodRating)} Mood {entry.moodRating}/5</Badge>}
           onDelete={() => onDelete(entry.$id)}
           onEdit={onEdit ? () => onEdit(entry) : undefined}
-          onClick={onEdit ? () => onEdit(entry) : undefined}
+          onClick={onView ? () => onView(entry) : undefined}
         />
       ))}
     </div>

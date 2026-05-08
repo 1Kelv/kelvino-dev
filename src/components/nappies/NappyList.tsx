@@ -10,6 +10,7 @@ interface NappyListProps {
   entries: NappyEntry[];
   onDelete: (id: string) => Promise<void>;
   onEdit?: (entry: NappyEntry) => void;
+  onView?: (entry: NappyEntry) => void;
   onAdd?: () => void;
 }
 
@@ -22,7 +23,7 @@ const kindConfig = (kind: NappyEntry['kind']) => {
   }
 };
 
-export function NappyList({ entries, onDelete, onEdit, onAdd }: NappyListProps) {
+export function NappyList({ entries, onDelete, onEdit, onView, onAdd }: NappyListProps) {
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -48,7 +49,7 @@ export function NappyList({ entries, onDelete, onEdit, onAdd }: NappyListProps) 
             badge={<Badge colour={config.colour}>{config.label}</Badge>}
             onDelete={() => onDelete(entry.$id)}
             onEdit={onEdit ? () => onEdit(entry) : undefined}
-            onClick={onEdit ? () => onEdit(entry) : undefined}
+            onClick={onView ? () => onView(entry) : undefined}
           />
         );
       })}

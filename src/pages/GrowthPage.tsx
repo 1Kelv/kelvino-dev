@@ -14,6 +14,7 @@ import { useAuth } from '../lib/AuthContext';
 import { useGrowth } from '../hooks/useGrowth';
 import { babyAge, isOnDate, formatDate } from '../lib/utils';
 import { GrowthEntry } from '../types';
+import { EntryDetailModal } from '../components/ui/EntryDetailModal';
 
 const UNIT_KEY = 'mylestone_growth_unit';
 
@@ -23,6 +24,7 @@ export function GrowthPage() {
   const { entries, loading, error, addEntry, updateEntry, removeEntry } = useGrowth(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<GrowthEntry | null>(null);
+  const [viewingEntry, setViewingEntry] = useState<GrowthEntry | null>(null);
   const [useKg, setUseKg] = useState(() => localStorage.getItem(UNIT_KEY) !== 'lbs');
   const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -82,7 +84,7 @@ export function GrowthPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <GrowthList entries={dayEntries} useKg={useKg} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
+          <GrowthList entries={dayEntries} useKg={useKg} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onView={(entry) => setViewingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 
@@ -104,6 +106,23 @@ export function GrowthPage() {
           />
         )}
       </Modal>
+
+      {viewingEntry && (
+        <EntryDetailModal
+          open={!!viewingEntry}
+          onClose={() => setViewingEntry(null)}
+          onEdit={() => { setViewingEntry(null); setEditingEntry(viewingEntry); }}
+          title={`${viewingEntry.weightKg} kg / ${viewingEntry.weightLbs} lbs`}
+          timestamp={formatDate(viewingEntry.date)}
+          fields={[
+            { label: 'Weight', value: `${viewingEntry.weightKg} kg / ${viewingEntry.weightLbs} lbs` },
+            { label: 'Length', value: viewingEntry.lengthCm ? `${viewingEntry.lengthCm} cm` : undefined },
+            { label: 'Head circumference', value: viewingEntry.headCircumferenceCm ? `${viewingEntry.headCircumferenceCm} cm` : undefined },
+            { label: 'Notes', value: viewingEntry.notes || undefined },
+            { label: 'Date', value: formatDate(viewingEntry.date) },
+          ]}
+        />
+      )}
     </AppShell>
   );
 }

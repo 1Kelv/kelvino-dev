@@ -11,8 +11,9 @@ import { SymptomList } from '../components/symptoms/SymptomList';
 import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useSymptoms } from '../hooks/useSymptoms';
-import { babyAge, isOnDate } from '../lib/utils';
+import { babyAge, isOnDate, formatDateTime } from '../lib/utils';
 import { SymptomEntry } from '../types';
+import { EntryDetailModal } from '../components/ui/EntryDetailModal';
 
 export function SymptomsPage() {
   const { selectedBaby } = useBabyContext();
@@ -20,6 +21,7 @@ export function SymptomsPage() {
   const { entries, loading, error, addEntry, updateEntry, removeEntry } = useSymptoms(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<SymptomEntry | null>(null);
+  const [viewingEntry, setViewingEntry] = useState<SymptomEntry | null>(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const dayEntries = entries.filter((e) => isOnDate(e.datetime, selectedDate));
@@ -62,7 +64,7 @@ export function SymptomsPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <SymptomList entries={dayEntries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
+          <SymptomList entries={dayEntries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onView={(entry) => setViewingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 
@@ -84,6 +86,25 @@ export function SymptomsPage() {
           />
         )}
       </Modal>
+
+      {viewingEntry && (
+        <EntryDetailModal
+          open={!!viewingEntry}
+          onClose={() => setViewingEntry(null)}
+          onEdit={() => { setViewingEntry(null); setEditingEntry(viewingEntry); }}
+          title={viewingEntry.skinColour.charAt(0).toUpperCase() + viewingEntry.skinColour.slice(1) + ' skin'}
+          timestamp={formatDateTime(viewingEntry.datetime)}
+          fields={[
+            { label: 'Skin colour', value: viewingEntry.skinColour },
+            { label: 'Energy', value: viewingEntry.energyLevel },
+            { label: 'Breathing', value: viewingEntry.breathing },
+            { label: 'Feeding', value: viewingEntry.feedingWell ? 'Feeding well' : 'Not feeding well' },
+            { label: 'Temperature', value: viewingEntry.temperatureC ? `${viewingEntry.temperatureC}°C` : undefined },
+            { label: 'Notes', value: viewingEntry.notes || undefined },
+            { label: 'Time', value: formatDateTime(viewingEntry.datetime) },
+          ]}
+        />
+      )}
     </AppShell>
   );
 }

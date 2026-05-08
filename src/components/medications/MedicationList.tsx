@@ -10,6 +10,7 @@ interface MedicationListProps {
   entries: MedicationEntry[];
   onDelete: (id: string) => Promise<void>;
   onEdit?: (entry: MedicationEntry) => void;
+  onView?: (entry: MedicationEntry) => void;
   onAdd?: () => void;
 }
 
@@ -23,7 +24,7 @@ const routeColour = (route: MedicationEntry['route']) => {
   }
 };
 
-export function MedicationList({ entries, onDelete, onEdit, onAdd }: MedicationListProps) {
+export function MedicationList({ entries, onDelete, onEdit, onView, onAdd }: MedicationListProps) {
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -47,7 +48,7 @@ export function MedicationList({ entries, onDelete, onEdit, onAdd }: MedicationL
           badge={<Badge colour={routeColour(entry.route)}>{entry.route}</Badge>}
           onDelete={() => onDelete(entry.$id)}
           onEdit={onEdit ? () => onEdit(entry) : undefined}
-          onClick={onEdit ? () => onEdit(entry) : undefined}
+          onClick={onView ? () => onView(entry) : undefined}
         />
       ))}
     </div>

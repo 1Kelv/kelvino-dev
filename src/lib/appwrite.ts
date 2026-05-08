@@ -1,7 +1,12 @@
 import { Client, Account, Databases, ID, Query, Permission, Role } from 'appwrite';
 
+// Use same-origin proxy in production so cookies are first-party (fixes Mac/Safari ITP).
+// Falls back to env var or direct Appwrite URL for local dev.
+const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT
+  || `${window.location.origin}/appwrite`;
+
 export const client = new Client()
-  .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
+  .setEndpoint(endpoint)
   .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID || '');
 
 export const account = new Account(client);

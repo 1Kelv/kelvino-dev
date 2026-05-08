@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ChevronUp } from 'lucide-react';
 import { BottomNav } from './BottomNav';
 
@@ -7,26 +7,20 @@ interface AppShellProps {
 }
 
 export function AppShell({ children }: AppShellProps) {
-  const mainRef = useRef<HTMLElement>(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
-    const el = mainRef.current;
-    if (!el) return;
-    const onScroll = () => setShowBackToTop(el.scrollTop > 240);
-    el.addEventListener('scroll', onScroll, { passive: true });
-    return () => el.removeEventListener('scroll', onScroll);
+    const onScroll = () => setShowBackToTop(window.scrollY > 240);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollToTop = () => {
-    mainRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <main
-        ref={mainRef}
-        className="flex-1 overflow-y-auto"
+        className="flex-1"
         style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 72px)' }}
       >
         {children}

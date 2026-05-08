@@ -11,8 +11,9 @@ import { SleepList } from '../components/sleep/SleepList';
 import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useSleep } from '../hooks/useSleep';
-import { babyAge, isOnDate, formatDuration } from '../lib/utils';
+import { babyAge, isOnDate, formatDuration, formatDate } from '../lib/utils';
 import { SleepEntry } from '../types';
+import { EntryDetailModal } from '../components/ui/EntryDetailModal';
 
 export function SleepPage() {
   const { selectedBaby } = useBabyContext();
@@ -20,6 +21,7 @@ export function SleepPage() {
   const { entries, loading, error, addEntry, updateEntry, removeEntry } = useSleep(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<SleepEntry | null>(null);
+  const [viewingEntry, setViewingEntry] = useState<SleepEntry | null>(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   // Sleep uses `date` (YYYY-MM-DD) and `sleepStart` (datetime); filter on sleepStart for accuracy
@@ -56,7 +58,7 @@ export function SleepPage() {
             <div className="w-8 h-8 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
           </div>
         ) : (
-          <SleepList entries={dayEntries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onAdd={() => setModalOpen(true)} />
+          <SleepList entries={dayEntries} onDelete={removeEntry} onEdit={(entry) => setEditingEntry(entry)} onView={(entry) => setViewingEntry(entry)} onAdd={() => setModalOpen(true)} />
         )}
       </div>
 
@@ -78,6 +80,23 @@ export function SleepPage() {
           />
         )}
       </Modal>
+
+      {viewingEntry && (
+        <EntryDetailModal
+          open={!!viewingEntry}
+          onClose={() => setViewingEntry(null)}
+          onEdit={() => { setViewingEntry(null); setEditingEntry(viewingEntry); }}
+          title={formatDuration(viewingEntry.durationMins)}
+          timestamp={formatDate(viewingEntry.date)}
+          fields={[
+            { label: 'Duration', value: formatDuration(viewingEntry.durationMins) },
+            { label: 'Wake-ups', value: String(viewingEntry.wakeCount) },
+            { label: 'Mood', value: `${viewingEntry.moodRating}/5` },
+            { label: 'Notes', value: viewingEntry.notes || undefined },
+            { label: 'Date', value: formatDate(viewingEntry.date) },
+          ]}
+        />
+      )}
     </AppShell>
   );
 }

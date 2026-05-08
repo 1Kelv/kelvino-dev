@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/appwrite/:path*", "destination": "https://cloud.appwrite.io/v1/:path*" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
