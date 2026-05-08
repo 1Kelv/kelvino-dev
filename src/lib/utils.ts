@@ -109,3 +109,18 @@ export function toLocalDateTimeInput(iso: string): string {
 export function toLocalDateInput(iso: string): string {
   return toLocalDateTimeInput(iso).slice(0, 10);
 }
+
+// I return the month count if today is exactly N months after the DOB (same calendar day), else null.
+// Used to trigger the monthly milestone celebration on the home screen.
+export function isMonthBirthday(dateOfBirth: string): number | null {
+  const dob = new Date(dateOfBirth);
+  const now = new Date();
+  if (dob.getDate() !== now.getDate()) return null;
+  const months = differenceInMonths(now, dob);
+  if (months < 1) return null;
+  // Verify the month count really lands exactly today (guard against same-day-different-month edge cases)
+  const expected = new Date(dob);
+  expected.setMonth(expected.getMonth() + months);
+  if (expected.getDate() !== now.getDate() || expected.getMonth() !== now.getMonth() || expected.getFullYear() !== now.getFullYear()) return null;
+  return months;
+}

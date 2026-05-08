@@ -16,8 +16,9 @@ import { useFeeds } from '../hooks/useFeeds';
 import { useNappies } from '../hooks/useNappies';
 import { useAppointments } from '../hooks/useAppointments';
 import { useSymptoms } from '../hooks/useSymptoms';
-import { babyAge, isToday, formatDateTime, formatTime } from '../lib/utils';
+import { babyAge, isToday, formatDateTime, formatTime, isMonthBirthday } from '../lib/utils';
 import { localDateNow } from '../lib/utils';
+import { MilestoneCelebration } from '../components/ui/MilestoneCelebration';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -174,6 +175,18 @@ export function HomePage() {
   const handleLogout = async () => {
     await logout();
     navigate('/login');
+  };
+
+  // Monthly milestone celebration — show once per calendar day
+  const DISMISS_KEY = `milestone_dismissed_${new Date().toISOString().slice(0, 10)}`;
+  const monthMilestone = selectedBaby ? isMonthBirthday(selectedBaby.dateOfBirth) : null;
+  const [celebrationDismissed, setCelebrationDismissed] = React.useState(
+    () => !!localStorage.getItem(DISMISS_KEY)
+  );
+  const showCelebration = !!monthMilestone && !celebrationDismissed;
+  const dismissCelebration = () => {
+    localStorage.setItem(DISMISS_KEY, '1');
+    setCelebrationDismissed(true);
   };
 
   const showNoBabyState = babies.length === 0 && !addBabyOpen;
@@ -638,6 +651,14 @@ export function HomePage() {
         >
           <Plus size={28} strokeWidth={2.5} />
         </motion.button>
+      )}
+
+      {showCelebration && selectedBaby && monthMilestone && (
+        <MilestoneCelebration
+          babyName={selectedBaby.name}
+          months={monthMilestone}
+          onDismiss={dismissCelebration}
+        />
       )}
     </AppShell>
   );
