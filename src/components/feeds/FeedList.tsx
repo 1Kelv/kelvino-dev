@@ -54,6 +54,7 @@ export function FeedList({ entries, onDelete, onEdit, onAdd }: FeedListProps) {
             <Badge colour={typeBadgeColour(entry.type)}>{typeLabel(entry.type)}</Badge>
           }
           onEdit={onEdit ? () => onEdit(entry) : undefined}
+          onClick={onEdit ? () => onEdit(entry) : undefined}
           onDelete={() => onDelete(entry.$id)}
         />
       ))}

@@ -48,6 +48,7 @@ export function NappyList({ entries, onDelete, onEdit, onAdd }: NappyListProps) 
             badge={<Badge colour={config.colour}>{config.label}</Badge>}
             onDelete={() => onDelete(entry.$id)}
             onEdit={onEdit ? () => onEdit(entry) : undefined}
+            onClick={onEdit ? () => onEdit(entry) : undefined}
           />
         );
       })}

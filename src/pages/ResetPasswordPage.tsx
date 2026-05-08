@@ -60,7 +60,7 @@ export function ResetPasswordPage() {
             animate={{ y: [0, -8, 0] }}
             transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
           >
-            <Heart size={32} className="text-white" strokeWidth={2.5} />
+            <MHeartIcon size={32} className="text-white" />
           </motion.div>
           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white font-heading">Mylestone</h1>
         </div>

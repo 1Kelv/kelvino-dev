@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart } from 'lucide-react';
+import { MHeartIcon } from '../components/ui/MHeartIcon';
 import { motion } from 'framer-motion';
 import { LoginForm } from '../components/auth/LoginForm';
 
@@ -18,7 +18,7 @@ export function LoginPage() {
             animate={{ y: [0, -8, 0], rotate: [0, 3, -3, 0] }}
             transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
           >
-            <Heart size={32} className="text-white" strokeWidth={2.5} />
+            <MHeartIcon size={32} className="text-white" />
           </motion.div>
           <motion.h1
             className="text-3xl font-extrabold text-gray-900 dark:text-white font-heading"

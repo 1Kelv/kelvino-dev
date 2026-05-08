@@ -48,6 +48,7 @@ export function NoteList({ entries, onDelete, onEdit, onAdd }: NoteListProps) {
             badge={<Badge colour={cat.colour}>{cat.label}</Badge>}
             onDelete={() => onDelete(entry.$id)}
             onEdit={onEdit ? () => onEdit(entry) : undefined}
+            onClick={onEdit ? () => onEdit(entry) : undefined}
           />
         );
       })}

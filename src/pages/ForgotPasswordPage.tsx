@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart } from 'lucide-react';
+import { MHeartIcon } from '../components/ui/MHeartIcon';
 import { motion } from 'framer-motion';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
@@ -42,7 +42,7 @@ export function ForgotPasswordPage() {
             animate={{ y: [0, -8, 0] }}
             transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
           >
-            <Heart size={32} className="text-white" strokeWidth={2.5} />
+            <MHeartIcon size={32} className="text-white" />
           </motion.div>
           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white font-heading">Mylestone</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Every milestone, remembered.</p>

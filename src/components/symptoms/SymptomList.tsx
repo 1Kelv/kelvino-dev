@@ -59,6 +59,7 @@ export function SymptomList({ entries, onDelete, onEdit, onAdd }: SymptomListPro
             badge={<Badge colour={skinBadge.colour}>{skinBadge.label}</Badge>}
             onDelete={() => onDelete(entry.$id)}
             onEdit={onEdit ? () => onEdit(entry) : undefined}
+            onClick={onEdit ? () => onEdit(entry) : undefined}
           />
         );
       })}

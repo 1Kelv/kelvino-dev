@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Heart } from 'lucide-react';
+import { MHeartIcon } from '../components/ui/MHeartIcon';
 import { motion } from 'framer-motion';
 import { useAuth } from '../lib/AuthContext';
 
@@ -40,7 +40,7 @@ export function VerifyEmailPage() {
           animate={{ y: [0, -8, 0] }}
           transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
         >
-          <Heart size={32} className="text-white" strokeWidth={2.5} />
+          <MHeartIcon size={32} className="text-white" />
         </motion.div>
 
         {status === 'loading' ? (

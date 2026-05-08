@@ -46,6 +46,7 @@ export function SleepList({ entries, onDelete, onEdit, onAdd }: SleepListProps) 
           badge={<Badge colour={moodColour(entry.moodRating)}>{moodEmoji(entry.moodRating)} Mood {entry.moodRating}/5</Badge>}
           onDelete={() => onDelete(entry.$id)}
           onEdit={onEdit ? () => onEdit(entry) : undefined}
+          onClick={onEdit ? () => onEdit(entry) : undefined}
         />
       ))}
     </div>

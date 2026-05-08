@@ -11,10 +11,11 @@ interface LogItemProps {
   extra?: React.ReactNode;
   onDelete: () => Promise<void>;
   onEdit?: () => void;
+  onClick?: () => void;
   className?: string;
 }
 
-export function LogItem({ timestamp, title, subtitle, badge, extra, onDelete, onEdit, className }: LogItemProps) {
+export function LogItem({ timestamp, title, subtitle, badge, extra, onDelete, onEdit, onClick, className }: LogItemProps) {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,10 +40,18 @@ export function LogItem({ timestamp, title, subtitle, badge, extra, onDelete, on
       transition={{ type: 'spring', stiffness: 300, damping: 24 }}
       className={cn(
         'bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex items-start gap-3',
+        onClick && 'cursor-pointer active:scale-[0.98] transition-transform',
         className
       )}
     >
-      <div className="flex-1 min-w-0">
+      {/* Clickable body area */}
+      <div
+        className="flex-1 min-w-0"
+        onClick={onClick}
+        role={onClick ? 'button' : undefined}
+        tabIndex={onClick ? 0 : undefined}
+        onKeyDown={onClick ? (e) => e.key === 'Enter' && onClick() : undefined}
+      >
         <div className="flex items-center gap-2 flex-wrap">
           <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">{timestamp}</p>
           {badge}

@@ -48,6 +48,7 @@ export function GrowthList({ entries, useKg, onDelete, onEdit, onAdd }: GrowthLi
             subtitle={details || undefined}
             onDelete={() => onDelete(entry.$id)}
             onEdit={onEdit ? () => onEdit(entry) : undefined}
+            onClick={onEdit ? () => onEdit(entry) : undefined}
           />
         );
       })}

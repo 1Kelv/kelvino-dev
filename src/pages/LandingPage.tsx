@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, Droplets, Moon, TrendingUp, Pill, Calendar, Baby, Activity, FileText } from 'lucide-react';
+import { Droplets, Moon, TrendingUp, Pill, Calendar, Baby, Activity, FileText } from 'lucide-react';
+import { MHeartIcon } from '../components/ui/MHeartIcon';
 import { motion } from 'framer-motion';
 
 const features = [
@@ -48,7 +49,7 @@ export function LandingPage() {
           animate={{ y: [0, -10, 0], rotate: [0, 3, -3, 0] }}
           transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
         >
-          <Heart size={36} className="text-white" strokeWidth={2.5} />
+          <MHeartIcon size={36} className="text-white" />
         </motion.div>
 
         <motion.h1

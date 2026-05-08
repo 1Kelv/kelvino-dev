@@ -86,6 +86,7 @@ export function AppointmentList({ entries, onDelete, onEdit, onStatusChange, onA
                 badge={<Badge colour="mint">Upcoming</Badge>}
                 onDelete={() => onDelete(entry.$id)}
                 onEdit={onEdit ? () => onEdit(entry) : undefined}
+                onClick={onEdit ? () => onEdit(entry) : undefined}
                 className="border-brand-mint/30 bg-brand-light/50"
               />
             ))}
@@ -111,6 +112,7 @@ export function AppointmentList({ entries, onDelete, onEdit, onStatusChange, onA
                   }
                   onDelete={() => onDelete(entry.$id)}
                   onEdit={onEdit ? () => onEdit(entry) : undefined}
+                onClick={onEdit ? () => onEdit(entry) : undefined}
                   className={
                     entry.status === 'attended'
                       ? 'border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800'
