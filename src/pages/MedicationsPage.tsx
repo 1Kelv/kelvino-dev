@@ -11,6 +11,7 @@ import { MedicationList } from '../components/medications/MedicationList';
 import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useMedications } from '../hooks/useMedications';
+import { useNotificationReminders, requestNotificationPermission } from '../hooks/useNotificationReminders';
 import { babyAge, isOnDate, formatTime, formatDateTime } from '../lib/utils';
 import { MedicationEntry } from '../types';
 import { EntryDetailModal } from '../components/ui/EntryDetailModal';
@@ -23,6 +24,9 @@ export function MedicationsPage() {
   const [editingEntry, setEditingEntry] = useState<MedicationEntry | null>(null);
   const [viewingEntry, setViewingEntry] = useState<MedicationEntry | null>(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [notifPermission, setNotifPermission] = React.useState(() => 'Notification' in window ? Notification.permission : 'denied');
+
+  useNotificationReminders(entries);
 
   const dayEntries = entries.filter((e) => isOnDate(e.datetime, selectedDate));
   const lastMed = entries[0];
@@ -48,6 +52,22 @@ export function MedicationsPage() {
         </div>
 
         <DateNavigator date={selectedDate} onChange={setSelectedDate} />
+
+        {entries.some((e) => e.reminderTime) && notifPermission !== 'granted' && notifPermission !== 'denied' && (
+          <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-2xl px-4 py-3 flex items-center gap-3">
+            <span className="text-lg">🔔</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-amber-800 dark:text-amber-200">Enable reminders</p>
+              <p className="text-xs text-amber-700 dark:text-amber-300">Allow notifications to receive medication reminders</p>
+            </div>
+            <button
+              onClick={() => requestNotificationPermission().then((ok) => setNotifPermission(ok ? 'granted' : 'denied'))}
+              className="text-xs font-bold text-amber-800 dark:text-amber-200 bg-amber-100 dark:bg-amber-800/50 px-3 py-1.5 rounded-xl shrink-0"
+            >
+              Enable
+            </button>
+          </div>
+        )}
 
         {error && <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
 
@@ -92,6 +112,7 @@ export function MedicationsPage() {
             { label: 'Route', value: viewingEntry.route },
             { label: 'Given by', value: viewingEntry.administeredBy },
             { label: 'Notes', value: viewingEntry.notes || undefined },
+            { label: 'Reminder', value: viewingEntry.reminderTime || undefined },
             { label: 'Time', value: formatDateTime(viewingEntry.datetime) },
           ]}
         />

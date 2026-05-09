@@ -42,6 +42,7 @@ export interface MedicationEntry {
   route: 'oral' | 'IV' | 'topical' | 'inhaled' | 'other';
   administeredBy: string;
   notes?: string;
+  reminderTime?: string;
 }
 
 export interface GrowthEntry {
@@ -66,6 +67,7 @@ export interface SymptomEntry {
   breathing: 'normal' | 'fast' | 'laboured' | 'noisy';
   feedingWell: boolean;
   temperatureC?: number;
+  spO2?: number;
   notes?: string;
 }
 

@@ -1,4 +1,4 @@
-// I render a line chart showing weight over time
+// I render a line chart showing weight and length over time
 import React from 'react';
 import {
   LineChart,
@@ -8,6 +8,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
 } from 'recharts';
 import { GrowthEntry } from '../../types';
 import { format } from 'date-fns';
@@ -24,6 +25,7 @@ export function GrowthChart({ entries, useKg }: GrowthChartProps) {
     .map((e) => ({
       date: format(new Date(e.date), 'dd MMM'),
       weight: useKg ? e.weightKg : e.weightLbs,
+      length: e.lengthCm ?? null,
     }));
 
   if (data.length === 0) return null;
@@ -31,7 +33,7 @@ export function GrowthChart({ entries, useKg }: GrowthChartProps) {
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
       <p className="text-sm font-semibold text-gray-600 mb-3">
-        Weight over time ({useKg ? 'kg' : 'lbs'})
+        Growth over time
       </p>
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
@@ -55,7 +57,11 @@ export function GrowthChart({ entries, useKg }: GrowthChartProps) {
               boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
               fontSize: 13,
             }}
-            formatter={(val: number) => [`${val} ${useKg ? 'kg' : 'lbs'}`, 'Weight']}
+            formatter={(val: number, name: string) =>
+              name === 'weight'
+                ? [`${val} ${useKg ? 'kg' : 'lbs'}`, 'Weight']
+                : [`${val} cm`, 'Length']
+            }
           />
           <Line
             type="monotone"
@@ -64,7 +70,19 @@ export function GrowthChart({ entries, useKg }: GrowthChartProps) {
             strokeWidth={2.5}
             dot={{ fill: '#4ECDC4', r: 4, strokeWidth: 0 }}
             activeDot={{ r: 6, fill: '#2A9D8F' }}
+            connectNulls
           />
+          <Line
+            type="monotone"
+            dataKey="length"
+            stroke="#A78BFA"
+            strokeWidth={2}
+            strokeDasharray="5 5"
+            dot={{ fill: '#A78BFA', r: 3, strokeWidth: 0 }}
+            activeDot={{ r: 5, fill: '#7C3AED' }}
+            connectNulls
+          />
+          <Legend />
         </LineChart>
       </ResponsiveContainer>
     </div>

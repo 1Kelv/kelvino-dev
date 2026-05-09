@@ -34,6 +34,7 @@ export function MedicationForm({ babyId, userId, onSubmit, onUpdate, onClose, in
   const [administeredByRole, setAdministeredByRole] = useState(initRole);
   const [administeredByCustom, setAdministeredByCustom] = useState(initCustom);
   const [notes, setNotes] = useState(initialValues?.notes ?? '');
+  const [reminderTime, setReminderTime] = useState(initialValues?.reminderTime ?? '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,7 +52,7 @@ export function MedicationForm({ babyId, userId, onSubmit, onUpdate, onClose, in
     setLoading(true);
     setError(null);
     try {
-      const data = { babyId, userId, datetime: new Date(datetime).toISOString(), medicationName, dose: doseNum, unit, route, administeredBy, notes: notes || undefined };
+      const data = { babyId, userId, datetime: new Date(datetime).toISOString(), medicationName, dose: doseNum, unit, route, administeredBy, notes: notes || undefined, reminderTime: reminderTime || undefined };
       if (isEdit && onUpdate) { await onUpdate(data); } else { await onSubmit(data); }
       onClose();
     } catch {
@@ -112,6 +113,16 @@ export function MedicationForm({ babyId, userId, onSubmit, onUpdate, onClose, in
           placeholder="e.g. Grandma, Childminder..."
         />
       )}
+      <div className="flex flex-col gap-1">
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Daily reminder (optional)</label>
+        <p className="text-xs text-gray-500 dark:text-gray-400 -mt-0.5">Get a daily notification at this time to give this medication</p>
+        <input
+          type="time"
+          value={reminderTime}
+          onChange={(e) => setReminderTime(e.target.value)}
+          className="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 text-base text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:border-brand-mint focus:outline-none focus:ring-2 focus:ring-brand-mint/30"
+        />
+      </div>
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Notes (optional)</label>
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any observations..." rows={3}

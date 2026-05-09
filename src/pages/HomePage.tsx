@@ -16,6 +16,7 @@ import { useFeeds } from '../hooks/useFeeds';
 import { useNappies } from '../hooks/useNappies';
 import { useAppointments } from '../hooks/useAppointments';
 import { useSymptoms } from '../hooks/useSymptoms';
+import { useMedications } from '../hooks/useMedications';
 import { babyAge, isToday, formatDateTime, formatTime, isMonthBirthday } from '../lib/utils';
 import { localDateNow } from '../lib/utils';
 import { MilestoneCelebration } from '../components/ui/MilestoneCelebration';
@@ -40,6 +41,7 @@ export function HomePage() {
   const { entries: nappies } = useNappies(selectedBaby?.$id);
   const { entries: appointments } = useAppointments(selectedBaby?.$id);
   const { entries: symptoms } = useSymptoms(selectedBaby?.$id);
+  const { entries: medications } = useMedications(selectedBaby?.$id);
 
   // Add baby modal
   const [addBabyOpen, setAddBabyOpen] = useState(false);
@@ -193,6 +195,8 @@ export function HomePage() {
 
   const todayFeeds = feeds.filter((e) => isToday(e.datetime));
   const todayNappies = nappies.filter((e) => isToday(e.datetime));
+  const todayMeds = medications.filter((e) => isToday(e.datetime));
+  const todayMl = todayFeeds.reduce((sum, e) => sum + e.amountMl, 0);
   const lastNappy = nappies[0];
   const now = new Date();
   const nextAppt = appointments
@@ -365,11 +369,41 @@ export function HomePage() {
               />
               <StatCard
                 icon={<Pill size={18} />}
-                label="Medications"
-                value={feeds.filter((e) => isToday(e.datetime)).length > 0 ? 'On track' : 'Check doses'}
+                label="Meds today"
+                value={todayMeds.length}
+                trend={todayMeds.length > 0 ? `Last: ${formatTime(todayMeds[0].datetime)}` : undefined}
                 colour="orange"
               />
             </motion.div>
+
+            {(todayFeeds.length > 0 || todayNappies.length > 0 || todayMeds.length > 0) && (
+              <motion.div
+                variants={itemVariants}
+                className="bg-white dark:bg-gray-800 rounded-2xl px-4 py-3 shadow-sm border border-gray-100 dark:border-gray-700"
+              >
+                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Today at a glance</p>
+                <div className="flex items-center justify-around">
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span className="text-xl">🍼</span>
+                    <p className="text-lg font-extrabold text-gray-900 dark:text-white">{todayFeeds.length}</p>
+                    <p className="text-xs text-gray-400">feeds</p>
+                    {todayMl > 0 && <p className="text-xs font-semibold text-brand-mint">{todayMl} ml</p>}
+                  </div>
+                  <div className="w-px h-10 bg-gray-100 dark:bg-gray-700" />
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span className="text-xl">🚼</span>
+                    <p className="text-lg font-extrabold text-gray-900 dark:text-white">{todayNappies.length}</p>
+                    <p className="text-xs text-gray-400">nappies</p>
+                  </div>
+                  <div className="w-px h-10 bg-gray-100 dark:bg-gray-700" />
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span className="text-xl">💊</span>
+                    <p className="text-lg font-extrabold text-gray-900 dark:text-white">{todayMeds.length}</p>
+                    <p className="text-xs text-gray-400">meds</p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
 
             <motion.div variants={itemVariants}>
               <h2 className="text-base font-bold text-gray-900 dark:text-white mb-3">Quick actions</h2>

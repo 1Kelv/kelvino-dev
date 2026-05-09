@@ -22,6 +22,7 @@ export function SymptomForm({ babyId, userId, onSubmit, onUpdate, onClose, initi
   const [breathing, setBreathing] = useState<SymptomEntry['breathing']>(initialValues?.breathing ?? 'normal');
   const [feedingWell, setFeedingWell] = useState(initialValues?.feedingWell ?? true);
   const [temperatureC, setTemperatureC] = useState(initialValues?.temperatureC ? String(initialValues.temperatureC) : '');
+  const [spO2, setSpO2] = useState(initialValues?.spO2 ? String(initialValues.spO2) : '');
   const [notes, setNotes] = useState(initialValues?.notes ?? '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +34,7 @@ export function SymptomForm({ babyId, userId, onSubmit, onUpdate, onClose, initi
     setLoading(true);
     setError(null);
     try {
-      const data = { babyId, userId, datetime: new Date(datetime).toISOString(), skinColour, energyLevel, breathing, feedingWell, temperatureC: temperatureC ? parseFloat(temperatureC) : undefined, notes: notes || undefined };
+      const data = { babyId, userId, datetime: new Date(datetime).toISOString(), skinColour, energyLevel, breathing, feedingWell, temperatureC: temperatureC ? parseFloat(temperatureC) : undefined, spO2: spO2 ? parseFloat(spO2) : undefined, notes: notes || undefined };
       if (isEdit && onUpdate) { await onUpdate(data); } else { await onSubmit(data); }
       onClose();
     } catch {
@@ -60,7 +61,7 @@ export function SymptomForm({ babyId, userId, onSubmit, onUpdate, onClose, initi
       <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-700 rounded-xl px-4 py-3">
         <div className="flex-1">
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Feeding well?</p>
-          <p className="text-xs text-gray-500">Poor feeding can indicate cardiac distress</p>
+          <p className="text-xs text-gray-500">Poor feeding can indicate discomfort or illness</p>
         </div>
         <button type="button" onClick={() => setFeedingWell(!feedingWell)}
           className={`relative w-12 h-6 rounded-full transition-colors focus:outline-none ${feedingWell ? 'bg-brand-mint' : 'bg-gray-300'}`}>
@@ -68,6 +69,7 @@ export function SymptomForm({ babyId, userId, onSubmit, onUpdate, onClose, initi
         </button>
       </div>
       <Input label="Temperature °C (optional)" type="number" value={temperatureC} onChange={(e) => setTemperatureC(e.target.value)} placeholder="e.g. 37.2" min="30" max="45" step="0.1" />
+      <Input label="Oxygen saturation % (optional)" type="number" value={spO2} onChange={(e) => setSpO2(e.target.value)} placeholder="e.g. 98" min="0" max="100" step="1" />
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Notes (optional)</label>
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any additional observations..." rows={3}

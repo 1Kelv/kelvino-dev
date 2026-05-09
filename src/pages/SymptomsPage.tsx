@@ -100,6 +100,7 @@ export function SymptomsPage() {
             { label: 'Breathing', value: viewingEntry.breathing },
             { label: 'Feeding', value: viewingEntry.feedingWell ? 'Feeding well' : 'Not feeding well' },
             { label: 'Temperature', value: viewingEntry.temperatureC ? `${viewingEntry.temperatureC}°C` : undefined },
+            { label: 'SpO2', value: viewingEntry.spO2 ? `${viewingEntry.spO2}%` : undefined },
             { label: 'Notes', value: viewingEntry.notes || undefined },
             { label: 'Time', value: formatDateTime(viewingEntry.datetime) },
           ]}
