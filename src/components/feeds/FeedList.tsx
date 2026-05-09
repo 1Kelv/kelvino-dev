@@ -45,15 +45,17 @@ export function FeedList({ entries, onDelete, onEdit, onView, onAdd }: FeedListP
         <LogItem
           key={entry.$id}
           timestamp={formatDateTime(entry.datetime)}
-          title={entry.amountMl > 0 ? `${entry.amountMl} ml` : 'Not measured'}
-          subtitle={
-            entry.durationMins
-              ? `Duration: ${formatDuration(entry.durationMins)}${entry.notes ? ` · ${entry.notes}` : ''}`
-              : entry.notes || undefined
+          title={
+            entry.bottleAmountMl
+              ? `${entry.amountMl > 0 ? entry.amountMl : '?'} ml of ${entry.bottleAmountMl} ml offered`
+              : entry.amountMl > 0 ? `${entry.amountMl} ml` : 'Not measured'
           }
-          badge={
-            <Badge colour={typeBadgeColour(entry.type)}>{typeLabel(entry.type)}</Badge>
-          }
+          subtitle={[
+            entry.durationMins ? `${formatDuration(entry.durationMins)}` : null,
+            entry.feedBehaviour === 'active' ? 'Fed actively' : entry.feedBehaviour === 'drowsy' ? 'Drowsy' : entry.feedBehaviour === 'asleep' ? 'Fell asleep' : null,
+            entry.notes || null,
+          ].filter(Boolean).join(' · ') || undefined}
+          badge={<Badge colour={typeBadgeColour(entry.type)}>{typeLabel(entry.type)}</Badge>}
           onEdit={onEdit ? () => onEdit(entry) : undefined}
           onClick={onView ? () => onView(entry) : undefined}
           onDelete={() => onDelete(entry.$id)}

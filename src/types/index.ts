@@ -17,7 +17,9 @@ export interface FeedEntry {
   userId: string;
   datetime: string;
   amountMl: number;
+  bottleAmountMl?: number;
   type: 'formula' | 'breast_milk' | 'mixed';
+  feedBehaviour?: 'active' | 'drowsy' | 'asleep';
   durationMins?: number;
   notes?: string;
 }

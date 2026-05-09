@@ -167,12 +167,18 @@ export function FeedsPage() {
           open={!!viewingEntry}
           onClose={() => setViewingEntry(null)}
           onEdit={() => { setViewingEntry(null); setEditingEntry(viewingEntry); }}
-          title={viewingEntry.amountMl > 0 ? `${viewingEntry.amountMl} ml` : 'Not measured'}
+          title={
+            viewingEntry.bottleAmountMl
+              ? `${viewingEntry.amountMl > 0 ? viewingEntry.amountMl : '?'} ml of ${viewingEntry.bottleAmountMl} ml offered`
+              : viewingEntry.amountMl > 0 ? `${viewingEntry.amountMl} ml` : 'Not measured'
+          }
           timestamp={formatDateTime(viewingEntry.datetime)}
           badge={<Badge colour={viewingEntry.type === 'formula' ? 'sky' : viewingEntry.type === 'breast_milk' ? 'purple' : 'mint'}>{viewingEntry.type === 'formula' ? 'Formula' : viewingEntry.type === 'breast_milk' ? 'Breast Milk' : 'Mixed'}</Badge>}
           fields={[
             { label: 'Type', value: viewingEntry.type === 'formula' ? 'Formula' : viewingEntry.type === 'breast_milk' ? 'Breast Milk' : 'Mixed' },
-            { label: 'Amount', value: viewingEntry.amountMl > 0 ? `${viewingEntry.amountMl} ml` : 'Not measured' },
+            { label: 'Offered', value: viewingEntry.bottleAmountMl ? `${viewingEntry.bottleAmountMl} ml` : undefined },
+            { label: 'Taken', value: viewingEntry.amountMl > 0 ? `${viewingEntry.amountMl} ml` : 'Not measured' },
+            { label: 'Feeding', value: viewingEntry.feedBehaviour === 'active' ? 'Active — fed well throughout' : viewingEntry.feedBehaviour === 'drowsy' ? 'Drowsy — dozed on and off' : viewingEntry.feedBehaviour === 'asleep' ? 'Fell asleep while feeding' : undefined },
             { label: 'Duration', value: viewingEntry.durationMins ? `${formatDuration(viewingEntry.durationMins)} mins` : undefined },
             { label: 'Notes', value: viewingEntry.notes || undefined },
             { label: 'Time', value: formatDateTime(viewingEntry.datetime) },

@@ -18,7 +18,9 @@ export function FeedForm({ babyId, userId, onSubmit, onUpdate, onClose, initialV
   const isEdit = !!initialValues;
   const [datetime, setDatetime] = useState(initialValues ? toLocalDateTimeInput(initialValues.datetime) : localDateTimeNow());
   const [amountMl, setAmountMl] = useState(initialValues?.amountMl ? String(initialValues.amountMl) : '');
+  const [bottleAmountMl, setBottleAmountMl] = useState(initialValues?.bottleAmountMl ? String(initialValues.bottleAmountMl) : '');
   const [type, setType] = useState<FeedEntry['type']>(initialValues?.type ?? 'formula');
+  const [feedBehaviour, setFeedBehaviour] = useState<FeedEntry['feedBehaviour']>(initialValues?.feedBehaviour ?? undefined);
   const [durationMins, setDurationMins] = useState(initialValues?.durationMins ? String(initialValues.durationMins) : '');
   const [notes, setNotes] = useState(initialValues?.notes ?? '');
   const [loading, setLoading] = useState(false);
@@ -40,7 +42,9 @@ export function FeedForm({ babyId, userId, onSubmit, onUpdate, onClose, initialV
         userId,
         datetime: new Date(datetime).toISOString(),
         amountMl: amount,
+        bottleAmountMl: bottleAmountMl ? parseFloat(bottleAmountMl) : undefined,
         type,
+        feedBehaviour: feedBehaviour || undefined,
         durationMins: durationMins ? parseInt(durationMins) : undefined,
         notes: notes || undefined,
       };
@@ -77,7 +81,16 @@ export function FeedForm({ babyId, userId, onSubmit, onUpdate, onClose, initialV
         ]}
       />
       <Input
-        label={isBreastMilk ? 'Amount (ml, optional)' : 'Amount (ml)'}
+        label="Bottle prepared (ml, optional)"
+        type="number"
+        value={bottleAmountMl}
+        onChange={(e) => setBottleAmountMl(e.target.value)}
+        placeholder="e.g. 120 — how much was offered"
+        min="0"
+        step="1"
+      />
+      <Input
+        label={isBreastMilk ? 'Amount taken (ml, optional)' : 'Amount taken (ml)'}
         type="number"
         value={amountMl}
         onChange={(e) => setAmountMl(e.target.value)}
@@ -94,6 +107,17 @@ export function FeedForm({ babyId, userId, onSubmit, onUpdate, onClose, initialV
         placeholder="e.g. 20"
         min="0"
         step="1"
+      />
+      <Select
+        label="How did the feed go? (optional)"
+        value={feedBehaviour ?? ''}
+        onChange={(e) => setFeedBehaviour((e.target.value as FeedEntry['feedBehaviour']) || undefined)}
+        placeholder="Select feeding behaviour..."
+        options={[
+          { value: 'active', label: 'Active — fed well throughout' },
+          { value: 'drowsy', label: 'Drowsy — dozed on and off' },
+          { value: 'asleep', label: 'Fell asleep while feeding' },
+        ]}
       />
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Notes (optional)</label>
