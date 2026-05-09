@@ -10,8 +10,9 @@ import { AppointmentList } from '../components/appointments/AppointmentList';
 import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useAppointments } from '../hooks/useAppointments';
-import { babyAge, formatDate } from '../lib/utils';
+import { babyAge, formatDate, formatDateTime, appointmentCountdown } from '../lib/utils';
 import { AppointmentEntry } from '../types';
+import { EntryDetailModal } from '../components/ui/EntryDetailModal';
 
 export function AppointmentsPage() {
   const { selectedBaby } = useBabyContext();
@@ -19,6 +20,7 @@ export function AppointmentsPage() {
   const { entries, loading, error, addEntry, updateEntry, removeEntry } = useAppointments(selectedBaby?.$id);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<AppointmentEntry | null>(null);
+  const [viewingEntry, setViewingEntry] = useState<AppointmentEntry | null>(null);
 
   const now = new Date();
   const upcoming = entries.filter((e) => new Date(e.datetime) >= now);
@@ -62,6 +64,7 @@ export function AppointmentsPage() {
             entries={entries}
             onDelete={removeEntry}
             onEdit={(entry) => setEditingEntry(entry)}
+            onView={(entry) => setViewingEntry(entry)}
             onStatusChange={(id, status) => updateEntry(id, { status })}
             onAdd={() => setModalOpen(true)}
           />
@@ -86,6 +89,28 @@ export function AppointmentsPage() {
           />
         )}
       </Modal>
+      {viewingEntry && (
+        <EntryDetailModal
+          open={!!viewingEntry}
+          onClose={() => setViewingEntry(null)}
+          onEdit={() => { setViewingEntry(null); setEditingEntry(viewingEntry); }}
+          title={`${viewingEntry.hospitalName}`}
+          timestamp={formatDateTime(viewingEntry.datetime)}
+          badge={
+            <span className="text-xs font-semibold text-brand-mint bg-brand-light px-2 py-0.5 rounded-full">
+              {appointmentCountdown(viewingEntry.datetime)}
+            </span>
+          }
+          fields={[
+            { label: 'Hospital', value: viewingEntry.hospitalName },
+            { label: 'Department', value: viewingEntry.department },
+            { label: 'Consultant', value: `Dr. ${viewingEntry.consultantName}` },
+            { label: 'Status', value: viewingEntry.status ? (viewingEntry.status === 'attended' ? 'Attended' : 'Missed') : undefined },
+            { label: 'Notes', value: viewingEntry.notes || undefined },
+            { label: 'Date & Time', value: formatDateTime(viewingEntry.datetime) },
+          ]}
+        />
+      )}
     </AppShell>
   );
 }

@@ -3,12 +3,13 @@ import { AppointmentEntry } from '../../types';
 import { LogItem } from '../ui/LogItem';
 import { Badge } from '../ui/Badge';
 import { EmptyState } from '../ui/EmptyState';
-import { formatDateTime } from '../../lib/utils';
+import { formatDateTime, appointmentCountdown } from '../../lib/utils';
 
 interface AppointmentListProps {
   entries: AppointmentEntry[];
   onDelete: (id: string) => Promise<void>;
   onEdit?: (entry: AppointmentEntry) => void;
+  onView?: (entry: AppointmentEntry) => void;
   onStatusChange: (id: string, status: 'attended' | 'missed') => Promise<void>;
   onAdd?: () => void;
 }
@@ -48,7 +49,7 @@ function statusBadge(status: AppointmentEntry['status']) {
   return null;
 }
 
-export function AppointmentList({ entries, onDelete, onEdit, onStatusChange, onAdd }: AppointmentListProps) {
+export function AppointmentList({ entries, onDelete, onEdit, onView, onStatusChange, onAdd }: AppointmentListProps) {
   const now = new Date();
   const upcoming = entries
     .filter((e) => new Date(e.datetime) >= now)
@@ -77,19 +78,27 @@ export function AppointmentList({ entries, onDelete, onEdit, onStatusChange, onA
             Upcoming ({upcoming.length})
           </h2>
           <div className="flex flex-col gap-3">
-            {upcoming.map((entry) => (
-              <LogItem
-                key={entry.$id}
-                timestamp={formatDateTime(entry.datetime)}
-                title={`${entry.hospitalName} — ${entry.department}`}
-                subtitle={`Dr. ${entry.consultantName}${entry.notes ? ` · ${entry.notes}` : ''}`}
-                badge={<Badge colour="mint">Upcoming</Badge>}
-                onDelete={() => onDelete(entry.$id)}
-                onEdit={onEdit ? () => onEdit(entry) : undefined}
-                onClick={onEdit ? () => onEdit(entry) : undefined}
-                className="border-brand-mint/30 bg-brand-light/50"
-              />
-            ))}
+            {upcoming.map((entry) => {
+              const countdown = appointmentCountdown(entry.datetime);
+              const isToday = countdown === 'Today';
+              return (
+                <LogItem
+                  key={entry.$id}
+                  timestamp={formatDateTime(entry.datetime)}
+                  title={`${entry.hospitalName} — ${entry.department}`}
+                  subtitle={`Dr. ${entry.consultantName}${entry.notes ? ` · ${entry.notes}` : ''}`}
+                  badge={
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <Badge colour={isToday ? 'orange' : 'mint'}>{countdown}</Badge>
+                    </div>
+                  }
+                  onDelete={() => onDelete(entry.$id)}
+                  onEdit={onEdit ? () => onEdit(entry) : undefined}
+                  onClick={onView ? () => onView(entry) : undefined}
+                  className="border-brand-mint/30 bg-brand-light/50"
+                />
+              );
+            })}
           </div>
         </section>
       )}
@@ -99,35 +108,39 @@ export function AppointmentList({ entries, onDelete, onEdit, onStatusChange, onA
             Past ({past.length})
           </h2>
           <div className="flex flex-col gap-3">
-            {past.map((entry) => (
-              <div key={entry.$id}>
-                <LogItem
-                  timestamp={formatDateTime(entry.datetime)}
-                  title={`${entry.hospitalName} — ${entry.department}`}
-                  subtitle={`Dr. ${entry.consultantName}${entry.notes ? ` · ${entry.notes}` : ''}`}
-                  badge={
-                    entry.status
-                      ? statusBadge(entry.status)
-                      : <Badge colour="gray">Past</Badge>
-                  }
-                  onDelete={() => onDelete(entry.$id)}
-                  onEdit={onEdit ? () => onEdit(entry) : undefined}
-                onClick={onEdit ? () => onEdit(entry) : undefined}
-                  className={
-                    entry.status === 'attended'
-                      ? 'border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800'
-                      : entry.status === 'missed'
-                      ? 'border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800'
-                      : ''
-                  }
-                  extra={
-                    !entry.status
-                      ? <StatusPrompt entry={entry} onStatusChange={onStatusChange} />
-                      : undefined
-                  }
-                />
-              </div>
-            ))}
+            {past.map((entry) => {
+              const countdown = appointmentCountdown(entry.datetime);
+              return (
+                <div key={entry.$id}>
+                  <LogItem
+                    timestamp={formatDateTime(entry.datetime)}
+                    title={`${entry.hospitalName} — ${entry.department}`}
+                    subtitle={`Dr. ${entry.consultantName}${entry.notes ? ` · ${entry.notes}` : ''}`}
+                    badge={
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {entry.status ? statusBadge(entry.status) : <Badge colour="gray">Past</Badge>}
+                        <span className="text-xs text-gray-400">{countdown}</span>
+                      </div>
+                    }
+                    onDelete={() => onDelete(entry.$id)}
+                    onEdit={onEdit ? () => onEdit(entry) : undefined}
+                    onClick={onView ? () => onView(entry) : undefined}
+                    className={
+                      entry.status === 'attended'
+                        ? 'border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800'
+                        : entry.status === 'missed'
+                        ? 'border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800'
+                        : ''
+                    }
+                    extra={
+                      !entry.status
+                        ? <StatusPrompt entry={entry} onStatusChange={onStatusChange} />
+                        : undefined
+                    }
+                  />
+                </div>
+              );
+            })}
           </div>
         </section>
       )}

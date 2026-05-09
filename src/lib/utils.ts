@@ -110,6 +110,33 @@ export function toLocalDateInput(iso: string): string {
   return toLocalDateTimeInput(iso).slice(0, 10);
 }
 
+// I return a human-readable countdown for an appointment datetime:
+// "Today", "Tomorrow", "Yesterday", "In X days / weeks", "X days / weeks ago"
+export function appointmentCountdown(datetime: string): string {
+  const appt = new Date(datetime);
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const apptStart = new Date(appt.getFullYear(), appt.getMonth(), appt.getDate());
+  const diffDays = Math.round((apptStart.getTime() - todayStart.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Tomorrow';
+  if (diffDays === -1) return 'Yesterday';
+  if (diffDays > 0) {
+    if (diffDays < 7) return `In ${diffDays} days`;
+    if (diffDays < 14) return 'In 1 week';
+    if (diffDays < 30) return `In ${Math.floor(diffDays / 7)} weeks`;
+    if (diffDays < 60) return 'In 1 month';
+    return `In ${Math.floor(diffDays / 30)} months`;
+  }
+  const absDays = Math.abs(diffDays);
+  if (absDays < 7) return `${absDays} days ago`;
+  if (absDays < 14) return '1 week ago';
+  if (absDays < 30) return `${Math.floor(absDays / 7)} weeks ago`;
+  if (absDays < 60) return '1 month ago';
+  return `${Math.floor(absDays / 30)} months ago`;
+}
+
 // I return the month count if today is exactly N months after the DOB (same calendar day), else null.
 // Used to trigger the monthly milestone celebration on the home screen.
 export function isMonthBirthday(dateOfBirth: string): number | null {
