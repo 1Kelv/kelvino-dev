@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
-import { Heart, Droplets, Baby, Pill, Calendar, Plus, LogOut, ChevronRight, Activity, Sun, Moon, MessageSquarePlus, Pencil, UserCircle, Share2, Copy, Check, FileDown } from 'lucide-react';
+import { Heart, Droplets, Baby, Pill, Calendar, Plus, LogOut, ChevronRight, ChevronDown, Activity, Sun, Moon, MessageSquarePlus, Pencil, UserCircle, Share2, Copy, Check, FileDown, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AppShell } from '../components/layout/AppShell';
 import { Modal } from '../components/ui/Modal';
@@ -33,7 +33,7 @@ const itemVariants = {
 };
 
 export function HomePage() {
-  const { selectedBaby, babies, addBaby, updateBaby, generateShareCode, joinWithCode, loading: babyContextLoading } = useBabyContext();
+  const { selectedBaby, babies, addBaby, updateBaby, removeBaby, generateShareCode, joinWithCode, setSelectedBaby, loading: babyContextLoading } = useBabyContext();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -75,6 +75,14 @@ export function HomePage() {
 
   // Export modal
   const [exportOpen, setExportOpen] = useState(false);
+
+  // Baby switcher
+  const [switcherOpen, setSwitcherOpen] = useState(false);
+
+  // Delete baby
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const openAddBaby = (tab: 'new' | 'join' = 'new') => {
     setAddBabyTab(tab);
@@ -175,6 +183,21 @@ export function HomePage() {
       setTimeout(() => setCodeCopied(false), 2000);
     } catch {
       // clipboard may be unavailable (old browser)
+    }
+  };
+
+  const handleDeleteBaby = async () => {
+    if (!selectedBaby) return;
+    setDeleteLoading(true);
+    setDeleteError(null);
+    try {
+      await removeBaby(selectedBaby.$id);
+      setDeleteConfirmOpen(false);
+      setEditBabyOpen(false);
+    } catch {
+      setDeleteError('Failed to delete profile. Please try again.');
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -293,6 +316,16 @@ export function HomePage() {
                 {babyAge(selectedBaby.dateOfBirth)}{selectedBaby.diagnosis ? ` · ${selectedBaby.diagnosis}` : ''}
               </p>
             </div>
+            {babies.length > 1 && (
+              <motion.button
+                onClick={() => setSwitcherOpen(true)}
+                whileTap={{ scale: 0.9 }}
+                className="p-1.5 rounded-lg bg-white/20 text-white flex-shrink-0 flex items-center gap-1"
+                aria-label="Switch baby profile"
+              >
+                <ChevronDown size={14} />
+              </motion.button>
+            )}
             {isOwner && (
               <motion.button
                 onClick={() => { setCodeCopied(false); setShareBabyOpen(true); }}
@@ -598,6 +631,14 @@ export function HomePage() {
             <Button variant="secondary" type="button" onClick={() => setEditBabyOpen(false)} className="flex-1">Cancel</Button>
             <Button type="submit" loading={editLoading} className="flex-1">Save Changes</Button>
           </div>
+          <button
+            type="button"
+            onClick={() => setDeleteConfirmOpen(true)}
+            className="flex items-center justify-center gap-2 w-full py-2 text-sm text-red-500 hover:text-red-600 font-medium mt-1"
+          >
+            <Trash2 size={14} />
+            Delete this profile
+          </button>
         </form>
       </Modal>
 
@@ -722,6 +763,46 @@ export function HomePage() {
       )}
 
       <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} />
+
+      {/* Baby profile switcher */}
+      <Modal open={switcherOpen} onClose={() => setSwitcherOpen(false)} title="Switch Profile">
+        <div className="flex flex-col gap-2">
+          {babies.map((baby) => (
+            <button
+              key={baby.$id}
+              onClick={() => { setSelectedBaby(baby); setSwitcherOpen(false); }}
+              className={`flex items-center gap-3 px-4 py-3 rounded-2xl border transition-colors text-left ${
+                baby.$id === selectedBaby?.$id
+                  ? 'bg-brand-light border-brand-mint'
+                  : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-brand-mint'
+              }`}
+            >
+              <div className="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center flex-shrink-0">
+                <Heart size={16} className="text-brand-mint" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-gray-900 dark:text-white text-sm">{baby.name}</p>
+                <p className="text-xs text-gray-400">{babyAge(baby.dateOfBirth)}{baby.diagnosis ? ` · ${baby.diagnosis}` : ''}</p>
+              </div>
+              {baby.$id === selectedBaby?.$id && <Check size={16} className="text-brand-mint flex-shrink-0" />}
+            </button>
+          ))}
+        </div>
+      </Modal>
+
+      {/* Delete baby confirmation */}
+      <Modal open={deleteConfirmOpen} onClose={() => { setDeleteConfirmOpen(false); setDeleteError(null); }} title="Delete Profile">
+        <div className="flex flex-col gap-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Are you sure you want to delete <span className="font-semibold text-gray-900 dark:text-white">{selectedBaby?.name}</span>'s profile? This cannot be undone.
+          </p>
+          {deleteError && <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/30 rounded-xl px-4 py-3">{deleteError}</p>}
+          <div className="flex gap-3">
+            <Button variant="secondary" type="button" onClick={() => { setDeleteConfirmOpen(false); setDeleteError(null); }} className="flex-1">Cancel</Button>
+            <Button type="button" loading={deleteLoading} onClick={handleDeleteBaby} className="flex-1 !bg-red-500 hover:!bg-red-600">Delete</Button>
+          </div>
+        </div>
+      </Modal>
     </AppShell>
   );
 }
