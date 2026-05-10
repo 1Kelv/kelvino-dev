@@ -21,6 +21,7 @@ import { babyAge, isToday, formatDateTime, formatTime, isMonthBirthday } from '.
 import { localDateNow } from '../lib/utils';
 import { MilestoneCelebration } from '../components/ui/MilestoneCelebration';
 import { ExportModal } from '../components/reports/ExportModal';
+import { NameMeaningCard } from '../components/ui/NameMeaningCard';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -386,6 +387,10 @@ export function HomePage() {
 
         {selectedBaby && (
           <>
+            <motion.div variants={itemVariants}>
+              <NameMeaningCard name={selectedBaby.name} />
+            </motion.div>
+
             <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">
               <StatCard
                 icon={<Droplets size={18} />}
