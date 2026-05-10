@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Info, ChevronDown, ChevronUp } from 'lucide-react';
 import {
   ComposedChart,
   Area,
@@ -98,10 +99,21 @@ export function GrowthChart({ entries, useKg, dob, gender }: GrowthChartProps) {
   const hasLength = data.some((d) => d.length !== null);
   const gridColor = isDark ? '#374151' : '#e5e7eb';
   const gradientId = `whoGrad-${isDark ? 'dark' : 'light'}`;
+  const [showKey, setShowKey] = useState(false);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700">
-      <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">Growth over time</p>
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">Growth over time</p>
+        <button
+          onClick={() => setShowKey((v) => !v)}
+          className="flex items-center gap-1 text-xs text-brand-mint font-medium py-1 px-2 rounded-lg hover:bg-brand-light transition-colors"
+        >
+          <Info size={12} />
+          {showKey ? 'Hide key' : 'How to read'}
+          {showKey ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
+        </button>
+      </div>
 
       {/* Legend */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mb-4">
@@ -216,6 +228,74 @@ export function GrowthChart({ entries, useKg, dob, gender }: GrowthChartProps) {
           />
         </ComposedChart>
       </ResponsiveContainer>
+
+      {showKey && (
+        <div className="mt-4 border-t border-gray-100 dark:border-gray-700 pt-4 flex flex-col gap-3">
+          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Chart key</p>
+
+          {/* Axes */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl px-3 py-2.5">
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-0.5">X axis</p>
+              <p className="text-xs text-gray-700 dark:text-gray-200">Age in months from birth</p>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl px-3 py-2.5">
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-0.5">Y axis</p>
+              <p className="text-xs text-gray-700 dark:text-gray-200">Weight in {useKg ? 'kilograms (kg)' : 'pounds (lbs)'}</p>
+            </div>
+          </div>
+
+          {/* Lines */}
+          <div className="flex flex-col gap-2">
+            {/* Baby weight */}
+            <div className="flex items-start gap-3">
+              <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
+                <div className="w-5 h-[3px] rounded-full bg-[#4ECDC4]" />
+                <div className="w-2.5 h-2.5 rounded-full bg-[#4ECDC4] border-2 border-white dark:border-gray-800" />
+              </div>
+              <p className="text-xs text-gray-600 dark:text-gray-300">
+                <span className="font-semibold">Your baby's weight</span> — each dot is a recorded measurement. The line shows how weight is trending over time.
+              </p>
+            </div>
+
+            {hasLength && (
+              <div className="flex items-start gap-3">
+                <div className="flex items-center gap-1 flex-shrink-0 mt-0.5">
+                  <div className="w-5 h-[2px] rounded-full bg-[#A78BFA]" style={{ backgroundImage: 'repeating-linear-gradient(90deg,#A78BFA 0,#A78BFA 4px,transparent 4px,transparent 7px)' }} />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#A78BFA] border-2 border-white dark:border-gray-800" />
+                </div>
+                <p className="text-xs text-gray-600 dark:text-gray-300">
+                  <span className="font-semibold">Length/height</span> — recorded length in cm, plotted alongside weight.
+                </p>
+              </div>
+            )}
+
+            {showWHO && (
+              <>
+                <div className="flex items-start gap-3">
+                  <div className="w-5 h-4 rounded-sm bg-blue-100 dark:bg-blue-900/60 border border-blue-300 dark:border-blue-700 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
+                    <span className="font-semibold">WHO healthy range (P3–P97)</span> — the shaded blue band shows where 94% of healthy {genderLabel} fall at each age, based on WHO 2006 growth standards.
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-5 h-[2px] rounded-full bg-blue-300 dark:bg-blue-400 flex-shrink-0 mt-1.5" />
+                  <p className="text-xs text-gray-600 dark:text-gray-300">
+                    <span className="font-semibold">Median line (P50)</span> — half of healthy {genderLabel} weigh more than this line, and half weigh less at each age.
+                  </p>
+                </div>
+
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl px-3 py-2.5 mt-1">
+                  <p className="text-xs text-blue-700 dark:text-blue-300">
+                    A baby tracking below P3 or above P97 is not automatically cause for concern — always discuss growth trends with your healthcare team.
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
