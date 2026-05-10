@@ -4,7 +4,8 @@ import { NappyEntry } from '../../types';
 import { LogItem } from '../ui/LogItem';
 import { Badge } from '../ui/Badge';
 import { EmptyState } from '../ui/EmptyState';
-import { formatDateTime } from '../../lib/utils';
+import { formatDateTime, getAuthorLabel } from '../../lib/utils';
+import { useAuth } from '../../lib/AuthContext';
 
 interface NappyListProps {
   entries: NappyEntry[];
@@ -24,6 +25,7 @@ const kindConfig = (kind: NappyEntry['kind']) => {
 };
 
 export function NappyList({ entries, onDelete, onEdit, onView, onAdd }: NappyListProps) {
+  const { user } = useAuth();
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -47,6 +49,7 @@ export function NappyList({ entries, onDelete, onEdit, onView, onAdd }: NappyLis
             title={`${config.emoji} ${config.label}`}
             subtitle={entry.notes || undefined}
             badge={<Badge colour={config.colour}>{config.label}</Badge>}
+            addedBy={getAuthorLabel(entry.userId, user)}
             onDelete={() => onDelete(entry.$id)}
             onEdit={onEdit ? () => onEdit(entry) : undefined}
             onClick={onView ? () => onView(entry) : undefined}

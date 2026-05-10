@@ -4,7 +4,8 @@ import { SleepEntry } from '../../types';
 import { LogItem } from '../ui/LogItem';
 import { Badge } from '../ui/Badge';
 import { EmptyState } from '../ui/EmptyState';
-import { formatDate, formatDuration } from '../../lib/utils';
+import { formatDate, formatDuration, getAuthorLabel } from '../../lib/utils';
+import { useAuth } from '../../lib/AuthContext';
 
 interface SleepListProps {
   entries: SleepEntry[];
@@ -24,6 +25,7 @@ const moodColour = (rating: SleepEntry['moodRating']) => {
 };
 
 export function SleepList({ entries, onDelete, onEdit, onView, onAdd }: SleepListProps) {
+  const { user } = useAuth();
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -45,6 +47,7 @@ export function SleepList({ entries, onDelete, onEdit, onView, onAdd }: SleepLis
           title={`${formatDuration(entry.durationMins)} ${moodEmoji(entry.moodRating)}`}
           subtitle={`Woke ${entry.wakeCount} time${entry.wakeCount !== 1 ? 's' : ''}${entry.notes ? ` · ${entry.notes}` : ''}`}
           badge={<Badge colour={moodColour(entry.moodRating)}>{moodEmoji(entry.moodRating)} Mood {entry.moodRating}/5</Badge>}
+          addedBy={getAuthorLabel(entry.userId, user)}
           onDelete={() => onDelete(entry.$id)}
           onEdit={onEdit ? () => onEdit(entry) : undefined}
           onClick={onView ? () => onView(entry) : undefined}

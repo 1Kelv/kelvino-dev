@@ -4,7 +4,8 @@ import { MedicationEntry } from '../../types';
 import { LogItem } from '../ui/LogItem';
 import { Badge } from '../ui/Badge';
 import { EmptyState } from '../ui/EmptyState';
-import { formatDateTime } from '../../lib/utils';
+import { formatDateTime, getAuthorLabel } from '../../lib/utils';
+import { useAuth } from '../../lib/AuthContext';
 
 interface MedicationListProps {
   entries: MedicationEntry[];
@@ -25,6 +26,7 @@ const routeColour = (route: MedicationEntry['route']) => {
 };
 
 export function MedicationList({ entries, onDelete, onEdit, onView, onAdd }: MedicationListProps) {
+  const { user } = useAuth();
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -46,6 +48,7 @@ export function MedicationList({ entries, onDelete, onEdit, onView, onAdd }: Med
           title={`${entry.medicationName} — ${entry.dose} ${entry.unit}`}
           subtitle={`${entry.route.toUpperCase()} · by ${entry.administeredBy}${entry.notes ? ` · ${entry.notes}` : ''}`}
           badge={<Badge colour={routeColour(entry.route)}>{entry.route}</Badge>}
+          addedBy={getAuthorLabel(entry.userId, user)}
           onDelete={() => onDelete(entry.$id)}
           onEdit={onEdit ? () => onEdit(entry) : undefined}
           onClick={onView ? () => onView(entry) : undefined}

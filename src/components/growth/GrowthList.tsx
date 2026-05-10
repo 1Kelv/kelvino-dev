@@ -3,7 +3,8 @@ import React from 'react';
 import { GrowthEntry } from '../../types';
 import { LogItem } from '../ui/LogItem';
 import { EmptyState } from '../ui/EmptyState';
-import { formatDate } from '../../lib/utils';
+import { formatDate, getAuthorLabel } from '../../lib/utils';
+import { useAuth } from '../../lib/AuthContext';
 
 interface GrowthListProps {
   entries: GrowthEntry[];
@@ -15,6 +16,7 @@ interface GrowthListProps {
 }
 
 export function GrowthList({ entries, useKg, onDelete, onEdit, onView, onAdd }: GrowthListProps) {
+  const { user } = useAuth();
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -47,6 +49,7 @@ export function GrowthList({ entries, useKg, onDelete, onEdit, onView, onAdd }: 
             timestamp={formatDate(entry.date)}
             title={weight}
             subtitle={details || undefined}
+            addedBy={getAuthorLabel(entry.userId, user)}
             onDelete={() => onDelete(entry.$id)}
             onEdit={onEdit ? () => onEdit(entry) : undefined}
             onClick={onView ? () => onView(entry) : undefined}

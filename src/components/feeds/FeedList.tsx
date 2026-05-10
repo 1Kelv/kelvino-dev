@@ -4,7 +4,8 @@ import { FeedEntry } from '../../types';
 import { LogItem } from '../ui/LogItem';
 import { Badge } from '../ui/Badge';
 import { EmptyState } from '../ui/EmptyState';
-import { formatDateTime, formatDuration } from '../../lib/utils';
+import { formatDateTime, formatDuration, getAuthorLabel } from '../../lib/utils';
+import { useAuth } from '../../lib/AuthContext';
 
 interface FeedListProps {
   entries: FeedEntry[];
@@ -27,6 +28,7 @@ const typeLabel = (type: FeedEntry['type']) => {
 };
 
 export function FeedList({ entries, onDelete, onEdit, onView, onAdd }: FeedListProps) {
+  const { user } = useAuth();
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -56,6 +58,7 @@ export function FeedList({ entries, onDelete, onEdit, onView, onAdd }: FeedListP
             entry.notes || null,
           ].filter(Boolean).join(' · ') || undefined}
           badge={<Badge colour={typeBadgeColour(entry.type)}>{typeLabel(entry.type)}</Badge>}
+          addedBy={getAuthorLabel(entry.userId, user)}
           onEdit={onEdit ? () => onEdit(entry) : undefined}
           onClick={onView ? () => onView(entry) : undefined}
           onDelete={() => onDelete(entry.$id)}

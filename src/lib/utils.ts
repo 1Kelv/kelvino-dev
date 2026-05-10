@@ -143,6 +143,14 @@ export function appointmentCountdown(datetime: string): string {
   return `${Math.floor(absDays / 30)} months ago`;
 }
 
+// I return a label for who added a log entry ("Mum", "Dad", "Guardian", "Caregiver", first name, or "Co-parent")
+export function getAuthorLabel(entryUserId: string, currentUser: { $id: string; name?: string; prefs?: { relationship?: string } } | null): string {
+  if (!currentUser || entryUserId !== currentUser.$id) return 'Co-parent';
+  const rel = currentUser.prefs?.relationship;
+  if (rel) return rel; // "Mum", "Dad", "Guardian", "Caregiver"
+  return currentUser.name?.split(' ')[0] || 'You';
+}
+
 // I return the month count if today is exactly N months after the DOB (same calendar day), else null.
 // Used to trigger the monthly milestone celebration on the home screen.
 export function isMonthBirthday(dateOfBirth: string): number | null {

@@ -9,13 +9,14 @@ interface LogItemProps {
   subtitle?: string;
   badge?: React.ReactNode;
   extra?: React.ReactNode;
+  addedBy?: string;
   onDelete: () => Promise<void>;
   onEdit?: () => void;
   onClick?: () => void;
   className?: string;
 }
 
-export function LogItem({ timestamp, title, subtitle, badge, extra, onDelete, onEdit, onClick, className }: LogItemProps) {
+export function LogItem({ timestamp, title, subtitle, badge, extra, addedBy, onDelete, onEdit, onClick, className }: LogItemProps) {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,6 +55,7 @@ export function LogItem({ timestamp, title, subtitle, badge, extra, onDelete, on
       >
         <div className="flex items-center gap-2 flex-wrap">
           <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">{timestamp}</p>
+          {addedBy && <p className="text-xs text-gray-300 dark:text-gray-600">· by {addedBy}</p>}
           {badge}
         </div>
         <p className="font-semibold text-gray-900 dark:text-white mt-0.5 truncate">{title}</p>

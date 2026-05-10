@@ -4,7 +4,8 @@ import { SymptomEntry } from '../../types';
 import { LogItem } from '../ui/LogItem';
 import { Badge } from '../ui/Badge';
 import { EmptyState } from '../ui/EmptyState';
-import { formatDateTime } from '../../lib/utils';
+import { formatDateTime, getAuthorLabel } from '../../lib/utils';
+import { useAuth } from '../../lib/AuthContext';
 
 interface SymptomListProps {
   entries: SymptomEntry[];
@@ -25,6 +26,7 @@ const skinColourBadge = (c: SymptomEntry['skinColour']) => {
 };
 
 export function SymptomList({ entries, onDelete, onEdit, onView, onAdd }: SymptomListProps) {
+  const { user } = useAuth();
   if (entries.length === 0) {
     return (
       <EmptyState
@@ -58,6 +60,7 @@ export function SymptomList({ entries, onDelete, onEdit, onView, onAdd }: Sympto
             title={skinBadge.label}
             subtitle={details}
             badge={<Badge colour={skinBadge.colour}>{skinBadge.label}</Badge>}
+            addedBy={getAuthorLabel(entry.userId, user)}
             onDelete={() => onDelete(entry.$id)}
             onEdit={onEdit ? () => onEdit(entry) : undefined}
             onClick={onView ? () => onView(entry) : undefined}

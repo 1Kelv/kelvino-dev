@@ -3,7 +3,8 @@ import { AppointmentEntry } from '../../types';
 import { LogItem } from '../ui/LogItem';
 import { Badge } from '../ui/Badge';
 import { EmptyState } from '../ui/EmptyState';
-import { formatDateTime, appointmentCountdown } from '../../lib/utils';
+import { formatDateTime, appointmentCountdown, getAuthorLabel } from '../../lib/utils';
+import { useAuth } from '../../lib/AuthContext';
 
 interface AppointmentListProps {
   entries: AppointmentEntry[];
@@ -50,6 +51,7 @@ function statusBadge(status: AppointmentEntry['status']) {
 }
 
 export function AppointmentList({ entries, onDelete, onEdit, onView, onStatusChange, onAdd }: AppointmentListProps) {
+  const { user } = useAuth();
   const now = new Date();
   const upcoming = entries
     .filter((e) => new Date(e.datetime) >= now)
@@ -92,6 +94,7 @@ export function AppointmentList({ entries, onDelete, onEdit, onView, onStatusCha
                       <Badge colour={isToday ? 'orange' : 'mint'}>{countdown}</Badge>
                     </div>
                   }
+                  addedBy={getAuthorLabel(entry.userId, user)}
                   onDelete={() => onDelete(entry.$id)}
                   onEdit={onEdit ? () => onEdit(entry) : undefined}
                   onClick={onView ? () => onView(entry) : undefined}
@@ -122,6 +125,7 @@ export function AppointmentList({ entries, onDelete, onEdit, onView, onStatusCha
                         <span className="text-xs text-gray-400">{countdown}</span>
                       </div>
                     }
+                    addedBy={getAuthorLabel(entry.userId, user)}
                     onDelete={() => onDelete(entry.$id)}
                     onEdit={onEdit ? () => onEdit(entry) : undefined}
                     onClick={onView ? () => onView(entry) : undefined}
