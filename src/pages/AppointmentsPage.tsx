@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar } from 'lucide-react';
+import { Calendar, Navigation } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
 import { PageHeader } from '../components/layout/PageHeader';
 import { FAB } from '../components/layout/FAB';
@@ -105,10 +105,22 @@ export function AppointmentsPage() {
             { label: 'Hospital', value: viewingEntry.hospitalName },
             { label: 'Department', value: viewingEntry.department },
             { label: 'Consultant', value: `Dr. ${viewingEntry.consultantName}` },
+            { label: 'Location', value: viewingEntry.location || undefined },
             { label: 'Status', value: viewingEntry.status ? (viewingEntry.status === 'attended' ? 'Attended' : 'Missed') : undefined },
             { label: 'Notes', value: viewingEntry.notes || undefined },
             { label: 'Date & Time', value: formatDateTime(viewingEntry.datetime) },
           ]}
+          actions={viewingEntry.location ? (
+            <a
+              href={`https://maps.google.com/?q=${encodeURIComponent(viewingEntry.location)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3 rounded-2xl bg-brand-mint text-white font-semibold text-sm flex items-center justify-center gap-2"
+            >
+              <Navigation size={16} />
+              Navigate to appointment
+            </a>
+          ) : undefined}
         />
       )}
     </AppShell>

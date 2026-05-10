@@ -15,9 +15,10 @@ interface EntryDetailModalProps {
   timestamp: string;
   badge?: React.ReactNode;
   fields: DetailField[];
+  actions?: React.ReactNode;
 }
 
-export function EntryDetailModal({ open, onClose, onEdit, title, timestamp, badge, fields }: EntryDetailModalProps) {
+export function EntryDetailModal({ open, onClose, onEdit, title, timestamp, badge, fields, actions }: EntryDetailModalProps) {
   if (!open) return null;
 
   return (
@@ -76,6 +77,8 @@ export function EntryDetailModal({ open, onClose, onEdit, title, timestamp, badg
                   </div>
                 ))}
               </div>
+
+              {actions}
 
               <button
                 onClick={onClose}

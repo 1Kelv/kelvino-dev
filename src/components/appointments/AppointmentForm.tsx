@@ -19,6 +19,7 @@ export function AppointmentForm({ babyId, userId, onSubmit, onUpdate, onClose, i
   const [hospitalName, setHospitalName] = useState(initialValues?.hospitalName ?? '');
   const [department, setDepartment] = useState(initialValues?.department ?? '');
   const [consultantName, setConsultantName] = useState(initialValues?.consultantName ?? '');
+  const [location, setLocation] = useState(initialValues?.location ?? '');
   const [notes, setNotes] = useState(initialValues?.notes ?? '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +33,7 @@ export function AppointmentForm({ babyId, userId, onSubmit, onUpdate, onClose, i
     setLoading(true);
     setError(null);
     try {
-      const data = { babyId, userId, datetime: new Date(datetime).toISOString(), hospitalName, department, consultantName, notes: notes || undefined };
+      const data = { babyId, userId, datetime: new Date(datetime).toISOString(), hospitalName, department, consultantName, location: location.trim() || undefined, notes: notes || undefined };
       if (isEdit && onUpdate) { await onUpdate(data); } else { await onSubmit(data); }
       onClose();
     } catch {
@@ -48,6 +49,7 @@ export function AppointmentForm({ babyId, userId, onSubmit, onUpdate, onClose, i
       <Input label="Hospital / Clinic name" type="text" value={hospitalName} onChange={(e) => setHospitalName(e.target.value)} placeholder="e.g. Great Ormond Street Hospital" required />
       <Input label="Department" type="text" value={department} onChange={(e) => setDepartment(e.target.value)} placeholder="e.g. Paediatric Cardiology" required />
       <Input label="Consultant name" type="text" value={consultantName} onChange={(e) => setConsultantName(e.target.value)} placeholder="e.g. Dr. Smith" required />
+      <Input label="Address / Location (optional)" type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. Great Ormond St, London WC1N 3JH" />
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Notes (optional)</label>
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any questions to ask, prep notes..." rows={4}

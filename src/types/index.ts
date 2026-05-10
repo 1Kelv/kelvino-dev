@@ -94,6 +94,7 @@ export interface AppointmentEntry {
   hospitalName: string;
   department: string;
   consultantName: string;
+  location?: string;
   notes?: string;
   status?: 'attended' | 'missed';
 }
