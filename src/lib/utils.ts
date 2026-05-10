@@ -110,8 +110,8 @@ export function toLocalDateInput(iso: string): string {
   return toLocalDateTimeInput(iso).slice(0, 10);
 }
 
-// I return a human-readable countdown for an appointment datetime:
-// "Today", "Tomorrow", "Yesterday", "In X days / weeks", "X days / weeks ago"
+// I return a human-readable countdown for an appointment datetime.
+// On the day itself it shows hours/mins remaining rather than just "Today".
 export function appointmentCountdown(datetime: string): string {
   const appt = new Date(datetime);
   const now = new Date();
@@ -119,7 +119,13 @@ export function appointmentCountdown(datetime: string): string {
   const apptStart = new Date(appt.getFullYear(), appt.getMonth(), appt.getDate());
   const diffDays = Math.round((apptStart.getTime() - todayStart.getTime()) / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) return 'Today';
+  if (diffDays === 0) {
+    const diffMins = Math.round((appt.getTime() - now.getTime()) / 60000);
+    if (diffMins <= 0) return 'Earlier today';
+    if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? '' : 's'} to go`;
+    const hours = Math.floor(diffMins / 60);
+    return `${hours} hour${hours === 1 ? '' : 's'} to go`;
+  }
   if (diffDays === 1) return 'Tomorrow';
   if (diffDays === -1) return 'Yesterday';
   if (diffDays > 0) {

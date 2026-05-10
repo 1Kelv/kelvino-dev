@@ -49,7 +49,7 @@ export function AppointmentsPage() {
           <div className="bg-brand-light rounded-2xl px-4 py-3">
             <p className="text-xs font-medium text-brand-dark uppercase tracking-wide mb-1">Next appointment</p>
             <p className="font-semibold text-gray-900">{nextAppt.hospitalName}</p>
-            <p className="text-sm text-gray-600">{nextAppt.department} · Dr. {nextAppt.consultantName}</p>
+            <p className="text-sm text-gray-600">{nextAppt.department} · {nextAppt.consultantName}</p>
           </div>
         )}
 
@@ -104,7 +104,7 @@ export function AppointmentsPage() {
           fields={[
             { label: 'Hospital', value: viewingEntry.hospitalName },
             { label: 'Department', value: viewingEntry.department },
-            { label: 'Consultant', value: `Dr. ${viewingEntry.consultantName}` },
+            { label: 'Consultant', value: viewingEntry.consultantName },
             { label: 'Location', value: viewingEntry.location || undefined },
             { label: 'Status', value: viewingEntry.status ? (viewingEntry.status === 'attended' ? 'Attended' : 'Missed') : undefined },
             { label: 'Notes', value: viewingEntry.notes || undefined },

@@ -86,7 +86,7 @@ export function AppointmentList({ entries, onDelete, onEdit, onView, onStatusCha
                   key={entry.$id}
                   timestamp={formatDateTime(entry.datetime)}
                   title={`${entry.hospitalName} — ${entry.department}`}
-                  subtitle={`Dr. ${entry.consultantName}${entry.notes ? ` · ${entry.notes}` : ''}`}
+                  subtitle={`${entry.consultantName}${entry.notes ? ` · ${entry.notes}` : ''}`}
                   badge={
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <Badge colour={isToday ? 'orange' : 'mint'}>{countdown}</Badge>
@@ -115,7 +115,7 @@ export function AppointmentList({ entries, onDelete, onEdit, onView, onStatusCha
                   <LogItem
                     timestamp={formatDateTime(entry.datetime)}
                     title={`${entry.hospitalName} — ${entry.department}`}
-                    subtitle={`Dr. ${entry.consultantName}${entry.notes ? ` · ${entry.notes}` : ''}`}
+                    subtitle={`${entry.consultantName}${entry.notes ? ` · ${entry.notes}` : ''}`}
                     badge={
                       <div className="flex items-center gap-1.5 flex-wrap">
                         {entry.status ? statusBadge(entry.status) : <Badge colour="gray">Past</Badge>}
