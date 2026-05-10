@@ -73,7 +73,7 @@ export function GrowthPage() {
           <StatCard icon={<TrendingUp size={18} />} label="Total gain" value={totalGain || '—'} colour="green" trendUp={true} />
         </div>
 
-        {entries.length > 1 && <GrowthChart entries={entries} useKg={useKg} />}
+        {entries.length > 1 && <GrowthChart entries={entries} useKg={useKg} dob={selectedBaby.dateOfBirth} gender={selectedBaby.gender} />}
 
         <DateNavigator date={selectedDate} onChange={setSelectedDate} />
 

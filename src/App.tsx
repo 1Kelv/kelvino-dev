@@ -19,6 +19,7 @@ import { RegisterPage } from './pages/RegisterPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { VerifyEmailPage } from './pages/VerifyEmailPage';
+import { OnboardingPage } from './pages/OnboardingPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -54,6 +55,7 @@ export default function App() {
       <Route path="/forgot-password" element={<PublicOnlyRoute><ForgotPasswordPage /></PublicOnlyRoute>} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/verify" element={<VerifyEmailPage />} />
+      <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
       <Route path="/app" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
       <Route path="/feeds" element={<ProtectedRoute><FeedsPage /></ProtectedRoute>} />
       <Route path="/nappies" element={<ProtectedRoute><NappiesPage /></ProtectedRoute>} />

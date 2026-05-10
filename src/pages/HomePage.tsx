@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { Heart, Droplets, Baby, Pill, Calendar, Plus, LogOut, ChevronRight, Activity, Sun, Moon, MessageSquarePlus, Pencil, UserCircle, Share2, Copy, Check, FileDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AppShell } from '../components/layout/AppShell';
@@ -33,7 +33,7 @@ const itemVariants = {
 };
 
 export function HomePage() {
-  const { selectedBaby, babies, addBaby, updateBaby, generateShareCode, joinWithCode } = useBabyContext();
+  const { selectedBaby, babies, addBaby, updateBaby, generateShareCode, joinWithCode, loading: babyContextLoading } = useBabyContext();
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -229,6 +229,10 @@ export function HomePage() {
   const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
   const isOwner = selectedBaby?.userId === user?.$id;
+
+  if (!babyContextLoading && babies.length === 0 && !localStorage.getItem('mylestone_onboarded')) {
+    return <Navigate to="/onboarding" replace />;
+  }
 
   return (
     <AppShell>
