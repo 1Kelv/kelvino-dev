@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Droplets, Baby, Pill, Calendar, Plus, LogOut, ChevronRight, Activity, Sun, Moon, MessageSquarePlus, Pencil, UserCircle, Share2, Copy, Check } from 'lucide-react';
+import { Heart, Droplets, Baby, Pill, Calendar, Plus, LogOut, ChevronRight, Activity, Sun, Moon, MessageSquarePlus, Pencil, UserCircle, Share2, Copy, Check, FileDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AppShell } from '../components/layout/AppShell';
 import { Modal } from '../components/ui/Modal';
@@ -20,6 +20,7 @@ import { useMedications } from '../hooks/useMedications';
 import { babyAge, isToday, formatDateTime, formatTime, isMonthBirthday } from '../lib/utils';
 import { localDateNow } from '../lib/utils';
 import { MilestoneCelebration } from '../components/ui/MilestoneCelebration';
+import { ExportModal } from '../components/reports/ExportModal';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -71,6 +72,9 @@ export function HomePage() {
   const [shareBabyOpen, setShareBabyOpen] = useState(false);
   const [shareLoading, setShareLoading] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
+
+  // Export modal
+  const [exportOpen, setExportOpen] = useState(false);
 
   const openAddBaby = (tab: 'new' | 'join' = 'new') => {
     setAddBabyTab(tab);
@@ -430,6 +434,24 @@ export function HomePage() {
               </div>
             </motion.div>
 
+            <motion.div variants={itemVariants}>
+              <button
+                onClick={() => setExportOpen(true)}
+                className="w-full flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-brand-light flex items-center justify-center">
+                    <FileDown size={17} className="text-brand-dark" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">Export health report</p>
+                    <p className="text-xs text-gray-400">PDF for your care team</p>
+                  </div>
+                </div>
+                <ChevronRight size={16} className="text-gray-400" />
+              </button>
+            </motion.div>
+
             {recentActivity.length > 0 && (
               <motion.div variants={itemVariants}>
                 <div className="flex items-center justify-between mb-3">
@@ -694,6 +716,8 @@ export function HomePage() {
           onDismiss={dismissCelebration}
         />
       )}
+
+      <ExportModal open={exportOpen} onClose={() => setExportOpen(false)} />
     </AppShell>
   );
 }
