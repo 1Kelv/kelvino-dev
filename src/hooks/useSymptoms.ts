@@ -43,7 +43,8 @@ export function useSymptoms(babyId: string | undefined): UseSymptomsReturn {
     try {
       const created = await symptomsDb.create(data);
       setEntries((prev) => prev.map((e) => (e.$id === tempId ? created : e)));
-    } catch {
+    } catch (err) {
+      console.error('[Mylestone] Symptom create failed:', err);
       setEntries((prev) => prev.filter((e) => e.$id !== tempId));
       throw new Error('Failed to save symptom entry.');
     }
