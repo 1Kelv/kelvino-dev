@@ -18,7 +18,8 @@ interface AppointmentListProps {
 function StatusPrompt({ entry, onStatusChange }: { entry: AppointmentEntry; onStatusChange: (id: string, status: 'attended' | 'missed') => Promise<void> }) {
   const [saving, setSaving] = useState(false);
 
-  const handle = async (status: 'attended' | 'missed') => {
+  const handle = async (e: React.MouseEvent, status: 'attended' | 'missed') => {
+    e.stopPropagation();
     setSaving(true);
     try { await onStatusChange(entry.$id, status); } finally { setSaving(false); }
   };
@@ -27,14 +28,14 @@ function StatusPrompt({ entry, onStatusChange }: { entry: AppointmentEntry; onSt
     <div className="mt-2 flex items-center gap-2">
       <p className="text-xs text-gray-500 dark:text-gray-400 mr-1">Did you attend?</p>
       <button
-        onClick={() => handle('attended')}
+        onClick={(e) => handle(e, 'attended')}
         disabled={saving}
         className="px-3 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-700 hover:bg-green-200 transition-colors disabled:opacity-50"
       >
         Yes
       </button>
       <button
-        onClick={() => handle('missed')}
+        onClick={(e) => handle(e, 'missed')}
         disabled={saving}
         className="px-3 py-1 rounded-lg text-xs font-semibold bg-red-100 text-red-700 hover:bg-red-200 transition-colors disabled:opacity-50"
       >
