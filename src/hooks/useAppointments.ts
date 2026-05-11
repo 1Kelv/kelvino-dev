@@ -54,7 +54,8 @@ export function useAppointments(babyId: string | undefined): UseAppointmentsRetu
     try {
       const updated = await appointmentsDb.update(id, data);
       setEntries((prev) => prev.map((e) => (e.$id === id ? updated : e)));
-    } catch {
+    } catch (err) {
+      console.error('[Mylestone] Appointment update failed:', err);
       await fetch();
       throw new Error('Failed to update appointment.');
     }
