@@ -163,12 +163,20 @@ export function HospitalPage() {
                   {stayDuration(activeStay.admittedDate)} · since {formatDateTime(activeStay.admittedDate)}
                 </p>
               </div>
-              <button
-                onClick={() => setEditTarget(activeStay)}
-                className="p-1.5 rounded-lg text-blue-400 hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-800/40"
-              >
-                <Pencil size={14} />
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setEditTarget(activeStay)}
+                  className="p-1.5 rounded-lg text-blue-400 hover:text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-800/40"
+                >
+                  <Pencil size={14} />
+                </button>
+                <button
+                  onClick={() => setDeleteTarget(activeStay)}
+                  className="p-1.5 rounded-lg text-blue-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
             </div>
 
             <div className="px-4 py-4 flex flex-col gap-3">
