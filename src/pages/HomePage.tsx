@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
-import { Heart, Droplets, Baby, Pill, Calendar, Plus, LogOut, ChevronRight, ChevronDown, Activity, Sun, Moon, MessageSquarePlus, Pencil, UserCircle, Share2, Copy, Check, FileDown, Trash2 } from 'lucide-react';
+import { Heart, Droplets, Baby, Pill, Calendar, Plus, LogOut, ChevronRight, ChevronDown, Activity, Sun, Moon, MessageSquarePlus, Pencil, UserCircle, Share2, Copy, Check, FileDown, Trash2, Stethoscope } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AppShell } from '../components/layout/AppShell';
 import { Modal } from '../components/ui/Modal';
@@ -17,11 +17,14 @@ import { useNappies } from '../hooks/useNappies';
 import { useAppointments } from '../hooks/useAppointments';
 import { useSymptoms } from '../hooks/useSymptoms';
 import { useMedications } from '../hooks/useMedications';
+import { useSleep } from '../hooks/useSleep';
+import { useHospitalStays } from '../hooks/useHospitalStays';
 import { babyAge, isToday, formatDateTime, formatTime, isMonthBirthday } from '../lib/utils';
 import { localDateNow } from '../lib/utils';
 import { MilestoneCelebration } from '../components/ui/MilestoneCelebration';
 import { ExportModal } from '../components/reports/ExportModal';
 import { NameMeaningCard } from '../components/ui/NameMeaningCard';
+import { TrendInsightsCard } from '../components/ui/TrendInsightsCard';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -44,6 +47,8 @@ export function HomePage() {
   const { entries: appointments } = useAppointments(selectedBaby?.$id);
   const { entries: symptoms } = useSymptoms(selectedBaby?.$id);
   const { entries: medications } = useMedications(selectedBaby?.$id);
+  const { entries: sleep } = useSleep(selectedBaby?.$id);
+  const { activeStay } = useHospitalStays(selectedBaby?.$id);
 
   // Add baby modal
   const [addBabyOpen, setAddBabyOpen] = useState(false);
@@ -389,6 +394,42 @@ export function HomePage() {
           <>
             <motion.div variants={itemVariants}>
               <NameMeaningCard name={selectedBaby.name} />
+            </motion.div>
+
+            {activeStay && (
+              <motion.div variants={itemVariants}>
+                <Link to="/hospital">
+                  <motion.div
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex items-center gap-3 bg-blue-50 dark:bg-blue-900/30 rounded-2xl px-4 py-3 border-2 border-blue-200 dark:border-blue-700"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-800/50 flex items-center justify-center flex-shrink-0">
+                      <Stethoscope size={18} className="text-blue-600 dark:text-blue-300" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse flex-shrink-0" />
+                        <p className="text-sm font-bold text-blue-700 dark:text-blue-300">Hospital Mode Active</p>
+                      </div>
+                      <p className="text-xs text-blue-500 dark:text-blue-400 truncate">{activeStay.hospital}</p>
+                    </div>
+                    <ChevronRight size={16} className="text-blue-400 flex-shrink-0" />
+                  </motion.div>
+                </Link>
+              </motion.div>
+            )}
+
+            <motion.div variants={itemVariants}>
+              <TrendInsightsCard
+                babyId={selectedBaby.$id}
+                babyName={selectedBaby.name}
+                feeds={feeds}
+                nappies={nappies}
+                symptoms={symptoms}
+                medications={medications}
+                sleep={sleep}
+              />
             </motion.div>
 
             <motion.div variants={itemVariants} className="grid grid-cols-2 gap-3">

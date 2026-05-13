@@ -9,6 +9,8 @@ import type {
   AppointmentEntry,
   NoteEntry,
   FeedbackEntry,
+  MilestoneEntry,
+  HospitalStay,
 } from '../types';
 
 function cast<T>(doc: Record<string, unknown>): T {
@@ -208,5 +210,51 @@ export const notesDb = {
 export const feedbackDb = {
   create: async (data: Omit<FeedbackEntry, '$id'>): Promise<void> => {
     await databases.createDocument(DB_ID, COLLECTIONS.FEEDBACK, ID.unique(), data, userPerms);
+  },
+};
+
+// Milestones
+export const milestonesDb = {
+  list: async (babyId: string): Promise<MilestoneEntry[]> => {
+    const res = await databases.listDocuments(DB_ID, COLLECTIONS.MILESTONES, [
+      Query.equal('babyId', babyId),
+      Query.orderDesc('datetime'),
+      Query.limit(500),
+    ]);
+    return res.documents.map((d) => cast<MilestoneEntry>(d as Record<string, unknown>));
+  },
+  create: async (data: Omit<MilestoneEntry, '$id'>): Promise<MilestoneEntry> => {
+    const doc = await databases.createDocument(DB_ID, COLLECTIONS.MILESTONES, ID.unique(), data, userPerms);
+    return cast<MilestoneEntry>(doc as Record<string, unknown>);
+  },
+  update: async (id: string, data: Partial<Omit<MilestoneEntry, '$id'>>): Promise<MilestoneEntry> => {
+    const doc = await databases.updateDocument(DB_ID, COLLECTIONS.MILESTONES, id, data);
+    return cast<MilestoneEntry>(doc as Record<string, unknown>);
+  },
+  delete: async (id: string): Promise<void> => {
+    await databases.deleteDocument(DB_ID, COLLECTIONS.MILESTONES, id);
+  },
+};
+
+// Hospital Stays
+export const hospitalStaysDb = {
+  list: async (babyId: string): Promise<HospitalStay[]> => {
+    const res = await databases.listDocuments(DB_ID, COLLECTIONS.HOSPITAL_STAYS, [
+      Query.equal('babyId', babyId),
+      Query.orderDesc('admittedDate'),
+      Query.limit(100),
+    ]);
+    return res.documents.map((d) => cast<HospitalStay>(d as Record<string, unknown>));
+  },
+  create: async (data: Omit<HospitalStay, '$id'>): Promise<HospitalStay> => {
+    const doc = await databases.createDocument(DB_ID, COLLECTIONS.HOSPITAL_STAYS, ID.unique(), data, userPerms);
+    return cast<HospitalStay>(doc as Record<string, unknown>);
+  },
+  update: async (id: string, data: Partial<Omit<HospitalStay, '$id'>>): Promise<HospitalStay> => {
+    const doc = await databases.updateDocument(DB_ID, COLLECTIONS.HOSPITAL_STAYS, id, data);
+    return cast<HospitalStay>(doc as Record<string, unknown>);
+  },
+  delete: async (id: string): Promise<void> => {
+    await databases.deleteDocument(DB_ID, COLLECTIONS.HOSPITAL_STAYS, id);
   },
 };

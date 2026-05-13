@@ -118,3 +118,29 @@ export interface FeedbackEntry {
   subject: string;
   message: string;
 }
+
+export interface MilestoneEntry {
+  $id: string;
+  babyId: string;
+  userId: string;
+  datetime: string;
+  title: string;
+  description?: string;
+  category: 'medical' | 'emotional' | 'developmental' | 'achievement';
+  emoji?: string;
+}
+
+export interface HospitalStay {
+  $id: string;
+  babyId: string;
+  userId: string;
+  admittedDate: string;
+  dischargedDate?: string;
+  hospital: string;
+  ward?: string;
+  reason: string;
+  surgeryDate?: string;
+  surgeryName?: string;
+  notes?: string;
+  checklistJson?: string;
+}
