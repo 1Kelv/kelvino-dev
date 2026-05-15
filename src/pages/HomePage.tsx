@@ -57,6 +57,7 @@ export function HomePage() {
   const [babyDob, setBabyDob] = useState(localDateNow());
   const [babyGender, setBabyGender] = useState('');
   const [babyDiagnosis, setBabyDiagnosis] = useState('');
+  const [babyNhsNumber, setBabyNhsNumber] = useState('');
   const [babyLoading, setBabyLoading] = useState(false);
   const [babyError, setBabyError] = useState<string | null>(null);
 
@@ -71,6 +72,7 @@ export function HomePage() {
   const [editDob, setEditDob] = useState('');
   const [editGender, setEditGender] = useState('');
   const [editDiagnosis, setEditDiagnosis] = useState('');
+  const [editNhsNumber, setEditNhsNumber] = useState('');
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
 
@@ -81,6 +83,17 @@ export function HomePage() {
 
   // Export modal
   const [exportOpen, setExportOpen] = useState(false);
+
+  // NHS copy
+  const [nhsCopied, setNhsCopied] = useState(false);
+  const handleCopyNhs = async () => {
+    if (!selectedBaby?.nhsNumber) return;
+    try {
+      await navigator.clipboard.writeText(selectedBaby.nhsNumber);
+      setNhsCopied(true);
+      setTimeout(() => setNhsCopied(false), 2000);
+    } catch { /* clipboard unavailable */ }
+  };
 
   // Baby switcher
   const [switcherOpen, setSwitcherOpen] = useState(false);
@@ -104,6 +117,7 @@ export function HomePage() {
     setEditDob(selectedBaby.dateOfBirth);
     setEditGender(selectedBaby.gender || '');
     setEditDiagnosis(selectedBaby.diagnosis || '');
+    setEditNhsNumber(selectedBaby.nhsNumber || '');
     setEditError(null);
     setEditBabyOpen(true);
   };
@@ -120,6 +134,7 @@ export function HomePage() {
         dateOfBirth: editDob,
         gender: (editGender as 'male' | 'female' | 'other') || null,
         diagnosis: editDiagnosis.trim() || null,
+        nhsNumber: editNhsNumber.replace(/\s/g, '').slice(0, 10) || null,
       });
       setEditBabyOpen(false);
     } catch {
@@ -141,6 +156,7 @@ export function HomePage() {
         userId: user?.$id || '',
         gender: (babyGender as 'male' | 'female' | 'other') || undefined,
         diagnosis: babyDiagnosis || undefined,
+        nhsNumber: babyNhsNumber.replace(/\s/g, '').slice(0, 10) || undefined,
       });
       setAddBabyOpen(false);
       setBabyName('');
@@ -321,6 +337,19 @@ export function HomePage() {
               <p className="text-white/80 text-xs">
                 {babyAge(selectedBaby.dateOfBirth)}{selectedBaby.diagnosis ? ` · ${selectedBaby.diagnosis}` : ''}
               </p>
+              {selectedBaby.nhsNumber && (
+                <button
+                  onClick={handleCopyNhs}
+                  className="flex items-center gap-1.5 mt-1 text-white/70 hover:text-white transition-colors"
+                >
+                  <span className="text-[11px] font-mono tracking-wide">
+                    NHS {selectedBaby.nhsNumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3')}
+                  </span>
+                  {nhsCopied
+                    ? <Check size={11} className="text-white" />
+                    : <Copy size={11} />}
+                </button>
+              )}
             </div>
             {babies.length > 1 && (
               <motion.button
@@ -670,6 +699,14 @@ export function HomePage() {
             onChange={(e) => setEditDiagnosis(e.target.value)}
             placeholder="e.g. premature, healthy, or any notes"
           />
+          <Input
+            label="NHS number (optional)"
+            type="text"
+            value={editNhsNumber}
+            onChange={(e) => setEditNhsNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+            placeholder="e.g. 9434765919"
+            maxLength={10}
+          />
           {editError && (
             <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/30 rounded-xl px-4 py-3">{editError}</p>
           )}
@@ -750,6 +787,14 @@ export function HomePage() {
                 value={babyDiagnosis}
                 onChange={(e) => setBabyDiagnosis(e.target.value)}
                 placeholder="e.g. premature, healthy, or any notes"
+              />
+              <Input
+                label="NHS number (optional)"
+                type="text"
+                value={babyNhsNumber}
+                onChange={(e) => setBabyNhsNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                placeholder="e.g. 9434765919"
+                maxLength={10}
               />
               {babyError && (
                 <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/30 rounded-xl px-4 py-3">{babyError}</p>

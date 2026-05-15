@@ -21,6 +21,7 @@ export function OnboardingPage() {
   const [babyDob, setBabyDob] = useState(localDateNow());
   const [babyGender, setBabyGender] = useState('');
   const [babyDiagnosis, setBabyDiagnosis] = useState('');
+  const [babyNhsNumber, setBabyNhsNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,6 +39,7 @@ export function OnboardingPage() {
         userId: user?.$id || '',
         gender: (babyGender as 'male' | 'female' | 'other') || undefined,
         diagnosis: babyDiagnosis.trim() || undefined,
+        nhsNumber: babyNhsNumber.replace(/\D/g, '').slice(0, 10) || undefined,
       });
       setStep(3);
     } catch {
@@ -141,6 +143,14 @@ export function OnboardingPage() {
                   value={babyDiagnosis}
                   onChange={(e) => setBabyDiagnosis(e.target.value)}
                   placeholder="e.g. premature, CHD, healthy..."
+                />
+                <Input
+                  label="NHS number (optional)"
+                  type="text"
+                  value={babyNhsNumber}
+                  onChange={(e) => setBabyNhsNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  placeholder="e.g. 9434765919"
+                  maxLength={10}
                 />
                 {error && (
                   <p className="text-sm text-red-500 bg-red-50 rounded-xl px-4 py-3">{error}</p>

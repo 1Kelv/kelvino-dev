@@ -7,6 +7,7 @@ export interface Baby {
   userId: string;
   gender?: 'male' | 'female' | 'other' | null;
   diagnosis?: string | null;
+  nhsNumber?: string | null;
   shareCode?: string | null;
   sharedWith?: string[];
 }
