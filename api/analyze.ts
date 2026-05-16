@@ -3,7 +3,7 @@ import Anthropic from '@anthropic-ai/sdk';
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '10mb',
+      sizeLimit: '20mb',
     },
   },
 };
@@ -33,6 +33,12 @@ FORMATTING RULES — always follow these:
 
 Remember: you are a helpful companion, not a doctor.`;
 
+interface FilePayload {
+  fileBase64: string;
+  fileMediaType: string;
+  fileName?: string;
+}
+
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -43,37 +49,43 @@ export default async function handler(req: any, res: any) {
     return res.status(500).json({ error: 'AI service is not configured. Please contact support.' });
   }
 
-  const { message, fileBase64, fileMediaType, fileName, history } = req.body || {};
+  const { message, fileBase64, fileMediaType, fileName, files, history } = req.body || {};
 
-  if (!message && !fileBase64) {
+  if (!message && !fileBase64 && (!files || files.length === 0)) {
     return res.status(400).json({ error: 'No message or file provided' });
   }
 
+  // Normalise to an array — support both legacy single-file and new multi-file formats
+  const fileList: FilePayload[] = files && Array.isArray(files)
+    ? files
+    : fileBase64 && fileMediaType
+      ? [{ fileBase64, fileMediaType, fileName }]
+      : [];
+
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-  // Build conversation history messages
   const historyMessages: Anthropic.MessageParam[] = (history || []).map((h: { role: string; text: string }) => ({
     role: h.role as 'user' | 'assistant',
     content: h.text,
   }));
 
-  // Build the current user message content
   const currentContent: Anthropic.MessageParam['content'] = [];
 
-  if (fileBase64 && fileMediaType) {
-    if (fileMediaType === 'application/pdf') {
+  for (const f of fileList) {
+    if (!f.fileBase64 || !f.fileMediaType) continue;
+    if (f.fileMediaType === 'application/pdf') {
       currentContent.push({
         type: 'document',
-        source: { type: 'base64', media_type: 'application/pdf', data: fileBase64 },
-        title: fileName || 'Medical document',
+        source: { type: 'base64', media_type: 'application/pdf', data: f.fileBase64 },
+        title: f.fileName || 'Medical document',
       } as any);
-    } else if (fileMediaType.startsWith('image/')) {
+    } else if (f.fileMediaType.startsWith('image/')) {
       currentContent.push({
         type: 'image',
         source: {
           type: 'base64',
-          media_type: fileMediaType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
-          data: fileBase64,
+          media_type: f.fileMediaType as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp',
+          data: f.fileBase64,
         },
       });
     }

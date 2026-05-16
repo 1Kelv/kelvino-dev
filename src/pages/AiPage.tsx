@@ -6,12 +6,21 @@ import { Send, Paperclip, X, Sparkles, FileText, AlertTriangle } from 'lucide-re
 import { AppShell } from '../components/layout/AppShell';
 import { PageHeader } from '../components/layout/PageHeader';
 
+interface Attachment {
+  previewUrl?: string;
+  fileName?: string;
+}
+
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   text: string;
+  attachments?: Attachment[];
+}
+
+interface PendingFile {
+  file: File;
   previewUrl?: string;
-  fileName?: string;
 }
 
 const SUGGESTED = [
@@ -21,7 +30,8 @@ const SUGGESTED = [
   "What does this prescription mean?",
 ];
 
-const MAX_FILE_BYTES = 3 * 1024 * 1024;
+const MAX_FILE_BYTES = 4 * 1024 * 1024; // 4 MB per file
+const MAX_FILES = 5;
 
 function TypingDots() {
   return (
@@ -50,7 +60,6 @@ function AiAvatar() {
   );
 }
 
-// Safely convert a file ArrayBuffer to base64 without stack-overflowing on large files
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer);
   let binary = '';
@@ -64,8 +73,7 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
 export function AiPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
   const [loading, setLoading] = useState(false);
   const [fileError, setFileError] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -77,94 +85,104 @@ export function AiPage() {
   }, [messages, loading]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const incoming = Array.from(e.target.files || []);
+    if (!incoming.length) return;
     setFileError('');
 
-    if (file.size > MAX_FILE_BYTES) {
-      setFileError('File is too large (max 3 MB). Please compress or resize it.');
+    const remaining = MAX_FILES - pendingFiles.length;
+    if (remaining <= 0) {
+      setFileError(`Maximum ${MAX_FILES} files per message.`);
       e.target.value = '';
       return;
     }
 
     const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
-    if (!allowed.includes(file.type)) {
-      setFileError('Unsupported file type. Use JPEG, PNG, WebP, GIF, or PDF.');
-      e.target.value = '';
-      return;
+    const toAdd: PendingFile[] = [];
+
+    for (const file of incoming.slice(0, remaining)) {
+      if (file.size > MAX_FILE_BYTES) {
+        setFileError(`"${file.name}" is too large (max 4 MB).`);
+        continue;
+      }
+      if (!allowed.includes(file.type)) {
+        setFileError(`"${file.name}" is not supported. Use JPEG, PNG, WebP, GIF, or PDF.`);
+        continue;
+      }
+      toAdd.push({
+        file,
+        previewUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
+      });
     }
 
-    setSelectedFile(file);
-    if (file.type.startsWith('image/')) {
-      setPreviewUrl(URL.createObjectURL(file));
-    } else {
-      setPreviewUrl(null);
-    }
+    if (toAdd.length) setPendingFiles((prev) => [...prev, ...toAdd]);
+    e.target.value = '';
   };
 
-  const clearFile = () => {
-    setSelectedFile(null);
-    setPreviewUrl(null);
+  const removeFile = (idx: number) => {
+    setPendingFiles((prev) => {
+      const copy = [...prev];
+      if (copy[idx].previewUrl) URL.revokeObjectURL(copy[idx].previewUrl!);
+      copy.splice(idx, 1);
+      return copy;
+    });
+  };
+
+  const clearFiles = () => {
+    pendingFiles.forEach((pf) => { if (pf.previewUrl) URL.revokeObjectURL(pf.previewUrl); });
+    setPendingFiles([]);
     setFileError('');
     if (fileRef.current) fileRef.current.value = '';
   };
 
-  const send = async (text: string, file?: File | null) => {
-    if (!text.trim() && !file) return;
+  const send = async (text: string, files: PendingFile[]) => {
+    if (!text.trim() && files.length === 0) return;
+
+    const attachments: Attachment[] = files.map((pf) => ({
+      previewUrl: pf.file.type.startsWith('image/') ? pf.previewUrl : undefined,
+      fileName: pf.file.type === 'application/pdf' ? pf.file.name : undefined,
+    }));
 
     const userMsg: Message = {
       id: Date.now().toString(),
       role: 'user',
       text: text.trim(),
-      previewUrl: file?.type.startsWith('image/') ? previewUrl || undefined : undefined,
-      fileName: file?.type === 'application/pdf' ? file.name : undefined,
+      attachments: attachments.length > 0 ? attachments : undefined,
     };
 
-    // Snapshot history before updating state (exclude temp messages, use only settled ones)
     const historySnapshot = messages.map((m) => ({ role: m.role, text: m.text }));
 
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
-    clearFile();
+    clearFiles();
     setLoading(true);
 
     try {
-      let fileBase64: string | undefined;
-      let fileMediaType: string | undefined;
-      let fileName: string | undefined;
-
-      if (file) {
-        const buffer = await file.arrayBuffer();
-        fileBase64 = arrayBufferToBase64(buffer);
-        fileMediaType = file.type;
-        fileName = file.name;
-      }
+      const encodedFiles = await Promise.all(
+        files.map(async (pf) => {
+          const buffer = await pf.file.arrayBuffer();
+          return {
+            fileBase64: arrayBufferToBase64(buffer),
+            fileMediaType: pf.file.type,
+            fileName: pf.file.name,
+          };
+        })
+      );
 
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: text.trim(),
-          fileBase64,
-          fileMediaType,
-          fileName,
+          files: encodedFiles.length > 0 ? encodedFiles : undefined,
           history: historySnapshot,
         }),
       });
 
       let data: { response?: string; error?: string };
-      try {
-        data = await res.json();
-      } catch {
-        throw new Error('routing');
-      }
+      try { data = await res.json(); } catch { throw new Error('routing'); }
 
       const reply = data.response || data.error || 'Sorry, something went wrong.';
-
-      setMessages((prev) => [
-        ...prev,
-        { id: Date.now().toString() + '_ai', role: 'assistant', text: reply },
-      ]);
+      setMessages((prev) => [...prev, { id: Date.now().toString() + '_ai', role: 'assistant', text: reply }]);
     } catch (err: any) {
       const isRoutingError = err?.message === 'routing';
       setMessages((prev) => [
@@ -174,7 +192,7 @@ export function AiPage() {
           role: 'assistant',
           text: isRoutingError
             ? 'AI service is temporarily unavailable. If you just deployed the app, please ensure the API routing is configured correctly in vercel.json.'
-            : 'Sorry, I couldn\'t reach the AI right now. Please try again.',
+            : "Sorry, I couldn't reach the AI right now. Please try again.",
         },
       ]);
     } finally {
@@ -184,17 +202,18 @@ export function AiPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    send(input, selectedFile);
+    send(input, pendingFiles);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      send(input, selectedFile);
+      send(input, pendingFiles);
     }
   };
 
   const isEmpty = messages.length === 0;
+  const canAddMore = pendingFiles.length < MAX_FILES;
 
   return (
     <AppShell>
@@ -224,14 +243,14 @@ export function AiPage() {
             </motion.div>
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Hi, I'm Mylo</h2>
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-xs mx-auto">
-              Your Mylestone AI companion. Upload a photo of a rash, a medical letter, or ask me anything about your baby's health.
+              Your Mylestone AI companion. Upload photos, PDFs, or a mix — up to {MAX_FILES} files per message.
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               {SUGGESTED.map((s) => (
                 <motion.button
                   key={s}
                   whileTap={{ scale: 0.96 }}
-                  onClick={() => send(s)}
+                  onClick={() => send(s, [])}
                   className="text-xs px-3 py-2 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-brand-mint hover:text-brand-mint transition-colors shadow-sm"
                 >
                   {s}
@@ -252,19 +271,24 @@ export function AiPage() {
               className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
             >
               {msg.role === 'assistant' && <AiAvatar />}
-
               <div className={`max-w-[80%] ${msg.role === 'user' ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
-                {msg.previewUrl && (
-                  <img
-                    src={msg.previewUrl}
-                    alt="Uploaded"
-                    className="max-w-[200px] rounded-xl border border-gray-200 dark:border-gray-700 object-cover"
-                  />
-                )}
-                {msg.fileName && (
-                  <div className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2">
-                    <FileText size={16} className="text-brand-mint flex-shrink-0" />
-                    <span className="text-xs text-gray-700 dark:text-gray-300 truncate max-w-[140px]">{msg.fileName}</span>
+                {msg.attachments && msg.attachments.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 justify-end">
+                    {msg.attachments.map((att, i) =>
+                      att.previewUrl ? (
+                        <img
+                          key={i}
+                          src={att.previewUrl}
+                          alt="Uploaded"
+                          className="w-24 h-24 rounded-xl border border-gray-200 dark:border-gray-700 object-cover"
+                        />
+                      ) : att.fileName ? (
+                        <div key={i} className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2">
+                          <FileText size={16} className="text-brand-mint flex-shrink-0" />
+                          <span className="text-xs text-gray-700 dark:text-gray-300 truncate max-w-[140px]">{att.fileName}</span>
+                        </div>
+                      ) : null
+                    )}
                   </div>
                 )}
                 {msg.text && (
@@ -319,27 +343,48 @@ export function AiPage() {
       </div>
 
       <div className="px-4 pb-4 pt-2 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
-        {fileError && (
-          <p className="text-xs text-red-500 mb-2">{fileError}</p>
-        )}
+        {fileError && <p className="text-xs text-red-500 mb-2">{fileError}</p>}
 
         <AnimatePresence>
-          {selectedFile && (
+          {pendingFiles.length > 0 && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="mb-2 flex items-center gap-2 bg-white dark:bg-gray-800 rounded-xl px-3 py-2 border border-gray-200 dark:border-gray-700"
+              className="mb-2 flex gap-2 overflow-x-auto pb-1 scrollbar-hide"
             >
-              {previewUrl ? (
-                <img src={previewUrl} alt="Preview" className="w-10 h-10 rounded-lg object-cover" />
-              ) : (
-                <FileText size={20} className="text-brand-mint" />
+              {pendingFiles.map((pf, idx) => (
+                <div
+                  key={idx}
+                  className="relative flex-shrink-0 w-16 h-16 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden"
+                >
+                  {pf.previewUrl ? (
+                    <img src={pf.previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-1 px-1">
+                      <FileText size={18} className="text-brand-mint" />
+                      <span className="text-[9px] text-gray-500 truncate w-full text-center leading-tight">
+                        {pf.file.name}
+                      </span>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => removeFile(idx)}
+                    className="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-gray-900/60 text-white flex items-center justify-center hover:bg-red-500/80 transition-colors"
+                  >
+                    <X size={10} />
+                  </button>
+                </div>
+              ))}
+              {canAddMore && (
+                <button
+                  onClick={() => fileRef.current?.click()}
+                  className="flex-shrink-0 w-16 h-16 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center gap-1 text-gray-400 hover:border-brand-mint hover:text-brand-mint transition-colors"
+                >
+                  <Paperclip size={16} />
+                  <span className="text-[9px]">Add</span>
+                </button>
               )}
-              <span className="text-xs text-gray-700 dark:text-gray-300 flex-1 truncate">{selectedFile.name}</span>
-              <button onClick={clearFile} className="text-gray-400 hover:text-red-400 transition-colors">
-                <X size={16} />
-              </button>
             </motion.div>
           )}
         </AnimatePresence>
@@ -349,17 +394,20 @@ export function AiPage() {
             ref={fileRef}
             type="file"
             accept="image/jpeg,image/png,image/webp,image/gif,application/pdf"
+            multiple
             onChange={handleFileChange}
             className="hidden"
           />
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.92 }}
-            onClick={() => fileRef.current?.click()}
-            className="p-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-brand-mint hover:border-brand-mint transition-colors flex-shrink-0"
-          >
-            <Paperclip size={18} />
-          </motion.button>
+          {pendingFiles.length === 0 && (
+            <motion.button
+              type="button"
+              whileTap={{ scale: 0.92 }}
+              onClick={() => fileRef.current?.click()}
+              className="p-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-brand-mint hover:border-brand-mint transition-colors flex-shrink-0"
+            >
+              <Paperclip size={18} />
+            </motion.button>
+          )}
 
           <textarea
             ref={textRef}
@@ -377,7 +425,7 @@ export function AiPage() {
 
           <motion.button
             type="submit"
-            disabled={loading || (!input.trim() && !selectedFile)}
+            disabled={loading || (!input.trim() && pendingFiles.length === 0)}
             whileTap={{ scale: 0.92 }}
             className="p-2.5 rounded-xl bg-brand-mint text-white disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0 shadow"
           >
