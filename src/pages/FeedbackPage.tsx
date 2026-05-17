@@ -20,7 +20,7 @@ export function FeedbackPage() {
             <p className="text-sm font-semibold text-brand-dark dark:text-white mb-0.5">Help shape Mylestone</p>
             <p className="text-xs text-brand-dark/70 dark:text-gray-300 leading-relaxed">
               Got a feature idea? Found a bug? Or just want to say hello?
-              We read every submission — your input directly improves the app for all CHD families.
+              We read every submission — your input directly improves the app for families everywhere.
             </p>
           </div>
         </div>

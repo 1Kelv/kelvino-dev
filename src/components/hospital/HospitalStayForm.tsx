@@ -66,7 +66,7 @@ export function HospitalStayForm({ babyId, userId, onSubmit, onUpdate, onClose, 
         <textarea
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          placeholder="e.g. Post-surgical monitoring after ToF repair"
+          placeholder="e.g. Post-surgical monitoring, respiratory observation..."
           rows={2}
           required
           className="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 text-base text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-400 focus:border-brand-mint focus:outline-none focus:ring-2 focus:ring-brand-mint/30 resize-none"

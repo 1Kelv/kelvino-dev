@@ -142,7 +142,7 @@ export function OnboardingPage() {
                   type="text"
                   value={babyDiagnosis}
                   onChange={(e) => setBabyDiagnosis(e.target.value)}
-                  placeholder="e.g. premature, CHD, healthy..."
+                  placeholder="e.g. premature, healthy, or any notes..."
                 />
                 <Input
                   label="NHS number (optional)"
