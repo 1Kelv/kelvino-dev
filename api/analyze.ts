@@ -112,6 +112,21 @@ export default async function handler(req: any, res: any) {
     res.status(200).json({ response: text });
   } catch (err: any) {
     console.error('Claude API error:', err);
-    res.status(500).json({ error: err?.message || 'Failed to get AI response' });
+
+    const status = err?.status ?? err?.statusCode ?? 500;
+
+    if (status === 529 || err?.error?.type === 'overloaded_error') {
+      return res.status(503).json({
+        error: "Mylo is a little busy right now — Anthropic's servers are under high demand. Please try again in a moment.",
+      });
+    }
+
+    if (status === 429) {
+      return res.status(429).json({
+        error: "Mylo has hit a rate limit. Please wait a few seconds and try again.",
+      });
+    }
+
+    res.status(500).json({ error: 'Sorry, Mylo couldn\'t respond right now. Please try again.' });
   }
 }
