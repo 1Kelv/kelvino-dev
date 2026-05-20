@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Paperclip, X, Sparkles, FileText, AlertTriangle } from 'lucide-react';
+import { Send, Paperclip, X, Sparkles, FileText, AlertTriangle, RefreshCw } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
 import { PageHeader } from '../components/layout/PageHeader';
 
@@ -16,6 +16,8 @@ interface Message {
   role: 'user' | 'assistant';
   text: string;
   attachments?: Attachment[];
+  isError?: boolean;
+  retryText?: string;
 }
 
 interface PendingFile {
@@ -192,7 +194,7 @@ export function AiPage() {
         : err?.message || "Sorry, I couldn't reach Mylo right now. Please try again.";
       setMessages((prev) => [
         ...prev,
-        { id: Date.now().toString() + '_err', role: 'assistant', text: message },
+        { id: Date.now().toString() + '_err', role: 'assistant', text: message, isError: true, retryText: text },
       ]);
     } finally {
       setLoading(false);
@@ -295,10 +297,24 @@ export function AiPage() {
                     className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                       msg.role === 'user'
                         ? 'bg-brand-mint text-white rounded-tr-sm whitespace-pre-wrap'
+                        : msg.isError
+                        ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-tl-sm'
                         : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-gray-700 rounded-tl-sm shadow-sm'
                     }`}
                   >
-                    {msg.role === 'assistant' ? (
+                    {msg.isError && msg.retryText ? (
+                      <div className="flex flex-col gap-2">
+                        <p>{msg.text}</p>
+                        <button
+                          onClick={() => send(msg.retryText!, [])}
+                          disabled={loading}
+                          className="flex items-center gap-1.5 text-xs font-semibold text-red-600 dark:text-red-400 hover:text-red-700 disabled:opacity-50 self-start"
+                        >
+                          <RefreshCw size={12} />
+                          Try again
+                        </button>
+                      </div>
+                    ) : msg.role === 'assistant' ? (
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
@@ -318,6 +334,7 @@ export function AiPage() {
                     ) : (
                       msg.text
                     )}
+
                   </div>
                 )}
               </div>
