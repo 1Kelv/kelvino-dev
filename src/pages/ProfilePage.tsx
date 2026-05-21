@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, ChevronLeft, Check, Heart } from 'lucide-react';
+import { User, Mail, Lock, ChevronLeft, Check, Heart, Bell } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { account } from '../lib/appwrite';
 import { AppShell } from '../components/layout/AppShell';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { useAuth } from '../lib/AuthContext';
+import { useBabyContext } from '../lib/BabyContext';
+import { NotificationSettings } from '../components/notifications/NotificationSettings';
 
 const RELATIONSHIPS = ['Mum', 'Dad', 'Guardian', 'Caregiver'];
 
@@ -39,6 +41,7 @@ function SuccessBadge({ message }: { message: string }) {
 
 export function ProfilePage() {
   const { user, refreshUser } = useAuth();
+  const { selectedBaby } = useBabyContext();
   const navigate = useNavigate();
 
   const [name, setName] = useState(user?.name || '');
@@ -242,6 +245,12 @@ export function ProfilePage() {
             <Button type="submit" loading={emailLoading}>Update Email</Button>
           </form>
         </Section>
+
+        {selectedBaby && (
+          <Section title="Notifications" icon={<Bell size={16} />}>
+            <NotificationSettings userId={user?.$id || ''} babyId={selectedBaby.$id} />
+          </Section>
+        )}
 
         <Section title="Change Password" icon={<Lock size={16} />}>
           <form onSubmit={handleUpdatePassword} className="flex flex-col gap-3">

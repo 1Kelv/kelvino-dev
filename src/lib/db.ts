@@ -11,6 +11,7 @@ import type {
   FeedbackEntry,
   MilestoneEntry,
   HospitalStay,
+  PushSubscriptionRecord,
 } from '../types';
 
 function cast<T>(doc: Record<string, unknown>): T {
@@ -256,5 +257,32 @@ export const hospitalStaysDb = {
   },
   delete: async (id: string): Promise<void> => {
     await databases.deleteDocument(DB_ID, COLLECTIONS.HOSPITAL_STAYS, id);
+  },
+};
+
+// Push Subscriptions
+export const pushSubscriptionsDb = {
+  upsert: async (data: Omit<PushSubscriptionRecord, '$id'>): Promise<void> => {
+    const res = await databases.listDocuments(DB_ID, COLLECTIONS.PUSH_SUBSCRIPTIONS, [
+      Query.equal('userId', data.userId),
+      Query.equal('endpoint', data.endpoint),
+      Query.limit(1),
+    ]);
+    if (res.documents.length > 0) {
+      await databases.updateDocument(DB_ID, COLLECTIONS.PUSH_SUBSCRIPTIONS, res.documents[0].$id, {
+        p256dh: data.p256dh,
+        auth: data.auth,
+        babyId: data.babyId,
+      });
+    } else {
+      await databases.createDocument(DB_ID, COLLECTIONS.PUSH_SUBSCRIPTIONS, ID.unique(), data, userPerms);
+    }
+  },
+  deleteByUserId: async (userId: string): Promise<void> => {
+    const res = await databases.listDocuments(DB_ID, COLLECTIONS.PUSH_SUBSCRIPTIONS, [
+      Query.equal('userId', userId),
+      Query.limit(10),
+    ]);
+    await Promise.all(res.documents.map((d) => databases.deleteDocument(DB_ID, COLLECTIONS.PUSH_SUBSCRIPTIONS, d.$id)));
   },
 };

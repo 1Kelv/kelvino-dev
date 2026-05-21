@@ -27,4 +27,5 @@ export const COLLECTIONS = {
   FEEDBACK: import.meta.env.VITE_APPWRITE_COLLECTION_FEEDBACK || 'feedback',
   MILESTONES: import.meta.env.VITE_APPWRITE_COLLECTION_MILESTONES || 'milestones',
   HOSPITAL_STAYS: import.meta.env.VITE_APPWRITE_COLLECTION_HOSPITAL_STAYS || 'hospital_stays',
+  PUSH_SUBSCRIPTIONS: import.meta.env.VITE_APPWRITE_COLLECTION_PUSH_SUBSCRIPTIONS || 'push_subscriptions',
 };

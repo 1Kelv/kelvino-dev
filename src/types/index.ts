@@ -145,3 +145,12 @@ export interface HospitalStay {
   notes?: string;
   checklistJson?: string;
 }
+
+export interface PushSubscriptionRecord {
+  $id: string;
+  userId: string;
+  babyId: string;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+}
