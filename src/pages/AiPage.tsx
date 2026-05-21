@@ -123,14 +123,12 @@ export function AiPage() {
   const removeFile = (idx: number) => {
     setPendingFiles((prev) => {
       const copy = [...prev];
-      if (copy[idx].previewUrl) URL.revokeObjectURL(copy[idx].previewUrl!);
       copy.splice(idx, 1);
       return copy;
     });
   };
 
   const clearFiles = () => {
-    pendingFiles.forEach((pf) => { if (pf.previewUrl) URL.revokeObjectURL(pf.previewUrl); });
     setPendingFiles([]);
     setFileError('');
     if (fileRef.current) fileRef.current.value = '';
@@ -188,10 +186,9 @@ export function AiPage() {
       const reply = data.response || 'Sorry, something went wrong.';
       setMessages((prev) => [...prev, { id: Date.now().toString() + '_ai', role: 'assistant', text: reply }]);
     } catch (err: any) {
-      const isRoutingError = err?.message === 'routing';
-      const message = isRoutingError
-        ? 'AI service is temporarily unavailable. If you just deployed the app, please ensure the API routing is configured correctly in vercel.json.'
-        : err?.message || "Sorry, I couldn't reach Mylo right now. Please try again.";
+      const message = err?.message === 'routing' || !err?.message
+        ? "Mylo couldn't connect right now. Please check your internet connection and try again."
+        : err.message;
       setMessages((prev) => [
         ...prev,
         { id: Date.now().toString() + '_err', role: 'assistant', text: message, isError: true, retryText: text },
