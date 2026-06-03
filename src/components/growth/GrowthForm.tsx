@@ -35,9 +35,16 @@ export function GrowthForm({ babyId, userId, onSubmit, onUpdate, onClose, initia
     setLoading(true);
     setError(null);
     try {
-      // Use null (not undefined) so Appwrite clears the field when editing
-      const data = { babyId, userId, date, weightKg, weightLbs, lengthCm: lengthCm ? parseFloat(lengthCm) : null, headCircumferenceCm: headCm ? parseFloat(headCm) : null, notes: notes || null } as any;
-      if (isEdit && onUpdate) { await onUpdate(data); } else { await onSubmit(data); }
+      const lengthVal = lengthCm ? parseFloat(lengthCm) : undefined;
+      const headVal = headCm ? parseFloat(headCm) : undefined;
+      const notesVal = notes || undefined;
+      if (isEdit && onUpdate) {
+        // null explicitly clears optional fields in Appwrite updates
+        await onUpdate({ babyId, userId, date, weightKg, weightLbs, lengthCm: lengthVal ?? null, headCircumferenceCm: headVal ?? null, notes: notesVal ?? null } as any);
+      } else {
+        // undefined omits the field entirely on create (Appwrite default)
+        await onSubmit({ babyId, userId, date, weightKg, weightLbs, lengthCm: lengthVal, headCircumferenceCm: headVal, notes: notesVal });
+      }
       onClose();
     } catch {
       setError(`Failed to ${isEdit ? 'update' : 'save'} growth entry. Please try again.`);
