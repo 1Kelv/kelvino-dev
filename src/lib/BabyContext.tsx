@@ -29,16 +29,22 @@ export function BabyProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const [babies, setBabies] = useState<Baby[]>([]);
   const [selectedBaby, setSelectedBabyState] = useState<Baby | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [fetchingInProgress, setFetchingInProgress] = useState(false);
+  const [lastFetchedUserId, setLastFetchedUserId] = useState<string | null>(null);
+
+  // Derived: loading is true whenever a user is present but their babies haven't
+  // been fetched yet. This is synchronously correct even between renders, preventing
+  // a false "no babies" state from firing before the first fetch completes.
+  const loading = !!user && (user.$id !== lastFetchedUserId || fetchingInProgress);
 
   const fetchBabies = async () => {
     if (!user) {
       setBabies([]);
       setSelectedBabyState(null);
-      setLoading(false);
+      setLastFetchedUserId(null);
       return;
     }
-    setLoading(true);
+    setFetchingInProgress(true);
     try {
       const res = await databases.listDocuments(DB_ID, COLLECTIONS.BABIES, [
         Query.or([
@@ -55,7 +61,8 @@ export function BabyProvider({ children }: { children: React.ReactNode }) {
     } catch {
       setBabies([]);
     } finally {
-      setLoading(false);
+      setLastFetchedUserId(user.$id);
+      setFetchingInProgress(false);
     }
   };
 
