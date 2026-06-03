@@ -137,7 +137,7 @@ export function GrowthChart({ entries, useKg, dob, gender }: GrowthChartProps) {
       </div>
 
       <ResponsiveContainer width="100%" height={230}>
-        <ComposedChart data={data} margin={{ top: 4, right: 16, left: -10, bottom: 0 }}>
+        <ComposedChart data={data} margin={{ top: 4, right: hasLength ? 32 : 16, left: -10, bottom: 0 }}>
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#60a5fa" stopOpacity={isDark ? 0.35 : 0.22} />
@@ -156,12 +156,27 @@ export function GrowthChart({ entries, useKg, dob, gender }: GrowthChartProps) {
             tickLine={false}
             axisLine={false}
           />
+          {/* Left axis — weight (kg or lbs) */}
           <YAxis
+            yAxisId="weight"
             tick={{ fontSize: 11, fill: '#9ca3af' }}
             tickLine={false}
             axisLine={false}
             domain={['auto', 'auto']}
           />
+          {/* Right axis — length/height (cm), only rendered when data exists */}
+          {hasLength && (
+            <YAxis
+              yAxisId="length"
+              orientation="right"
+              tick={{ fontSize: 11, fill: '#A78BFA' }}
+              tickLine={false}
+              axisLine={false}
+              domain={['auto', 'auto']}
+              tickFormatter={(v) => `${v}`}
+              width={28}
+            />
+          )}
 
           <Tooltip content={<ChartTooltip useKg={useKg} />} />
 
@@ -169,6 +184,7 @@ export function GrowthChart({ entries, useKg, dob, gender }: GrowthChartProps) {
           {showWHO && (
             <>
               <Area
+                yAxisId="weight"
                 type="monotone"
                 dataKey="p3"
                 stroke="none"
@@ -179,6 +195,7 @@ export function GrowthChart({ entries, useKg, dob, gender }: GrowthChartProps) {
                 isAnimationActive={false}
               />
               <Area
+                yAxisId="weight"
                 type="monotone"
                 dataKey="bandWidth"
                 stroke="none"
@@ -190,6 +207,7 @@ export function GrowthChart({ entries, useKg, dob, gender }: GrowthChartProps) {
               />
               {/* P50 median — thin solid line inside the band */}
               <Line
+                yAxisId="weight"
                 type="monotone"
                 dataKey="p50"
                 stroke={isDark ? '#60a5fa' : '#93c5fd'}
@@ -203,8 +221,9 @@ export function GrowthChart({ entries, useKg, dob, gender }: GrowthChartProps) {
             </>
           )}
 
-          {/* Length — secondary line */}
+          {/* Length — secondary line on its own axis */}
           <Line
+            yAxisId={hasLength ? 'length' : 'weight'}
             type="monotone"
             dataKey="length"
             stroke="#A78BFA"
@@ -218,6 +237,7 @@ export function GrowthChart({ entries, useKg, dob, gender }: GrowthChartProps) {
 
           {/* Weight — hero line */}
           <Line
+            yAxisId="weight"
             type="monotone"
             dataKey="weight"
             stroke="#4ECDC4"
@@ -241,9 +261,15 @@ export function GrowthChart({ entries, useKg, dob, gender }: GrowthChartProps) {
               <p className="text-xs text-gray-700 dark:text-gray-200">Age in months from birth</p>
             </div>
             <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl px-3 py-2.5">
-              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-0.5">Y axis</p>
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-0.5">Left axis</p>
               <p className="text-xs text-gray-700 dark:text-gray-200">Weight in {useKg ? 'kilograms (kg)' : 'pounds (lbs)'}</p>
             </div>
+            {hasLength && (
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl px-3 py-2.5">
+                <p className="text-xs font-semibold text-purple-400 mb-0.5">Right axis</p>
+                <p className="text-xs text-gray-700 dark:text-gray-200">Length / height in centimetres (cm)</p>
+              </div>
+            )}
           </div>
 
           {/* Lines */}
