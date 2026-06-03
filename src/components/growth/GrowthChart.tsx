@@ -55,9 +55,10 @@ export function GrowthChart({ entries, useKg, dob, gender }: GrowthChartProps) {
     .map((e) => {
       const daysOld = Math.max(0, differenceInDays(new Date(e.date), dobDate));
       const ageMonths = parseFloat((daysOld / 30.4375).toFixed(2));
+      const w = useKg ? e.weightKg : e.weightLbs;
       return {
         ageMonths,
-        weight: useKg ? e.weightKg : e.weightLbs,
+        weight: w > 0 ? w : null,
         length: e.lengthCm ?? null,
       };
     });

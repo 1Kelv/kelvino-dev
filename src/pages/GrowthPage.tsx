@@ -34,13 +34,15 @@ export function GrowthPage() {
     localStorage.setItem(UNIT_KEY, next ? 'kg' : 'lbs');
   };
 
-  const latest = entries[0];
-  const oldest = entries[entries.length - 1];
+  const weightEntries = entries.filter((e) => e.weightKg > 0);
+  const latest = weightEntries[0];
+  const oldest = weightEntries[weightEntries.length - 1];
   const totalGain = latest && oldest && oldest.$id !== latest.$id
     ? useKg
       ? `+${(latest.weightKg - oldest.weightKg).toFixed(2)} kg`
       : `+${(latest.weightLbs - oldest.weightLbs).toFixed(2)} lbs`
     : null;
+  const latestHeight = entries.find((e) => e.lengthCm);
 
   // Growth uses `date` (YYYY-MM-DD); filter list by selected date
   const dayEntries = entries.filter((e) => isOnDate(e.date, selectedDate));
@@ -69,8 +71,8 @@ export function GrowthPage() {
       <div className="p-5 flex flex-col gap-5">
         <div className="grid grid-cols-3 gap-3">
           <StatCard icon={<TrendingUp size={18} />} label="Current weight" value={latest ? (useKg ? `${latest.weightKg.toFixed(2)} kg` : `${latest.weightLbs.toFixed(2)} lbs`) : '—'} colour="mint" />
-          <StatCard icon={<TrendingUp size={18} />} label="Last measured" value={latest ? formatDate(latest.date) : '—'} colour="sky" />
-          <StatCard icon={<TrendingUp size={18} />} label="Total gain" value={totalGain || '—'} colour="green" trendUp={true} />
+          <StatCard icon={<TrendingUp size={18} />} label="Height" value={latestHeight?.lengthCm ? `${latestHeight.lengthCm} cm` : '—'} colour="purple" />
+          <StatCard icon={<TrendingUp size={18} />} label="Weight gain" value={totalGain || '—'} colour="green" trendUp={true} />
         </div>
 
         {entries.length > 1 && <GrowthChart entries={entries} useKg={useKg} dob={selectedBaby.dateOfBirth} gender={selectedBaby.gender} />}
@@ -112,11 +114,11 @@ export function GrowthPage() {
           open={!!viewingEntry}
           onClose={() => setViewingEntry(null)}
           onEdit={() => { setViewingEntry(null); setEditingEntry(viewingEntry); }}
-          title={`${viewingEntry.weightKg} kg / ${viewingEntry.weightLbs} lbs`}
+          title={viewingEntry.weightKg > 0 ? `${viewingEntry.weightKg} kg / ${viewingEntry.weightLbs} lbs` : `${viewingEntry.lengthCm} cm`}
           timestamp={formatDate(viewingEntry.date)}
           fields={[
-            { label: 'Weight', value: `${viewingEntry.weightKg} kg / ${viewingEntry.weightLbs} lbs` },
-            { label: 'Length', value: viewingEntry.lengthCm ? `${viewingEntry.lengthCm} cm` : undefined },
+            { label: 'Weight', value: viewingEntry.weightKg > 0 ? `${viewingEntry.weightKg} kg / ${viewingEntry.weightLbs} lbs` : undefined },
+            { label: 'Length / Height', value: viewingEntry.lengthCm ? `${viewingEntry.lengthCm} cm` : undefined },
             { label: 'Head circumference', value: viewingEntry.headCircumferenceCm ? `${viewingEntry.headCircumferenceCm} cm` : undefined },
             { label: 'Notes', value: viewingEntry.notes || undefined },
             { label: 'Date', value: formatDate(viewingEntry.date) },

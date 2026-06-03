@@ -26,11 +26,12 @@ export function GrowthForm({ babyId, userId, onSubmit, onUpdate, onClose, initia
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!date || !weight) { setError('Please enter the date and weight.'); return; }
-    const weightNum = parseFloat(weight);
-    if (isNaN(weightNum) || weightNum <= 0) { setError('Please enter a valid weight.'); return; }
-    const weightKg = useKg ? weightNum : lbsToKg(weightNum);
-    const weightLbs = useKg ? kgToLbs(weightNum) : weightNum;
+    if (!date) { setError('Please enter a date.'); return; }
+    if (!weight && !lengthCm) { setError('Please enter at least a weight or height.'); return; }
+    const weightNum = weight ? parseFloat(weight) : 0;
+    if (weight && (isNaN(weightNum) || weightNum <= 0)) { setError('Please enter a valid weight.'); return; }
+    const weightKg = weight ? (useKg ? weightNum : lbsToKg(weightNum)) : 0;
+    const weightLbs = weight ? (useKg ? kgToLbs(weightNum) : weightNum) : 0;
     setLoading(true);
     setError(null);
     try {
@@ -49,7 +50,7 @@ export function GrowthForm({ babyId, userId, onSubmit, onUpdate, onClose, initia
       <Input label="Date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Weight</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Weight <span className="font-normal text-gray-400">(optional)</span></label>
           <div className="flex gap-1 bg-gray-100 dark:bg-gray-700 rounded-xl p-1">
             <button type="button" onClick={() => setUseKg(true)}
               className={`px-3 py-1 rounded-lg text-sm font-semibold transition-colors min-h-[32px] ${useKg ? 'bg-white dark:bg-gray-600 text-brand-mint shadow-sm' : 'text-gray-500'}`}>
@@ -62,10 +63,10 @@ export function GrowthForm({ babyId, userId, onSubmit, onUpdate, onClose, initia
           </div>
         </div>
         <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)}
-          placeholder={useKg ? 'e.g. 3.5' : 'e.g. 7.7'} min="0" step="0.01" required
+          placeholder={useKg ? 'e.g. 3.5' : 'e.g. 7.7'} min="0" step="0.01"
           className="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 text-base text-gray-900 dark:text-white bg-white dark:bg-gray-700 placeholder-gray-400 focus:border-brand-mint focus:outline-none focus:ring-2 focus:ring-brand-mint/30 min-h-[44px]" />
       </div>
-      <Input label="Length / Height (cm, optional)" type="number" value={lengthCm} onChange={(e) => setLengthCm(e.target.value)} placeholder="e.g. 50" min="0" step="0.1" />
+      <Input label="Length / Height (cm)" type="number" value={lengthCm} onChange={(e) => setLengthCm(e.target.value)} placeholder="e.g. 50" min="0" step="0.1" />
       <Input label="Head circumference (cm, optional)" type="number" value={headCm} onChange={(e) => setHeadCm(e.target.value)} placeholder="e.g. 34" min="0" step="0.1" />
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Notes (optional)</label>
