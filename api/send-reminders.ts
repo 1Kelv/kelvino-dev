@@ -9,16 +9,16 @@ webpush.setVapidDetails(
 
 function makeAppwriteClient() {
   return new Client()
-    .setEndpoint(process.env.APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
-    .setProject(process.env.APPWRITE_PROJECT_ID || '')
+    .setEndpoint(process.env.VITE_APPWRITE_ENDPOINT || process.env.APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
+    .setProject(process.env.VITE_APPWRITE_PROJECT_ID || process.env.APPWRITE_PROJECT_ID || '')
     .setKey(process.env.APPWRITE_API_KEY || '');
 }
 
-const DB_ID = process.env.APPWRITE_DATABASE_ID || '';
+const DB_ID = process.env.VITE_APPWRITE_DATABASE_ID || process.env.APPWRITE_DATABASE_ID || '';
 const COL = {
-  PUSH_SUBSCRIPTIONS: process.env.APPWRITE_COLLECTION_PUSH_SUBSCRIPTIONS || 'push_subscriptions',
-  MEDICATIONS: process.env.APPWRITE_COLLECTION_MEDICATIONS || 'medications',
-  APPOINTMENTS: process.env.APPWRITE_COLLECTION_APPOINTMENTS || 'appointments',
+  PUSH_SUBSCRIPTIONS: process.env.VITE_APPWRITE_COLLECTION_PUSH_SUBSCRIPTIONS || 'push_subscriptions',
+  MEDICATIONS: process.env.VITE_APPWRITE_COLLECTION_MEDICATIONS || 'medications',
+  APPOINTMENTS: process.env.VITE_APPWRITE_COLLECTION_APPOINTMENTS || 'appointments',
 };
 
 interface PushSub {
