@@ -48,6 +48,8 @@ export function SymptomList({ entries, onDelete, onEdit, onView, onAdd }: Sympto
           `Breathing: ${entry.breathing}`,
           entry.feedingWell ? 'Feeding well' : 'Not feeding well',
           entry.temperatureC ? `Temp: ${entry.temperatureC}°C` : null,
+          entry.heartRate ? `HR: ${entry.heartRate} bpm` : null,
+          entry.spO2 ? `SpO2: ${entry.spO2}%` : null,
           entry.notes || null,
         ]
           .filter(Boolean)

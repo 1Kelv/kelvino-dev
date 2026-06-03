@@ -22,6 +22,7 @@ export function SymptomForm({ babyId, userId, onSubmit, onUpdate, onClose, initi
   const [breathing, setBreathing] = useState<SymptomEntry['breathing']>(initialValues?.breathing ?? 'normal');
   const [feedingWell, setFeedingWell] = useState(initialValues?.feedingWell ?? true);
   const [temperatureC, setTemperatureC] = useState(initialValues?.temperatureC ? String(initialValues.temperatureC) : '');
+  const [heartRate, setHeartRate] = useState(initialValues?.heartRate ? String(initialValues.heartRate) : '');
   const [spO2, setSpO2] = useState(initialValues?.spO2 ? String(initialValues.spO2) : '');
   const [notes, setNotes] = useState(initialValues?.notes ?? '');
   const [loading, setLoading] = useState(false);
@@ -34,7 +35,7 @@ export function SymptomForm({ babyId, userId, onSubmit, onUpdate, onClose, initi
     setLoading(true);
     setError(null);
     try {
-      const data = { babyId, userId, datetime: new Date(datetime).toISOString(), skinColour, energyLevel, breathing, feedingWell, temperatureC: temperatureC ? parseFloat(temperatureC) : undefined, spO2: spO2 ? parseFloat(spO2) : undefined, notes: notes || undefined };
+      const data = { babyId, userId, datetime: new Date(datetime).toISOString(), skinColour, energyLevel, breathing, feedingWell, temperatureC: temperatureC ? parseFloat(temperatureC) : undefined, heartRate: heartRate ? parseInt(heartRate) : undefined, spO2: spO2 ? parseFloat(spO2) : undefined, notes: notes || undefined };
       if (isEdit && onUpdate) { await onUpdate(data); } else { await onSubmit(data); }
       onClose();
     } catch {
@@ -69,7 +70,10 @@ export function SymptomForm({ babyId, userId, onSubmit, onUpdate, onClose, initi
         </button>
       </div>
       <Input label="Temperature °C (optional)" type="number" value={temperatureC} onChange={(e) => setTemperatureC(e.target.value)} placeholder="e.g. 37.2" min="30" max="45" step="0.1" />
-      <Input label="Oxygen saturation % (optional)" type="number" value={spO2} onChange={(e) => setSpO2(e.target.value)} placeholder="e.g. 98" min="0" max="100" step="1" />
+      <div className="grid grid-cols-2 gap-3">
+        <Input label="Heart rate bpm (optional)" type="number" value={heartRate} onChange={(e) => setHeartRate(e.target.value)} placeholder="e.g. 140" min="0" max="300" step="1" />
+        <Input label="SpO2 % (optional)" type="number" value={spO2} onChange={(e) => setSpO2(e.target.value)} placeholder="e.g. 98" min="0" max="100" step="1" />
+      </div>
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Notes (optional)</label>
         <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any additional observations..." rows={3}

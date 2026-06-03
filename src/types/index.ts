@@ -70,6 +70,7 @@ export interface SymptomEntry {
   breathing: 'normal' | 'fast' | 'laboured' | 'noisy';
   feedingWell: boolean;
   temperatureC?: number;
+  heartRate?: number;
   spO2?: number;
   notes?: string;
 }
