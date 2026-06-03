@@ -1,6 +1,6 @@
 {
   "crons": [
-    { "path": "/api/send-reminders", "schedule": "0 * * * *" }
+    { "path": "/api/send-reminders", "schedule": "0 8 * * *" }
   ],
   "rewrites": [
     { "source": "/appwrite/:path*", "destination": "https://cloud.appwrite.io/v1/:path*" },
