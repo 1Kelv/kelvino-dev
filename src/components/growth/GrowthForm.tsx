@@ -35,7 +35,8 @@ export function GrowthForm({ babyId, userId, onSubmit, onUpdate, onClose, initia
     setLoading(true);
     setError(null);
     try {
-      const data = { babyId, userId, date, weightKg, weightLbs, lengthCm: lengthCm ? parseFloat(lengthCm) : undefined, headCircumferenceCm: headCm ? parseFloat(headCm) : undefined, notes: notes || undefined };
+      // Use null (not undefined) so Appwrite clears the field when editing
+      const data = { babyId, userId, date, weightKg, weightLbs, lengthCm: lengthCm ? parseFloat(lengthCm) : null, headCircumferenceCm: headCm ? parseFloat(headCm) : null, notes: notes || null } as any;
       if (isEdit && onUpdate) { await onUpdate(data); } else { await onSubmit(data); }
       onClose();
     } catch {

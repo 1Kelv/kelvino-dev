@@ -74,7 +74,7 @@ export function GrowthChart({ entries, useKg, dob, gender }: GrowthChartProps) {
     const daysOld = Math.max(0, differenceInDays(new Date(e.date), dobDate));
     const ageMonths = parseFloat((daysOld / 30.4375).toFixed(2));
     const w = useKg ? e.weightKg : e.weightLbs;
-    return { ageMonths, weight: w > 0 ? w : null, length: e.lengthCm ?? null };
+    return { ageMonths, weight: w > 0 ? w : null, length: e.lengthCm || null };
   });
 
   const maxBabyAge = babyPoints.length > 0 ? Math.max(...babyPoints.map((p) => p.ageMonths)) : 0;
