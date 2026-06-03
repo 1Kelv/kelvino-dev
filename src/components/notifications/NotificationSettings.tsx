@@ -41,8 +41,7 @@ export function NotificationSettings({ userId, babyId }: NotificationSettingsPro
         auth: keys.auth,
       });
       setStatus('subscribed');
-    } catch (err: any) {
-      console.error('Push enable error:', err?.message, err?.code, err);
+    } catch {
       setError('Could not enable notifications. Please try again.');
     } finally {
       setBusy(false);
