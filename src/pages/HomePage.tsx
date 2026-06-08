@@ -292,6 +292,13 @@ export function HomePage() {
             <path d="M0,24 C100,0 300,0 400,24 L400,24 L0,24 Z" />
           </svg>
         </div>
+        <div className="flex items-center justify-between mb-4 relative">
+          <div>
+            <p className="text-white font-extrabold text-lg font-heading tracking-tight leading-none">Mylestone</p>
+            <p className="text-white/60 text-[11px] font-medium mt-0.5">Every milestone, beautifully tracked</p>
+          </div>
+          <span className="text-2xl">✨</span>
+        </div>
         <div className="flex items-start justify-between relative">
           <div>
             <p className="text-white/80 text-sm font-medium">{greeting},</p>
