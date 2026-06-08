@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Paperclip, X, Sparkles, FileText, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Send, Paperclip, X, Sparkles, FileText, AlertTriangle, RefreshCw, Copy, Check, Pencil } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
 import { PageHeader } from '../components/layout/PageHeader';
 
@@ -102,6 +102,7 @@ export function AiPage() {
   const [pendingFiles, setPendingFiles] = useState<PendingFile[]>([]);
   const [loading, setLoading] = useState(false);
   const [fileError, setFileError] = useState('');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLTextAreaElement>(null);
@@ -229,6 +230,26 @@ export function AiPage() {
     }
   };
 
+  const handleCopy = (id: string, text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    });
+  };
+
+  const handleEdit = (msg: Message) => {
+    const idx = messages.findIndex((m) => m.id === msg.id);
+    setMessages((prev) => prev.slice(0, idx));
+    setInput(msg.text);
+    setTimeout(() => {
+      textRef.current?.focus();
+      if (textRef.current) {
+        textRef.current.style.height = 'auto';
+        textRef.current.style.height = Math.min(textRef.current.scrollHeight, 120) + 'px';
+      }
+    }, 0);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     send(input, pendingFiles);
@@ -321,49 +342,70 @@ export function AiPage() {
                   </div>
                 )}
                 {msg.text && (
-                  <div
-                    className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                      msg.role === 'user'
-                        ? 'bg-brand-mint text-white rounded-tr-sm whitespace-pre-wrap'
-                        : msg.isError
-                        ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-tl-sm'
-                        : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-gray-700 rounded-tl-sm shadow-sm'
-                    }`}
-                  >
-                    {msg.isError && msg.retryText ? (
-                      <div className="flex flex-col gap-2">
-                        <p>{msg.text}</p>
-                        <button
-                          onClick={() => send(msg.retryText!, [])}
-                          disabled={loading}
-                          className="flex items-center gap-1.5 text-xs font-semibold text-red-600 dark:text-red-400 hover:text-red-700 disabled:opacity-50 self-start"
+                  <>
+                    <div
+                      className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                        msg.role === 'user'
+                          ? 'bg-brand-mint text-white rounded-tr-sm whitespace-pre-wrap'
+                          : msg.isError
+                          ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-tl-sm'
+                          : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-gray-700 rounded-tl-sm shadow-sm'
+                      }`}
+                    >
+                      {msg.isError && msg.retryText ? (
+                        <div className="flex flex-col gap-2">
+                          <p>{msg.text}</p>
+                          <button
+                            onClick={() => send(msg.retryText!, [])}
+                            disabled={loading}
+                            className="flex items-center gap-1.5 text-xs font-semibold text-red-600 dark:text-red-400 hover:text-red-700 disabled:opacity-50 self-start"
+                          >
+                            <RefreshCw size={12} />
+                            Try again
+                          </button>
+                        </div>
+                      ) : msg.role === 'assistant' ? (
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                            ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
+                            ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
+                            li: ({ children }) => <li className="text-sm">{children}</li>,
+                            strong: ({ children }) => <strong className="font-semibold text-gray-900 dark:text-white">{children}</strong>,
+                            em: ({ children }) => <em className="italic">{children}</em>,
+                            h3: ({ children }) => <h3 className="font-bold text-gray-900 dark:text-white mb-1 mt-2">{children}</h3>,
+                            h4: ({ children }) => <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-1">{children}</h4>,
+                            hr: () => <hr className="my-2 border-gray-200 dark:border-gray-600" />,
+                          }}
                         >
-                          <RefreshCw size={12} />
-                          Try again
+                          {msg.text}
+                        </ReactMarkdown>
+                      ) : (
+                        msg.text
+                      )}
+                    </div>
+                    {!msg.isError && (
+                      <div className={`flex gap-2 mt-1 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                        {msg.role === 'user' && (
+                          <button
+                            onClick={() => handleEdit(msg)}
+                            className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-brand-mint transition-colors py-0.5 px-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                          >
+                            <Pencil size={11} />
+                            Edit
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleCopy(msg.id, msg.text)}
+                          className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-brand-mint transition-colors py-0.5 px-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                        >
+                          {copiedId === msg.id ? <Check size={11} className="text-brand-mint" /> : <Copy size={11} />}
+                          {copiedId === msg.id ? 'Copied' : 'Copy'}
                         </button>
                       </div>
-                    ) : msg.role === 'assistant' ? (
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                          ul: ({ children }) => <ul className="list-disc list-inside mb-2 space-y-1">{children}</ul>,
-                          ol: ({ children }) => <ol className="list-decimal list-inside mb-2 space-y-1">{children}</ol>,
-                          li: ({ children }) => <li className="text-sm">{children}</li>,
-                          strong: ({ children }) => <strong className="font-semibold text-gray-900 dark:text-white">{children}</strong>,
-                          em: ({ children }) => <em className="italic">{children}</em>,
-                          h3: ({ children }) => <h3 className="font-bold text-gray-900 dark:text-white mb-1 mt-2">{children}</h3>,
-                          h4: ({ children }) => <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-1">{children}</h4>,
-                          hr: () => <hr className="my-2 border-gray-200 dark:border-gray-600" />,
-                        }}
-                      >
-                        {msg.text}
-                      </ReactMarkdown>
-                    ) : (
-                      msg.text
                     )}
-
-                  </div>
+                  </>
                 )}
               </div>
             </motion.div>
