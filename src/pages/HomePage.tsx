@@ -281,8 +281,18 @@ export function HomePage() {
 
   return (
     <AppShell>
-      <div className="bg-gradient-to-br from-brand-mint to-brand-dark px-5 pt-6 pb-8">
-        <div className="flex items-start justify-between">
+      <div className="relative bg-gradient-to-br from-[#3ECFBF] via-brand-mint to-[#1E9E92] px-5 pt-6 pb-12">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-4 -right-4 w-32 h-32 rounded-full bg-white/5" />
+          <div className="absolute top-8 right-16 w-16 h-16 rounded-full bg-white/5" />
+          <div className="absolute -bottom-2 -left-4 w-24 h-24 rounded-full bg-white/5" />
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-[0]">
+          <svg viewBox="0 0 400 24" preserveAspectRatio="none" className="w-full h-6 fill-gray-50 dark:fill-gray-900">
+            <path d="M0,24 C100,0 300,0 400,24 L400,24 L0,24 Z" />
+          </svg>
+        </div>
+        <div className="flex items-start justify-between relative">
           <div>
             <p className="text-white/80 text-sm font-medium">{greeting},</p>
             <h1 className="text-white text-2xl font-extrabold mt-0.5 font-heading">
@@ -385,8 +395,9 @@ export function HomePage() {
         )}
       </div>
 
+
       <motion.div
-        className="p-5 -mt-4 flex flex-col gap-5"
+        className="p-5 -mt-2 flex flex-col gap-5"
         variants={containerVariants}
         initial="hidden"
         animate="show"
@@ -495,28 +506,31 @@ export function HomePage() {
             {(todayFeeds.length > 0 || todayNappies.length > 0 || todayMeds.length > 0) && (
               <motion.div
                 variants={itemVariants}
-                className="bg-white dark:bg-gray-800 rounded-2xl px-4 py-3 shadow-sm border border-gray-100 dark:border-gray-700"
+                className="bg-white dark:bg-gray-800 rounded-2xl px-4 py-4 shadow-sm border border-gray-100 dark:border-gray-700"
               >
-                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Today at a glance</p>
+                <p className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Today at a glance</p>
                 <div className="flex items-center justify-around">
-                  <div className="flex flex-col items-center gap-0.5">
-                    <span className="text-xl">🍼</span>
-                    <p className="text-lg font-extrabold text-gray-900 dark:text-white">{todayFeeds.length}</p>
-                    <p className="text-xs text-gray-400">feeds</p>
-                    {todayMl > 0 && <p className="text-xs font-semibold text-brand-mint">{todayMl} ml</p>}
-                  </div>
-                  <div className="w-px h-10 bg-gray-100 dark:bg-gray-700" />
-                  <div className="flex flex-col items-center gap-0.5">
-                    <span className="text-xl">🚼</span>
-                    <p className="text-lg font-extrabold text-gray-900 dark:text-white">{todayNappies.length}</p>
-                    <p className="text-xs text-gray-400">nappies</p>
-                  </div>
-                  <div className="w-px h-10 bg-gray-100 dark:bg-gray-700" />
-                  <div className="flex flex-col items-center gap-0.5">
-                    <span className="text-xl">💊</span>
-                    <p className="text-lg font-extrabold text-gray-900 dark:text-white">{todayMeds.length}</p>
-                    <p className="text-xs text-gray-400">meds</p>
-                  </div>
+                  {[
+                    { emoji: '🍼', count: todayFeeds.length, label: 'feeds', sub: todayMl > 0 ? `${todayMl} ml` : null, color: 'text-teal-500' },
+                    { emoji: '🚼', count: todayNappies.length, label: 'nappies', sub: null, color: 'text-sky-500' },
+                    { emoji: '💊', count: todayMeds.length, label: 'meds', sub: null, color: 'text-violet-500' },
+                  ].map((item, i) => (
+                    <React.Fragment key={item.label}>
+                      {i > 0 && <div className="w-px h-12 bg-gray-100 dark:bg-gray-700" />}
+                      <div className="flex flex-col items-center gap-0.5">
+                        <motion.span
+                          className="text-2xl"
+                          animate={{ y: [0, -4, 0] }}
+                          transition={{ repeat: Infinity, duration: 2.5, delay: i * 0.4, ease: 'easeInOut' }}
+                        >
+                          {item.emoji}
+                        </motion.span>
+                        <p className={`text-xl font-extrabold ${item.color}`}>{item.count}</p>
+                        <p className="text-[11px] text-gray-400 font-medium">{item.label}</p>
+                        {item.sub && <p className="text-[11px] font-bold text-teal-500">{item.sub}</p>}
+                      </div>
+                    </React.Fragment>
+                  ))}
                 </div>
               </motion.div>
             )}
@@ -525,21 +539,21 @@ export function HomePage() {
               <h2 className="text-base font-bold text-gray-900 dark:text-white mb-3">Quick actions</h2>
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { label: 'Log feed', to: '/feeds', icon: Droplets, colour: 'bg-brand-light text-brand-dark' },
-                  { label: 'Log nappy', to: '/nappies', icon: Baby, colour: 'bg-blue-50 text-blue-700' },
-                  { label: 'Log meds', to: '/medications', icon: Pill, colour: 'bg-purple-50 text-purple-700' },
+                  { label: 'Log feed', to: '/feeds', icon: Droplets, gradient: 'from-teal-400 to-emerald-500', shadow: 'shadow-teal-100 dark:shadow-teal-900/30' },
+                  { label: 'Log nappy', to: '/nappies', icon: Baby, gradient: 'from-sky-400 to-blue-500', shadow: 'shadow-sky-100 dark:shadow-sky-900/30' },
+                  { label: 'Log meds', to: '/medications', icon: Pill, gradient: 'from-violet-400 to-purple-500', shadow: 'shadow-violet-100 dark:shadow-violet-900/30' },
                 ].map((action) => (
                   <Link key={action.to} to={action.to}>
                     <motion.div
-                      whileHover={{ scale: 1.06, y: -3 }}
+                      whileHover={{ scale: 1.06, y: -4 }}
                       whileTap={{ scale: 0.94 }}
                       transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                      className="flex flex-col items-center gap-2 bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 min-h-[80px] justify-center"
+                      className={`flex flex-col items-center gap-2.5 bg-gradient-to-br ${action.gradient} rounded-2xl p-4 shadow-lg ${action.shadow} min-h-[84px] justify-center`}
                     >
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${action.colour}`}>
+                      <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white">
                         <action.icon size={20} />
                       </div>
-                      <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 text-center">{action.label}</p>
+                      <p className="text-xs font-semibold text-white text-center">{action.label}</p>
                     </motion.div>
                   </Link>
                 ))}
