@@ -39,6 +39,17 @@ const MAX_FILE_BYTES = 4 * 1024 * 1024;
 const MAX_FILES = 5;
 const MAX_MESSAGES_STORED = 60;
 
+function getBabyAge(dob: string): string {
+  const birth = new Date(dob);
+  const now = new Date();
+  const totalDays = Math.floor((now.getTime() - birth.getTime()) / 86400000);
+  const months = Math.floor(totalDays / 30.44);
+  const weeks = Math.floor(totalDays / 7);
+  if (months >= 24) return `${Math.floor(months / 12)} years old`;
+  if (months >= 1) return `${months} month${months !== 1 ? 's' : ''} old`;
+  return `${weeks} week${weeks !== 1 ? 's' : ''} old`;
+}
+
 function TypingDots() {
   return (
     <div className="flex gap-1 items-center py-1">
@@ -223,10 +234,26 @@ export function AiPage() {
         return { fileBase64: arrayBufferToBase64(buffer), fileMediaType: pf.file.type, fileName: pf.file.name };
       }));
 
+      const babyCtx = selectedBaby ? {
+        name: selectedBaby.name,
+        age: getBabyAge(selectedBaby.dateOfBirth),
+        gender: selectedBaby.gender ?? undefined,
+        diagnosis: selectedBaby.diagnosis ?? undefined,
+      } : undefined;
+
+      const recentTopics = chats.slice(0, 5).map((c) => c.title);
+
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text.trim(), files: encodedFiles.length > 0 ? encodedFiles : undefined, history: historySnapshot }),
+        body: JSON.stringify({
+          message: text.trim(),
+          files: encodedFiles.length > 0 ? encodedFiles : undefined,
+          history: historySnapshot,
+          babyContext: babyCtx,
+          userName: user?.name || undefined,
+          recentTopics: recentTopics.length > 0 ? recentTopics : undefined,
+        }),
       });
 
       let data: { response?: string; error?: string };

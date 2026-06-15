@@ -8,7 +8,7 @@ export const config = {
   },
 };
 
-const SYSTEM_PROMPT = `You are Mylo — Mylestone's AI Health Companion, a warm, knowledgeable assistant for parents and carers tracking their baby's health journey.
+const BASE_SYSTEM_PROMPT = `You are Mylo — Mylestone's AI Health Companion, a warm, knowledgeable assistant for parents and carers tracking their baby's health journey.
 
 You help parents by:
 - Analysing photos of symptoms (rashes, skin changes, eye discharge, etc.) and describing what you observe
@@ -33,6 +33,36 @@ FORMATTING RULES — always follow these:
 
 Remember: you are a helpful companion, not a doctor.`;
 
+interface BabyContext {
+  name: string;
+  age: string;
+  gender?: string;
+  diagnosis?: string;
+}
+
+function buildSystemPrompt(babyContext?: BabyContext, userName?: string, recentTopics?: string[]): string {
+  let prompt = BASE_SYSTEM_PROMPT;
+
+  if (userName) {
+    prompt += `\n\nPARENT/CARER: You are speaking with ${userName}. Use their name occasionally to make the conversation feel warm and personal — but don't overdo it.`;
+  }
+
+  if (babyContext) {
+    prompt += `\n\nBABY PROFILE — always use this context in every response:
+- Name: ${babyContext.name}
+- Age: ${babyContext.age}${babyContext.gender ? `\n- Gender: ${babyContext.gender}` : ''}${babyContext.diagnosis ? `\n- Known diagnosis / medical conditions: ${babyContext.diagnosis}` : ''}
+
+Always refer to the baby as ${babyContext.name} (never "the baby" or "your baby" when the name is known). Tailor all advice to their age and, where relevant, their known medical conditions.`;
+  }
+
+  if (recentTopics && recentTopics.length > 0) {
+    prompt += `\n\nRECENT CONVERSATION TOPICS (for continuity — reference only if relevant):
+${recentTopics.map((t, i) => `${i + 1}. ${t}`).join('\n')}`;
+  }
+
+  return prompt;
+}
+
 interface FilePayload {
   fileBase64: string;
   fileMediaType: string;
@@ -49,7 +79,7 @@ export default async function handler(req: any, res: any) {
     return res.status(500).json({ error: 'AI service is not configured. Please contact support.' });
   }
 
-  const { message, fileBase64, fileMediaType, fileName, files, history } = req.body || {};
+  const { message, fileBase64, fileMediaType, fileName, files, history, babyContext, userName, recentTopics } = req.body || {};
 
   if (!message && !fileBase64 && (!files || files.length === 0)) {
     return res.status(400).json({ error: 'No message or file provided' });
@@ -97,7 +127,7 @@ export default async function handler(req: any, res: any) {
     const response = await client.messages.create({
       model: 'claude-opus-4-7',
       max_tokens: 1024,
-      system: SYSTEM_PROMPT,
+      system: buildSystemPrompt(babyContext, userName, recentTopics),
       messages: [
         ...historyMessages,
         { role: 'user', content: currentContent },
