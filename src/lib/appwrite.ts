@@ -28,4 +28,5 @@ export const COLLECTIONS = {
   MILESTONES: import.meta.env.VITE_APPWRITE_COLLECTION_MILESTONES || 'milestones',
   HOSPITAL_STAYS: import.meta.env.VITE_APPWRITE_COLLECTION_HOSPITAL_STAYS || 'hospital_stays',
   PUSH_SUBSCRIPTIONS: import.meta.env.VITE_APPWRITE_COLLECTION_PUSH_SUBSCRIPTIONS || 'push_subscriptions',
+  AI_CHATS: import.meta.env.VITE_APPWRITE_COLLECTION_AI_CHATS || 'ai_chats',
 };

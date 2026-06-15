@@ -286,3 +286,34 @@ export const pushSubscriptionsDb = {
     await Promise.all(res.documents.map((d) => databases.deleteDocument(DB_ID, COLLECTIONS.PUSH_SUBSCRIPTIONS, d.$id)));
   },
 };
+
+export interface AiChat {
+  $id: string;
+  $updatedAt: string;
+  userId: string;
+  babyId: string;
+  title: string;
+  messages: string; // JSON-serialised Message[]
+}
+
+export const aiChatsDb = {
+  list: async (userId: string, babyId: string): Promise<AiChat[]> => {
+    const res = await databases.listDocuments(DB_ID, COLLECTIONS.AI_CHATS, [
+      Query.equal('userId', userId),
+      Query.equal('babyId', babyId),
+      Query.orderDesc('$updatedAt'),
+      Query.limit(30),
+    ]);
+    return res.documents as unknown as AiChat[];
+  },
+  create: async (userId: string, babyId: string, title: string, messages: string): Promise<AiChat> => {
+    const doc = await databases.createDocument(DB_ID, COLLECTIONS.AI_CHATS, ID.unique(), { userId, babyId, title, messages }, userPerms);
+    return doc as unknown as AiChat;
+  },
+  update: async (id: string, title: string, messages: string): Promise<void> => {
+    await databases.updateDocument(DB_ID, COLLECTIONS.AI_CHATS, id, { title, messages });
+  },
+  remove: async (id: string): Promise<void> => {
+    await databases.deleteDocument(DB_ID, COLLECTIONS.AI_CHATS, id);
+  },
+};
