@@ -44,12 +44,23 @@ function surgeryCountdown(surgeryDate: string): string {
   return `${hours}h`;
 }
 
-function stayDuration(admittedDate: string, dischargedDate?: string): string {
-  const end = dischargedDate ? new Date(dischargedDate) : new Date();
-  const diff = end.getTime() - new Date(admittedDate).getTime();
+function stayDuration(admittedDate: string, dischargeDate?: string): string {
+  const start = new Date(admittedDate);
+  const end = dischargeDate ? new Date(dischargeDate) : new Date();
+  if (start > end) return 'Upcoming';
+  const diff = end.getTime() - start.getTime();
   const days = Math.floor(diff / 86400000);
   if (days === 0) return 'Less than a day';
   return `${days} day${days !== 1 ? 's' : ''}`;
+}
+
+function admissionCountdown(admittedDate: string): string {
+  const diff = new Date(admittedDate).getTime() - Date.now();
+  if (diff <= 0) return '';
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  if (days > 0) return `in ${days}d ${hours}h`;
+  return `in ${hours}h`;
 }
 
 export function HospitalPage() {
@@ -66,6 +77,7 @@ export function HospitalPage() {
   const [dischargeLoading, setDischargeLoading] = useState(false);
   const [newCheckItem, setNewCheckItem] = useState('');
 
+  const isUpcoming = activeStay ? new Date(activeStay.admittedDate) > new Date() : false;
   const checklist = activeStay ? parseChecklist(activeStay.checklistJson) : [];
 
   const saveChecklist = async (items: ChecklistItem[]) => {
@@ -113,7 +125,7 @@ export function HospitalPage() {
 
   return (
     <AppShell>
-      <div className={`px-5 pt-6 pb-8 ${activeStay ? 'bg-gradient-to-br from-blue-600 to-blue-400' : 'bg-gradient-to-br from-brand-dark to-brand-mint'}`}>
+      <div className={`px-5 pt-6 pb-8 ${activeStay ? (isUpcoming ? 'bg-gradient-to-br from-orange-500 to-amber-400' : 'bg-gradient-to-br from-blue-600 to-blue-400') : 'bg-gradient-to-br from-brand-dark to-brand-mint'}`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center">
             <Stethoscope size={20} className="text-white" />
@@ -121,7 +133,9 @@ export function HospitalPage() {
           <div>
             <h1 className="text-white text-xl font-extrabold font-heading">Hospital Mode</h1>
             {activeStay ? (
-              <p className="text-white/80 text-xs">Currently admitted · {activeStay.hospital}</p>
+              isUpcoming
+                ? <p className="text-white/80 text-xs">Upcoming · {activeStay.hospital}</p>
+                : <p className="text-white/80 text-xs">Currently admitted · {activeStay.hospital}</p>
             ) : (
               <p className="text-white/80 text-xs">No active hospital stay</p>
             )}
@@ -149,18 +163,22 @@ export function HospitalPage() {
         {/* Active stay */}
         {activeStay && (
           <motion.div
-            className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border-2 border-blue-200 dark:border-blue-800 overflow-hidden"
+            className={`bg-white dark:bg-gray-800 rounded-3xl shadow-sm border-2 overflow-hidden ${isUpcoming ? 'border-orange-200 dark:border-orange-800' : 'border-blue-200 dark:border-blue-800'}`}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <div className="bg-blue-50 dark:bg-blue-900/30 px-4 py-3 flex items-center justify-between">
+            <div className={`px-4 py-3 flex items-center justify-between ${isUpcoming ? 'bg-orange-50 dark:bg-orange-900/30' : 'bg-blue-50 dark:bg-blue-900/30'}`}>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                  <p className="text-sm font-bold text-blue-700 dark:text-blue-300">Currently Admitted</p>
+                  <span className={`w-2 h-2 rounded-full ${isUpcoming ? 'bg-orange-500' : 'bg-blue-500 animate-pulse'}`} />
+                  <p className={`text-sm font-bold ${isUpcoming ? 'text-orange-700 dark:text-orange-300' : 'text-blue-700 dark:text-blue-300'}`}>
+                    {isUpcoming ? 'Upcoming Admission' : 'Currently Admitted'}
+                  </p>
                 </div>
-                <p className="text-xs text-blue-500 dark:text-blue-400 mt-0.5">
-                  {stayDuration(activeStay.admittedDate)} · since {formatDateTime(activeStay.admittedDate)}
+                <p className={`text-xs mt-0.5 ${isUpcoming ? 'text-orange-500 dark:text-orange-400' : 'text-blue-500 dark:text-blue-400'}`}>
+                  {isUpcoming
+                    ? `Admitted ${admissionCountdown(activeStay.admittedDate)} · ${formatDateTime(activeStay.admittedDate)}`
+                    : `${stayDuration(activeStay.admittedDate)} · since ${formatDateTime(activeStay.admittedDate)}`}
                 </p>
               </div>
               <div className="flex items-center gap-1">
@@ -285,7 +303,7 @@ export function HospitalPage() {
                       {stay.ward && <p className="text-xs text-gray-400">{stay.ward}</p>}
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{stay.reason}</p>
                       <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                        <Badge colour="gray">{stayDuration(stay.admittedDate, stay.dischargeDate)}</Badge>
+                        <Badge colour="gray">{stayDuration(stay.admittedDate, stay.dischargeDate ?? undefined)}</Badge>
                         {stay.surgeryName && <Badge colour="mint">{stay.surgeryName}</Badge>}
                       </div>
                       <p className="text-xs text-gray-400 mt-1">
