@@ -92,7 +92,7 @@ export function HospitalPage() {
     if (!activeStay || !dischargeDate) return;
     setDischargeLoading(true);
     try {
-      await updateStay(activeStay.$id, { dischargedDate: new Date(dischargeDate).toISOString() });
+      await updateStay(activeStay.$id, { dischargeDate: new Date(dischargeDate).toISOString() });
       setDischargeOpen(false);
     } catch { /* ignore */ }
     finally { setDischargeLoading(false); }
@@ -106,7 +106,7 @@ export function HospitalPage() {
     finally { setDeleteLoading(false); }
   };
 
-  const pastStays = stays.filter((s) => !!s.dischargedDate);
+  const pastStays = stays.filter((s) => !!s.dischargeDate);
   const surgeryPending = activeStay?.surgeryDate && new Date(activeStay.surgeryDate) > new Date();
   const surgeryPast = activeStay?.surgeryDate && new Date(activeStay.surgeryDate) <= new Date();
   const completedChecklist = checklist.filter((i) => i.completed).length;
@@ -285,11 +285,11 @@ export function HospitalPage() {
                       {stay.ward && <p className="text-xs text-gray-400">{stay.ward}</p>}
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{stay.reason}</p>
                       <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                        <Badge colour="gray">{stayDuration(stay.admittedDate, stay.dischargedDate)}</Badge>
+                        <Badge colour="gray">{stayDuration(stay.admittedDate, stay.dischargeDate)}</Badge>
                         {stay.surgeryName && <Badge colour="mint">{stay.surgeryName}</Badge>}
                       </div>
                       <p className="text-xs text-gray-400 mt-1">
-                        {formatDate(stay.admittedDate)} – {stay.dischargedDate ? formatDate(stay.dischargedDate) : 'ongoing'}
+                        {formatDate(stay.admittedDate)} – {stay.dischargeDate ? formatDate(stay.dischargeDate) : 'ongoing'}
                       </p>
                     </div>
                     <button

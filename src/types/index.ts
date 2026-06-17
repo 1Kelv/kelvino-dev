@@ -137,7 +137,7 @@ export interface HospitalStay {
   babyId: string;
   userId: string;
   admittedDate: string;
-  dischargedDate?: string;
+  dischargeDate?: string;
   hospital: string;
   ward?: string;
   reason: string;

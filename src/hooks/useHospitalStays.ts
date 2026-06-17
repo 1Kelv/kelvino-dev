@@ -34,7 +34,7 @@ export function useHospitalStays(babyId: string | undefined): UseHospitalStaysRe
 
   useEffect(() => { fetch(); }, [fetch]);
 
-  const activeStay = stays.find((s) => !s.dischargedDate) ?? null;
+  const activeStay = stays.find((s) => !s.dischargeDate) ?? null;
 
   const addStay = async (data: Omit<HospitalStay, '$id'>) => {
     const tempId = `temp_${Date.now()}`;
