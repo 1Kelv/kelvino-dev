@@ -42,7 +42,8 @@ export function useHospitalStays(babyId: string | undefined): UseHospitalStaysRe
     try {
       const created = await hospitalStaysDb.create(data);
       setStays((prev) => prev.map((s) => (s.$id === tempId ? created : s)));
-    } catch {
+    } catch (err) {
+      console.error('Hospital stay create error:', err);
       setStays((prev) => prev.filter((s) => s.$id !== tempId));
       throw new Error('Failed to save hospital stay.');
     }
