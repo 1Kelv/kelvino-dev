@@ -44,7 +44,23 @@ export function useHospitalStays(babyId: string | undefined): UseHospitalStaysRe
       setStays((prev) => prev.map((s) => (s.$id === tempId ? created : s)));
     } catch (err) {
       console.error('Hospital stay create error:', err);
-      setStays((prev) => prev.filter((s) => s.$id !== tempId));
+      // Re-fetch to verify whether the save succeeded despite the network error
+      if (babyId) {
+        try {
+          const latest = await hospitalStaysDb.list(babyId);
+          const saved = latest.find(
+            (s) =>
+              s.hospital === data.hospital &&
+              Math.abs(new Date(s.admittedDate).getTime() - new Date(data.admittedDate).getTime()) < 60000
+          );
+          setStays(latest);
+          if (saved) return; // saved successfully — response just timed out
+        } catch {
+          setStays((prev) => prev.filter((s) => s.$id !== tempId));
+        }
+      } else {
+        setStays((prev) => prev.filter((s) => s.$id !== tempId));
+      }
       throw new Error('Failed to save hospital stay.');
     }
   };
