@@ -83,7 +83,7 @@ export function NotesPage() {
           timestamp={formatDate(viewingEntry.date)}
           fields={[
             { label: 'Category', value: viewingEntry.category },
-            { label: 'Note', value: viewingEntry.body },
+            { label: 'Note', value: viewingEntry.body, markdown: true },
             { label: 'Date', value: formatDate(viewingEntry.date) },
           ]}
         />

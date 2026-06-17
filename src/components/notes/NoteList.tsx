@@ -23,6 +23,16 @@ const categoryConfig = (cat: NoteEntry['category']) => {
   }
 };
 
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/#{1,6}\s+/g, '')
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/^[\*\-]\s+/gm, '')
+    .replace(/\n+/g, ' ')
+    .trim();
+}
+
 export function NoteList({ entries, onDelete, onEdit, onView, onAdd }: NoteListProps) {
   if (entries.length === 0) {
     return (
@@ -45,7 +55,7 @@ export function NoteList({ entries, onDelete, onEdit, onView, onAdd }: NoteListP
             key={entry.$id}
             timestamp={formatDate(entry.date)}
             title={entry.title}
-            subtitle={entry.body.length > 100 ? entry.body.slice(0, 100) + '…' : entry.body}
+            subtitle={(() => { const clean = stripMarkdown(entry.body); return clean.length > 100 ? clean.slice(0, 100) + '…' : clean; })()}
             badge={<Badge colour={cat.colour}>{cat.label}</Badge>}
             onDelete={() => onDelete(entry.$id)}
             onEdit={onEdit ? () => onEdit(entry) : undefined}

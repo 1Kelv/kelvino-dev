@@ -1,10 +1,13 @@
 import React from 'react';
 import { Pencil } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export interface DetailField {
   label: string;
   value: string | undefined | null;
+  markdown?: boolean;
 }
 
 interface EntryDetailModalProps {
@@ -73,7 +76,26 @@ export function EntryDetailModal({ open, onClose, onEdit, title, timestamp, badg
                 {fields.filter(f => f.value).map((field) => (
                   <div key={field.label} className="py-3 flex gap-3">
                     <span className="text-sm text-gray-400 dark:text-gray-500 w-28 shrink-0 pt-0.5">{field.label}</span>
-                    <span className="text-sm text-gray-900 dark:text-white font-medium flex-1">{field.value}</span>
+                    {field.markdown ? (
+                      <div className="text-sm text-gray-900 dark:text-white flex-1 prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5 prose-headings:mb-1">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            p: ({ children }) => <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>,
+                            ul: ({ children }) => <ul className="list-disc list-outside pl-4 mb-2 space-y-1">{children}</ul>,
+                            ol: ({ children }) => <ol className="list-decimal list-outside pl-4 mb-2 space-y-1">{children}</ol>,
+                            li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                            strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                            h3: ({ children }) => <h3 className="font-bold text-gray-900 dark:text-white mt-3 mb-1">{children}</h3>,
+                            h4: ({ children }) => <h4 className="font-semibold mt-2 mb-1">{children}</h4>,
+                          }}
+                        >
+                          {field.value as string}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-gray-900 dark:text-white font-medium flex-1">{field.value}</span>
+                    )}
                   </div>
                 ))}
               </div>
