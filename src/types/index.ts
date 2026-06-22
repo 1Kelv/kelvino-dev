@@ -145,6 +145,7 @@ export interface HospitalStay {
   surgeryName?: string;
   notes?: string;
   checklistJson?: string;
+  phase?: string | null;
 }
 
 export interface PushSubscriptionRecord {

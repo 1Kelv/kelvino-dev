@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Plus, Pencil, Trash2, CheckSquare, Square, LogOut, Stethoscope, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AppShell } from '../components/layout/AppShell';
@@ -8,32 +8,16 @@ import { Input } from '../components/ui/Input';
 import { EmptyState } from '../components/ui/EmptyState';
 import { Badge } from '../components/ui/Badge';
 import { HospitalStayForm } from '../components/hospital/HospitalStayForm';
+import { PhaseTracker } from '../components/hospital/PhaseTracker';
+import { CareTeamSection } from '../components/hospital/CareTeamSection';
+import { RecoveryTimeline } from '../components/hospital/RecoveryTimeline';
+import { RoundQuestions } from '../components/hospital/RoundQuestions';
+import { parseExtras, HospitalExtras, CareTeamMember, TimelineEntry, RoundQuestion, ChecklistItem } from '../components/hospital/hospitalExtras';
 import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { useHospitalStays } from '../hooks/useHospitalStays';
 import { HospitalStay } from '../types';
 import { formatDateTime, formatDate } from '../lib/utils';
-
-interface ChecklistItem {
-  title: string;
-  completed: boolean;
-}
-
-function parseChecklist(json: string | undefined): ChecklistItem[] {
-  if (!json) return defaultChecklist();
-  try { return JSON.parse(json); } catch { return defaultChecklist(); }
-}
-
-function defaultChecklist(): ChecklistItem[] {
-  return [
-    { title: 'Medication list confirmed', completed: false },
-    { title: 'Feeding plan documented', completed: false },
-    { title: 'Follow-up appointments booked', completed: false },
-    { title: 'Discharge letter received', completed: false },
-    { title: 'Community nurse referral made', completed: false },
-    { title: 'Emergency contacts noted', completed: false },
-  ];
-}
 
 function surgeryCountdown(surgeryDate: string): string {
   const diff = new Date(surgeryDate).getTime() - Date.now();
@@ -78,26 +62,44 @@ export function HospitalPage() {
   const [newCheckItem, setNewCheckItem] = useState('');
 
   const isUpcoming = activeStay ? new Date(activeStay.admittedDate) > new Date() : false;
-  const checklist = activeStay ? parseChecklist(activeStay.checklistJson) : [];
+  const extras: HospitalExtras = activeStay ? parseExtras(activeStay.checklistJson) : { checklist: [], timeline: [], careTeam: [], roundQuestions: [] };
+  const checklist = extras.checklist;
 
-  const saveChecklist = async (items: ChecklistItem[]) => {
+  const saveExtras = useCallback(async (newExtras: HospitalExtras) => {
     if (!activeStay) return;
-    await updateStay(activeStay.$id, { checklistJson: JSON.stringify(items) });
-  };
+    await updateStay(activeStay.$id, { checklistJson: JSON.stringify(newExtras) });
+  }, [activeStay, updateStay]);
+
+  const setPhase = useCallback(async (phase: string) => {
+    if (!activeStay) return;
+    await updateStay(activeStay.$id, { phase });
+  }, [activeStay, updateStay]);
 
   const toggleCheckItem = async (idx: number) => {
-    const updated = checklist.map((item, i) => i === idx ? { ...item, completed: !item.completed } : item);
-    await saveChecklist(updated);
+    const updated = checklist.map((item: ChecklistItem, i: number) => i === idx ? { ...item, completed: !item.completed } : item);
+    await saveExtras({ ...extras, checklist: updated });
   };
 
   const addCheckItem = async () => {
     if (!newCheckItem.trim()) return;
-    await saveChecklist([...checklist, { title: newCheckItem.trim(), completed: false }]);
+    await saveExtras({ ...extras, checklist: [...checklist, { title: newCheckItem.trim(), completed: false }] });
     setNewCheckItem('');
   };
 
   const removeCheckItem = async (idx: number) => {
-    await saveChecklist(checklist.filter((_, i) => i !== idx));
+    await saveExtras({ ...extras, checklist: checklist.filter((_: ChecklistItem, i: number) => i !== idx) });
+  };
+
+  const handleCareTeamChange = async (members: CareTeamMember[]) => {
+    await saveExtras({ ...extras, careTeam: members });
+  };
+
+  const handleTimelineChange = async (entries: TimelineEntry[]) => {
+    await saveExtras({ ...extras, timeline: entries });
+  };
+
+  const handleRoundQuestionsChange = async (questions: RoundQuestion[]) => {
+    await saveExtras({ ...extras, roundQuestions: questions });
   };
 
   const handleDischarge = async () => {
@@ -121,7 +123,7 @@ export function HospitalPage() {
   const pastStays = stays.filter((s) => !!s.dischargeDate);
   const surgeryPending = activeStay?.surgeryDate && new Date(activeStay.surgeryDate) > new Date();
   const surgeryPast = activeStay?.surgeryDate && new Date(activeStay.surgeryDate) <= new Date();
-  const completedChecklist = checklist.filter((i) => i.completed).length;
+  const completedChecklist = checklist.filter((i: ChecklistItem) => i.completed).length;
 
   return (
     <AppShell>
@@ -157,6 +159,14 @@ export function HospitalPage() {
             subtext={`Log a hospital admission for ${selectedBaby?.name ?? 'baby'} to track surgery countdowns, discharge checklists, and stay history.`}
             ctaLabel="Log hospital admission"
             onCta={() => setAdmitOpen(true)}
+          />
+        )}
+
+        {/* Phase Tracker — shown whenever there is an active stay */}
+        {activeStay && (
+          <PhaseTracker
+            currentPhase={activeStay.phase}
+            onSelect={setPhase}
           />
         )}
 
@@ -197,7 +207,7 @@ export function HospitalPage() {
               </div>
             </div>
 
-            <div className="px-4 py-4 flex flex-col gap-3">
+            <div className="px-4 py-4 flex flex-col gap-4">
               <div>
                 <p className="text-base font-bold text-gray-900 dark:text-white">{activeStay.hospital}</p>
                 {activeStay.ward && <p className="text-xs text-gray-500">{activeStay.ward}</p>}
@@ -230,14 +240,45 @@ export function HospitalPage() {
                 </p>
               )}
 
+              {/* Divider */}
+              <div className="border-t border-gray-100 dark:border-gray-700" />
+
+              {/* Care Team */}
+              <div className="bg-gray-50 dark:bg-gray-700/30 rounded-2xl px-3 py-3">
+                <CareTeamSection
+                  members={extras.careTeam}
+                  onChange={handleCareTeamChange}
+                />
+              </div>
+
+              {/* Recovery Timeline */}
+              <div className="bg-gray-50 dark:bg-gray-700/30 rounded-2xl px-3 py-3">
+                <RecoveryTimeline
+                  entries={extras.timeline}
+                  admittedDate={activeStay.admittedDate}
+                  onChange={handleTimelineChange}
+                />
+              </div>
+
+              {/* Round Questions */}
+              <div className="bg-gray-50 dark:bg-gray-700/30 rounded-2xl px-3 py-3">
+                <RoundQuestions
+                  questions={extras.roundQuestions}
+                  onChange={handleRoundQuestionsChange}
+                />
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-gray-100 dark:border-gray-700" />
+
               {/* Discharge checklist */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Discharge checklist</p>
+                  <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Discharge checklist</p>
                   <span className="text-xs text-gray-400">{completedChecklist}/{checklist.length}</span>
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  {checklist.map((item, idx) => (
+                  {checklist.map((item: ChecklistItem, idx: number) => (
                     <div key={idx} className="flex items-center gap-2 group">
                       <button
                         onClick={() => toggleCheckItem(idx)}
@@ -398,4 +439,3 @@ export function HospitalPage() {
     </AppShell>
   );
 }
-
