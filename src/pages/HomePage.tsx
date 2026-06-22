@@ -25,6 +25,7 @@ import { MilestoneCelebration } from '../components/ui/MilestoneCelebration';
 import { ExportModal } from '../components/reports/ExportModal';
 import { NameMeaningCard } from '../components/ui/NameMeaningCard';
 import { TrendInsightsCard } from '../components/ui/TrendInsightsCard';
+import { ParentInsightsCard } from '../components/home/ParentInsightsCard';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -541,6 +542,17 @@ export function HomePage() {
                 </div>
               </motion.div>
             )}
+
+            <motion.div variants={itemVariants}>
+              <ParentInsightsCard
+                babyName={selectedBaby.name}
+                babyGender={selectedBaby.gender}
+                feeds={feeds}
+                nappies={nappies}
+                medications={medications}
+                appointments={appointments}
+              />
+            </motion.div>
 
             <motion.div variants={itemVariants}>
               <h2 className="text-base font-bold text-gray-900 dark:text-white mb-3">Quick actions</h2>
