@@ -2,8 +2,6 @@ import React from 'react';
 import './Projects.css';
 import { motion } from 'framer-motion';
 import agileflowImg from '../assets/af1.jpeg';
-import otHelperImg from '../assets/ot_helper.jpeg';
-import regEImg from '../assets/reg_e.jpeg';
 
 const getTechStackUrl = (techArray: string[]) =>
   `https://skillicons.dev/icons?i=${techArray.join(',')}`;
@@ -79,61 +77,13 @@ const projects = [
     ],
   },
   {
-    title: 'Riposte',
-    emoji: '⚡',
-    tag: 'Internal Tool · Nala',
+    title: 'Internal Tooling @ Nala',
+    emoji: '🔧',
+    tag: 'Internal · Nala',
     description:
-      'Automated TrustPayments chargeback and pre-arbitration note generator. Parses dispute PDFs, extracts transaction details via OCR, and produces ready-to-submit case notes across all required sections. Runs fully locally.',
+      'Five production tools built for the Fraud Ops team: Riposte (chargeback automation), NALA Fraud Academy (analyst onboarding), EXCO Reporter (automated weekly reporting via Claude AI), Reg-E Radar (Regulation E dispute classification), and Overtime Helper (payroll reconciliation).',
     image: null,
-    techStack: ['py'],
-    links: [
-      { label: 'GitHub', href: 'https://github.com/1Kelv/riposte', type: 'secondary', external: true },
-    ],
-  },
-  {
-    title: 'EXCO Reporter',
-    emoji: '📈',
-    tag: 'Internal Tool · Nala',
-    description:
-      'Automated weekly ExCo performance report generator for Fraud Ops. Uses Playwright to capture the Hex dashboard, then Claude AI to draft the full update in standard format, ready to paste into Slack. Runs every Friday at 5:30pm.',
-    image: null,
-    techStack: ['nodejs', 'js'],
-    links: [
-      { label: 'GitHub', href: 'https://github.com/1Kelv/exco-reporter', type: 'secondary', external: true },
-    ],
-  },
-  {
-    title: 'NALA Fraud Academy',
-    emoji: '🎓',
-    tag: 'Internal Tool · Nala',
-    description:
-      'Internal fraud analyst onboarding and training platform for the Nala Fraud Operations team. Covers standard operating procedures, case studies, and scenario-based assessments.',
-    image: null,
-    techStack: ['react', 'js'],
-    links: [
-      { label: 'GitHub', href: 'https://github.com/1Kelv/nala-fraud-academy', type: 'secondary', external: true },
-    ],
-  },
-  {
-    title: 'Reg-E Radar',
-    emoji: '🛡️',
-    tag: 'Internal Tool',
-    description:
-      'A decision-support tool that classifies Regulation E disputes and drafts consistent case notes using a structured checklist and rule-based logic.',
-    image: regEImg,
-    techStack: ['react', 'js'],
-    links: [
-      { label: 'Case study on request', href: '#contact', type: 'secondary', external: false },
-    ],
-  },
-  {
-    title: 'Overtime Helper',
-    emoji: '⏱️',
-    tag: 'Internal Tool',
-    description:
-      'Standardises overtime and bank-holiday calculations from workforce management exports, reducing manual reconciliation work significantly.',
-    image: otHelperImg,
-    techStack: ['py', 'streamlit'],
+    techStack: ['react', 'py', 'nodejs', 'js', 'streamlit'],
     links: [
       { label: 'Case study on request', href: '#contact', type: 'secondary', external: false },
     ],
