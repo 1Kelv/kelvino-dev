@@ -2,13 +2,14 @@ import React from 'react';
 import './Projects.css';
 import { motion } from 'framer-motion';
 import agileflowImg from '../assets/af1.jpeg';
-import bananaImg from '../assets/banana.png';
 import otHelperImg from '../assets/ot_helper.jpeg';
 import regEImg from '../assets/reg_e.jpeg';
-import skypulseImg from '../assets/skypulse.png';
 
 const getTechStackUrl = (techArray: string[]) =>
   `https://skillicons.dev/icons?i=${techArray.join(',')}`;
+
+const microshot = (url: string) =>
+  `https://api.microlink.io/?url=${encodeURIComponent(url)}&screenshot=true&meta=false&embed=screenshot.url`;
 
 const featuredProjects = [
   {
@@ -16,7 +17,7 @@ const featuredProjects = [
     emoji: '⚙️',
     tag: 'Final Year Project · Bronze Award',
     description:
-      'An Agile project management tool with AI-driven sprint predictions using TensorFlow. Built with React, TypeScript, and Supabase — earned the Bronze Award for Innovation from SwitchShop Limited.',
+      'An Agile project management tool with AI-driven sprint predictions using TensorFlow. Built with React, TypeScript, and Supabase. Earned the Bronze Award for Innovation from SwitchShop Limited.',
     image: agileflowImg,
     techStack: ['react', 'ts', 'js', 'supabase', 'tensorflow', 'github'],
     links: [
@@ -28,8 +29,8 @@ const featuredProjects = [
     emoji: '💸',
     tag: 'Startup · Now Live',
     description:
-      'My own startup. A personal finance app that helps users track spending, catch suspicious activity before it costs them, and build healthy financial habits — built by someone who understands fraud firsthand. 12+ users and actively iterating.',
-    image: 'https://api.microlink.io/?url=https%3A%2F%2Fgetmythrive.io&screenshot=true&meta=false&embed=screenshot.url',
+      'My own startup. A personal finance app that helps users track spending, catch suspicious activity before it costs them, and build healthy financial habits, built by someone who understands fraud firsthand. 12+ users and actively iterating.',
+    image: microshot('https://getmythrive.io'),
     techStack: ['react', 'ts', 'supabase'],
     links: [
       { label: 'Visit Live App', href: 'https://getmythrive.io', type: 'primary', external: true },
@@ -38,6 +39,81 @@ const featuredProjects = [
 ];
 
 const projects = [
+  {
+    title: 'Sentinel',
+    emoji: '🔍',
+    tag: 'Startup · Co-Founder',
+    description:
+      'Real-time AI vulnerability detection for collections and debt support agents. Listens to live calls, identifies financial distress signals, and guides agents with compliance-ready prompts. FCA Consumer Duty aligned.',
+    image: microshot('https://sentinel-taupe-theta.vercel.app'),
+    techStack: ['react', 'ts', 'nodejs'],
+    links: [
+      { label: 'Visit App', href: 'https://sentinel-taupe-theta.vercel.app/', type: 'primary', external: true },
+      { label: 'GitHub', href: 'https://github.com/1Kelv/sentinel', type: 'secondary', external: true },
+    ],
+  },
+  {
+    title: 'Mylestone',
+    emoji: '👶',
+    tag: 'Personal Project · PWA',
+    description:
+      'A production PWA for tracking care schedules for medically complex infants, including babies with congenital heart conditions. Covers feeds, medication, growth, symptoms, appointments, and sleep, with per-user data isolation.',
+    image: microshot('https://mylestone-seven.vercel.app'),
+    techStack: ['react', 'ts', 'appwrite'],
+    links: [
+      { label: 'Visit App', href: 'https://mylestone-seven.vercel.app', type: 'primary', external: true },
+      { label: 'GitHub', href: 'https://github.com/1Kelv/mylestone', type: 'secondary', external: true },
+    ],
+  },
+  {
+    title: 'AlertIQ',
+    emoji: '🚨',
+    tag: 'Training Tool',
+    description:
+      'Interactive fraud analyst training simulator built for the Fraud Analysis Bootcamp. Runs timed exam scenarios, scores performance, and sharpens threat detection skills using real-world alert patterns.',
+    image: microshot('https://fraud-simulator-three.vercel.app'),
+    techStack: ['react', 'js', 'vite'],
+    links: [
+      { label: 'Try It', href: 'https://fraud-simulator-three.vercel.app', type: 'primary', external: true },
+      { label: 'GitHub', href: 'https://github.com/1Kelv/alertiq', type: 'secondary', external: true },
+    ],
+  },
+  {
+    title: 'Riposte',
+    emoji: '⚡',
+    tag: 'Internal Tool · Nala',
+    description:
+      'Automated TrustPayments chargeback and pre-arbitration note generator. Parses dispute PDFs, extracts transaction details via OCR, and produces ready-to-submit case notes across all required sections. Runs fully locally.',
+    image: null,
+    techStack: ['py'],
+    links: [
+      { label: 'GitHub', href: 'https://github.com/1Kelv/riposte', type: 'secondary', external: true },
+    ],
+  },
+  {
+    title: 'EXCO Reporter',
+    emoji: '📈',
+    tag: 'Internal Tool · Nala',
+    description:
+      'Automated weekly ExCo performance report generator for Fraud Ops. Uses Playwright to capture the Hex dashboard, then Claude AI to draft the full update in standard format, ready to paste into Slack. Runs every Friday at 5:30pm.',
+    image: null,
+    techStack: ['nodejs', 'js'],
+    links: [
+      { label: 'GitHub', href: 'https://github.com/1Kelv/exco-reporter', type: 'secondary', external: true },
+    ],
+  },
+  {
+    title: 'NALA Fraud Academy',
+    emoji: '🎓',
+    tag: 'Internal Tool · Nala',
+    description:
+      'Internal fraud analyst onboarding and training platform for the Nala Fraud Operations team. Covers standard operating procedures, case studies, and scenario-based assessments.',
+    image: null,
+    techStack: ['react', 'js'],
+    links: [
+      { label: 'GitHub', href: 'https://github.com/1Kelv/nala-fraud-academy', type: 'secondary', external: true },
+    ],
+  },
   {
     title: 'Reg-E Radar',
     emoji: '🛡️',
@@ -62,45 +138,6 @@ const projects = [
       { label: 'Case study on request', href: '#contact', type: 'secondary', external: false },
     ],
   },
-  {
-    title: 'NextGen AI Résumé Analyser',
-    emoji: '📊',
-    tag: 'AI / ML',
-    description:
-      'AI-powered résumé analyser using SHAP, LIME, and fairness audit techniques — focused on ethical AI and explainable predictions.',
-    image: null,
-    techStack: ['py', 'streamlit', 'scikitlearn'],
-    links: [
-      { label: 'View Analysis', href: 'https://g3tsfvzt8zlfbxsttxk5bh.streamlit.app/', type: 'primary', external: true },
-      { label: 'GitHub', href: 'https://github.com/1Kelv/nextgen-ai-resume-analyser', type: 'secondary', external: true },
-    ],
-  },
-  {
-    title: 'Banana Game',
-    emoji: '🍌',
-    tag: 'Full Stack',
-    description:
-      'Interactive browser puzzle fetching banana-themed challenges via an external API. Features authentication, live gameplay, and score tracking.',
-    image: bananaImg,
-    techStack: ['html', 'css', 'js', 'nodejs', 'express', 'mysql', 'netlify'],
-    links: [
-      { label: 'Play Game', href: 'https://api-banana-game.netlify.app/', type: 'primary', external: true },
-      { label: 'GitHub', href: 'https://github.com/1Kelv/banana-game', type: 'secondary', external: true },
-    ],
-  },
-  {
-    title: 'SkyPulse Weather App',
-    emoji: '🌦',
-    tag: 'Frontend',
-    description:
-      'Responsive weather app delivering real-time forecasts via the OpenWeatherMap API in a clean, intuitive interface.',
-    image: skypulseImg,
-    techStack: ['html', 'css', 'js', 'netlify'],
-    links: [
-      { label: 'Check Weather', href: 'https://weather-app-kelvin.netlify.app/', type: 'primary', external: true },
-      { label: 'GitHub', href: 'https://github.com/1Kelv/weather-app', type: 'secondary', external: true },
-    ],
-  },
 ];
 
 const cardVariants = {
@@ -116,12 +153,11 @@ const Projects: React.FC = () => {
   return (
     <section className="projects-section" id="projects">
       <div className="projects-container">
-        {/* Section header */}
         <div className="projects-header">
           <span className="section-label">Projects</span>
           <h2 className="section-title">Things I've Built</h2>
           <p className="section-subtitle">
-            A mix of personal projects, AI tools, and anonymised internal products — built to solve real problems.
+            Personal projects, startup work, and internal tooling, built to solve real problems.
           </p>
         </div>
 

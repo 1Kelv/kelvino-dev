@@ -49,14 +49,13 @@ const Hero: React.FC = () => {
             >
               Nala
             </a>
-            {' '}· CS Graduate · Aspiring Software Engineer
+            {' '}· Software Engineer · Co-Founder
           </p>
 
           {/* Description */}
           <p className="hero-description">
-            I build clean, scalable software at the intersection of engineering,
-            data analytics, and fraud operations — from React interfaces and Python
-            tooling to data dashboards that surface real risk signals.
+            I build software that solves operational problems. Fraud tooling at Nala,
+            two startups in production, and an MSc in AI on the way.
           </p>
 
           {/* CTAs */}
@@ -80,13 +79,13 @@ const Hero: React.FC = () => {
             </div>
             <div className="hero-stat-divider" />
             <div className="hero-stat">
-              <span className="hero-stat-value">6+</span>
+              <span className="hero-stat-value">10+</span>
               <span className="hero-stat-label">Projects Built</span>
             </div>
             <div className="hero-stat-divider" />
             <div className="hero-stat">
-              <span className="hero-stat-value">1</span>
-              <span className="hero-stat-label">Year at Nala</span>
+              <span className="hero-stat-value">2</span>
+              <span className="hero-stat-label">Startups</span>
             </div>
           </div>
         </motion.div>

@@ -5,8 +5,8 @@ import gradPhoto from '../assets/gradphoto.jpg';
 
 const skills = [
   'React', 'TypeScript', 'JavaScript', 'Python', 'Streamlit',
-  'Supabase', 'Node.js', 'SQL', 'TensorFlow', 'Framer Motion',
-  'Hex Dashboards', 'Fraud Operations', 'Data Analytics', 'Git',
+  'Supabase', 'Appwrite', 'Node.js', 'SQL', 'Playwright',
+  'Hex Dashboards', 'Claude AI', 'Fraud Operations', 'Data Analytics', 'Git',
 ];
 
 const About: React.FC = () => {
@@ -40,19 +40,19 @@ const About: React.FC = () => {
         >
           <div className="about-header">
             <span className="section-label">About Me</span>
-            <h2 className="section-title">Engineer. Analyst. Builder.</h2>
+            <h2 className="section-title">Engineer. Founder. Fraud specialist.</h2>
           </div>
 
           <p className="about-text">
-            I'm Kelvin — a First-Class Computer Science graduate and Fraud Operations Lead working at the intersection of software engineering, data analytics, and operational problem-solving. I design and build internal tools that improve decision-making, reduce manual effort, and scale operational processes.
+            I'm Kelvin, a First-Class CS graduate and Fraud Operations Lead at Nala. I build the tools my team actually relies on: fraud detection frameworks, dispute automation, analyst onboarding, and the dashboards that surface risk before it becomes a problem.
           </p>
 
           <p className="about-text">
-            My day-to-day blends hands-on development with real-world impact: React-based interfaces, Python tooling, and Hex dashboards that surface meaningful risk signals. I collaborate closely with engineers and data teams, translating operational pain points into technical requirements and iterating on solutions that work in production.
+            My stack spans React, TypeScript, Python, and a growing set of AI tooling. I've shipped production software across fraud operations, fintech, and healthcare. Outside Nala, I co-founded Sentinel, an AI agent assist platform for debt support teams, and run Thrive Finance, a personal finance app with 12+ active users.
           </p>
 
           <p className="about-text">
-            I'm actively transitioning toward software engineering roles — with a particular focus on product-focused engineering, internal tooling, and data-driven systems. Currently preparing for a master's degree in AI & Machine Learning.
+            I'm looking for software engineering roles focused on product and AI systems. Working toward an MSc in AI and Machine Learning.
           </p>
 
           <div className="about-skills">

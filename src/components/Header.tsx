@@ -94,7 +94,7 @@ const Header: React.FC = () => {
           <nav className="nav-links" aria-label="Primary">
             <a href="#projects">Projects</a>
             <a href="#about">About</a>
-            <a href="#journey">Journey</a>
+            <a href="#experience">Experience</a>
             <a href="#contact">Contact</a>
             <a href="#" onClick={handleCVRequest} className="header-nav-btn">
               Request CV
@@ -140,7 +140,7 @@ const Header: React.FC = () => {
         <div className="mobile-nav-links">
           <a href="#projects" onClick={handleNavClick}>Projects</a>
           <a href="#about" onClick={handleNavClick}>About</a>
-          <a href="#journey" onClick={handleNavClick}>Journey</a>
+          <a href="#experience" onClick={handleNavClick}>Experience</a>
           <a href="#contact" onClick={handleNavClick}>Contact</a>
           <a href="#" onClick={handleCVRequest}>
             Request CV

@@ -40,7 +40,7 @@ const Achievements: React.FC = () => {
             <h3 className="ach-card-title">🥉 Final Year Project Award</h3>
             <p className="ach-card-text">
               Awarded the <strong>Bronze Award for Innovation</strong> from{' '}
-              <strong>SwitchShop Limited</strong> for <strong>AgileFlow</strong> — a
+              <strong>SwitchShop Limited</strong> for <strong>AgileFlow</strong>: a
               React &amp; TypeScript Agile project management dashboard integrating
               AI sprint prediction via TensorFlow and fairness auditing tools.
             </p>
