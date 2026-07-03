@@ -572,7 +572,7 @@ export function AiPage() {
               value={input}
               onChange={(e) => { setInput(e.target.value); e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; }}
               onKeyDown={handleKeyDown}
-              placeholder={selectedBaby ? `Ask about ${selectedBaby.name}…` : 'Ask Mylo about your baby's health…'}
+              placeholder={selectedBaby ? `Ask about ${selectedBaby.name}…` : "Ask Mylo about your baby's health…"}
               className="flex-1 resize-none bg-transparent text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none min-h-[36px] max-h-[120px] overflow-y-auto py-1.5 px-1"
             />
             <motion.button
