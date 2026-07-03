@@ -2,9 +2,8 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Paperclip, X, Sparkles, FileText, AlertTriangle, RefreshCw, Copy, Check, Pencil, History, Plus, Trash2, MessageSquare } from 'lucide-react';
+import { Send, Paperclip, X, Sparkles, FileText, RefreshCw, Copy, Check, Pencil, History, Plus, Trash2, MessageSquare, ChevronDown } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
-import { PageHeader } from '../components/layout/PageHeader';
 import { useBabyContext } from '../lib/BabyContext';
 import { useAuth } from '../lib/AuthContext';
 import { aiChatsDb, AiChat } from '../lib/db';
@@ -52,27 +51,29 @@ function getBabyAge(dob: string): string {
 
 function TypingDots() {
   return (
-    <div className="flex gap-1 items-center py-1">
+    <div className="flex gap-1.5 items-center py-1 px-1">
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
           className="w-2 h-2 rounded-full bg-brand-mint"
-          animate={{ y: [0, -6, 0] }}
-          transition={{ repeat: Infinity, duration: 0.8, delay: i * 0.15 }}
+          animate={{ y: [0, -5, 0], opacity: [0.5, 1, 0.5] }}
+          transition={{ repeat: Infinity, duration: 1, delay: i * 0.18 }}
         />
       ))}
     </div>
   );
 }
 
-function AiAvatar() {
+function MyloAvatar({ size = 'sm' }: { size?: 'sm' | 'lg' }) {
+  const dim = size === 'lg' ? 'w-14 h-14' : 'w-8 h-8';
+  const icon = size === 'lg' ? 28 : 14;
   return (
     <motion.div
-      className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-mint to-emerald-400 flex items-center justify-center flex-shrink-0 shadow"
-      animate={{ scale: [1, 1.05, 1] }}
-      transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+      className={`${dim} rounded-2xl bg-gradient-to-br from-brand-mint via-emerald-400 to-teal-500 flex items-center justify-center flex-shrink-0 shadow-md`}
+      animate={{ scale: [1, 1.04, 1] }}
+      transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
     >
-      <Sparkles size={14} className="text-white" />
+      <Sparkles size={icon} className="text-white" />
     </motion.div>
   );
 }
@@ -137,6 +138,7 @@ export function AiPage() {
   const [showHistory, setShowHistory] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [showDisclaimer, setShowDisclaimer] = useState(false);
 
   const fileRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -326,71 +328,102 @@ export function AiPage() {
 
   const isEmpty = messages.length === 0;
   const canAddMore = pendingFiles.length < MAX_FILES;
+  const firstName = user?.name?.split(' ')[0] || '';
 
   return (
     <AppShell>
-      <PageHeader
-        title="Mylo — AI Companion"
-        action={
-          <div className="flex items-center gap-2">
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => { loadHistory(); setShowHistory(true); }}
-              className="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300"
-              aria-label="Chat history"
-            >
-              <History size={18} />
-            </motion.button>
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={startNewChat}
-              className="p-2 rounded-xl bg-brand-mint text-white"
-              aria-label="New chat"
-            >
-              <Plus size={18} />
-            </motion.button>
+      {/* Custom header */}
+      <div className="flex items-center justify-between px-4 pt-4 pb-3">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-mint to-teal-500 flex items-center justify-center shadow">
+            <Sparkles size={16} className="text-white" />
           </div>
-        }
-      />
-
-      <div className="mx-4 mt-2 mb-3 flex items-start gap-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-2xl px-4 py-3">
-        <AlertTriangle size={15} className="text-amber-500 flex-shrink-0 mt-0.5" />
-        <p className="text-xs text-amber-700 dark:text-amber-300 leading-snug">
-          For guidance only — always consult your GP, midwife, or paediatrician for medical advice.
-        </p>
+          <div>
+            <h1 className="text-base font-bold text-gray-900 dark:text-white leading-none">Mylo</h1>
+            <button
+              onClick={() => setShowDisclaimer((v) => !v)}
+              className="flex items-center gap-0.5 text-[11px] text-gray-400 dark:text-gray-500 hover:text-brand-mint transition-colors mt-0.5"
+            >
+              AI Health Companion
+              <ChevronDown size={10} className={`transition-transform ${showDisclaimer ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => { loadHistory(); setShowHistory(true); }}
+            className="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-brand-mint transition-colors"
+            aria-label="Chat history"
+          >
+            <History size={17} />
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={startNewChat}
+            className="p-2 rounded-xl bg-brand-mint text-white shadow-sm"
+            aria-label="New chat"
+          >
+            <Plus size={17} />
+          </motion.button>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-4">
+      {/* Collapsible disclaimer */}
+      <AnimatePresence>
+        {showDisclaimer && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden mx-4"
+          >
+            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-2xl px-4 py-3 mb-3">
+              <p className="text-xs text-amber-700 dark:text-amber-300 leading-snug">
+                Mylo provides general health guidance only — always consult your GP, midwife, or paediatrician for medical decisions. Photos and documents are not stored.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-5">
         {isEmpty && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-            className="text-center pt-6 pb-4"
+            transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+            className="flex flex-col items-center text-center pt-8 pb-4"
           >
-            <motion.div
-              className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-mint to-emerald-400 flex items-center justify-center mx-auto mb-4 shadow-lg"
-              animate={{ y: [0, -8, 0] }}
-              transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
-            >
-              <Sparkles size={30} className="text-white" />
-            </motion.div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Hi, I'm Mylo</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-xs mx-auto">
-              Your Mylestone AI companion. Upload photos, PDFs, or a mix — up to {MAX_FILES} files per message.
-            </p>
-            <div className="flex flex-wrap gap-2 justify-center">
+            <MyloAvatar size="lg" />
+            <div className="mt-4 mb-1">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                {firstName ? `Hi ${firstName}, I'm Mylo` : "Hi, I'm Mylo"}
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-xs mx-auto leading-relaxed">
+                {selectedBaby
+                  ? `Your AI companion for ${selectedBaby.name}'s health journey. Ask me anything — photos and documents welcome.`
+                  : 'Your Mylestone AI companion. Upload photos, PDFs, or just ask a question.'}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2 justify-center mt-5">
               {SUGGESTED.map((s) => (
                 <motion.button
                   key={s}
-                  whileTap={{ scale: 0.96 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => send(s, [])}
-                  className="text-xs px-3 py-2 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:border-brand-mint hover:text-brand-mint transition-colors shadow-sm"
+                  className="text-xs px-3.5 py-2 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-brand-mint hover:text-brand-mint dark:hover:text-brand-mint transition-colors shadow-sm"
                 >
                   {s}
                 </motion.button>
               ))}
             </div>
+
+            <p className="text-[11px] text-gray-400 dark:text-gray-600 mt-6">
+              For guidance only · Always verify with a healthcare professional
+            </p>
           </motion.div>
         )}
 
@@ -398,21 +431,25 @@ export function AiPage() {
           {messages.map((msg) => (
             <motion.div
               key={msg.id}
-              initial={{ opacity: 0, y: 12, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-              className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
+              transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+              className={`flex gap-2.5 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
             >
-              {msg.role === 'assistant' && <AiAvatar />}
-              <div className={`max-w-[80%] ${msg.role === 'user' ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
+              {msg.role === 'assistant' && (
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-mint to-teal-500 flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5">
+                  <Sparkles size={14} className="text-white" />
+                </div>
+              )}
+              <div className={`max-w-[82%] ${msg.role === 'user' ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
                 {msg.attachments && msg.attachments.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 justify-end">
                     {msg.attachments.map((att, i) =>
                       att.previewUrl ? (
-                        <img key={i} src={att.previewUrl} alt="Uploaded" className="w-24 h-24 rounded-xl border border-gray-200 dark:border-gray-700 object-cover" />
+                        <img key={i} src={att.previewUrl} alt="Uploaded" className="w-24 h-24 rounded-2xl border border-gray-200 dark:border-gray-700 object-cover shadow-sm" />
                       ) : att.fileName ? (
-                        <div key={i} className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2">
+                        <div key={i} className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-3 py-2 shadow-sm">
                           <FileText size={16} className="text-brand-mint flex-shrink-0" />
                           <span className="text-xs text-gray-700 dark:text-gray-300 truncate max-w-[140px]">{att.fileName}</span>
                         </div>
@@ -424,10 +461,10 @@ export function AiPage() {
                   <>
                     <div className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                       msg.role === 'user'
-                        ? 'bg-brand-mint text-white rounded-tr-sm whitespace-pre-wrap'
+                        ? 'bg-gradient-to-br from-brand-mint to-emerald-500 text-white rounded-tr-sm shadow-md whitespace-pre-wrap'
                         : msg.isError
                         ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-tl-sm'
-                        : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-gray-700 rounded-tl-sm shadow-sm'
+                        : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-gray-700/80 rounded-tl-sm shadow-sm'
                     }`}>
                       {msg.isError && msg.retryText ? (
                         <div className="flex flex-col gap-2">
@@ -458,14 +495,14 @@ export function AiPage() {
                       )}
                     </div>
                     {!msg.isError && (
-                      <div className={`flex gap-2 mt-0.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`flex gap-1 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                         {msg.role === 'user' && (
                           <button onClick={() => handleEdit(msg)} className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-brand-mint transition-colors py-0.5 px-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-                            <Pencil size={11} />Edit
+                            <Pencil size={10} />Edit
                           </button>
                         )}
                         <button onClick={() => handleCopy(msg.id, msg.text)} className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-brand-mint transition-colors py-0.5 px-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-                          {copiedId === msg.id ? <Check size={11} className="text-brand-mint" /> : <Copy size={11} />}
+                          {copiedId === msg.id ? <Check size={10} className="text-brand-mint" /> : <Copy size={10} />}
                           {copiedId === msg.id ? 'Copied' : 'Copy'}
                         </button>
                       </div>
@@ -478,9 +515,11 @@ export function AiPage() {
         </AnimatePresence>
 
         {loading && (
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex gap-2">
-            <AiAvatar />
-            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-mint to-teal-500 flex items-center justify-center flex-shrink-0 shadow-sm">
+              <Sparkles size={14} className="text-white" />
+            </div>
+            <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700/80 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
               <TypingDots />
             </div>
           </motion.div>
@@ -488,13 +527,14 @@ export function AiPage() {
         <div ref={bottomRef} />
       </div>
 
-      <div className="px-4 pb-4 pt-2 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
-        {fileError && <p className="text-xs text-red-500 mb-2">{fileError}</p>}
+      {/* Input area */}
+      <div className="px-4 pb-5 pt-2">
+        {fileError && <p className="text-xs text-red-500 mb-2 px-1">{fileError}</p>}
         <AnimatePresence>
           {pendingFiles.length > 0 && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-2 flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
               {pendingFiles.map((pf, idx) => (
-                <div key={idx} className="relative flex-shrink-0 w-16 h-16 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+                <div key={idx} className="relative flex-shrink-0 w-16 h-16 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden shadow-sm">
                   {pf.previewUrl ? <img src={pf.previewUrl} alt="Preview" className="w-full h-full object-cover" /> : (
                     <div className="w-full h-full flex flex-col items-center justify-center gap-1 px-1">
                       <FileText size={18} className="text-brand-mint" />
@@ -507,35 +547,47 @@ export function AiPage() {
                 </div>
               ))}
               {canAddMore && (
-                <button onClick={() => fileRef.current?.click()} className="flex-shrink-0 w-16 h-16 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center gap-1 text-gray-400 hover:border-brand-mint hover:text-brand-mint transition-colors">
+                <button onClick={() => fileRef.current?.click()} className="flex-shrink-0 w-16 h-16 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center gap-1 text-gray-400 hover:border-brand-mint hover:text-brand-mint transition-colors">
                   <Paperclip size={16} /><span className="text-[9px]">Add</span>
                 </button>
               )}
             </motion.div>
           )}
         </AnimatePresence>
-        <form onSubmit={handleSubmit} className="flex items-end gap-2">
-          <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf" multiple onChange={handleFileChange} className="hidden" />
-          {pendingFiles.length === 0 && (
-            <motion.button type="button" whileTap={{ scale: 0.92 }} onClick={() => fileRef.current?.click()} className="p-2.5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-brand-mint hover:border-brand-mint transition-colors flex-shrink-0">
+
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm overflow-hidden">
+          <form onSubmit={handleSubmit} className="flex items-end gap-1 px-2 py-2">
+            <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf" multiple onChange={handleFileChange} className="hidden" />
+            <motion.button
+              type="button"
+              whileTap={{ scale: 0.9 }}
+              onClick={() => fileRef.current?.click()}
+              className="p-2 rounded-xl text-gray-400 hover:text-brand-mint hover:bg-brand-mint/10 transition-colors flex-shrink-0"
+            >
               <Paperclip size={18} />
             </motion.button>
-          )}
-          <textarea
-            ref={textRef}
-            rows={1}
-            value={input}
-            onChange={(e) => { setInput(e.target.value); e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; }}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask Mylo about your baby's health…"
-            className="flex-1 resize-none bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-mint/50 focus:border-brand-mint transition-colors min-h-[42px] max-h-[120px] overflow-y-auto"
-          />
-          <motion.button type="submit" disabled={loading || (!input.trim() && pendingFiles.length === 0)} whileTap={{ scale: 0.92 }} className="p-2.5 rounded-xl bg-brand-mint text-white disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0 shadow">
-            <Send size={18} />
-          </motion.button>
-        </form>
+            <textarea
+              ref={textRef}
+              rows={1}
+              value={input}
+              onChange={(e) => { setInput(e.target.value); e.target.style.height = 'auto'; e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; }}
+              onKeyDown={handleKeyDown}
+              placeholder={selectedBaby ? `Ask about ${selectedBaby.name}…` : 'Ask Mylo about your baby's health…'}
+              className="flex-1 resize-none bg-transparent text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none min-h-[36px] max-h-[120px] overflow-y-auto py-1.5 px-1"
+            />
+            <motion.button
+              type="submit"
+              disabled={loading || (!input.trim() && pendingFiles.length === 0)}
+              whileTap={{ scale: 0.9 }}
+              className="p-2 rounded-xl bg-brand-mint text-white disabled:opacity-30 disabled:cursor-not-allowed flex-shrink-0 shadow-sm"
+            >
+              <Send size={17} />
+            </motion.button>
+          </form>
+        </div>
+
         <p className="text-[10px] text-gray-400 dark:text-gray-600 text-center mt-2">
-          Photos & documents are not stored · Always verify with a healthcare professional
+          Photos & documents are not stored · Tap <span className="text-brand-mint">AI Health Companion</span> for important notes
         </p>
       </div>
 
@@ -547,7 +599,7 @@ export function AiPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/40 z-40"
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
               onClick={() => setShowHistory(false)}
             />
             <motion.div
@@ -557,19 +609,20 @@ export function AiPage() {
               transition={{ type: 'spring', stiffness: 320, damping: 32 }}
               className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 rounded-t-3xl shadow-2xl max-h-[75vh] flex flex-col"
             >
-              <div className="flex items-center justify-between px-5 pt-5 pb-3">
+              <div className="w-10 h-1 rounded-full bg-gray-200 dark:bg-gray-700 mx-auto mt-3 mb-1" />
+              <div className="flex items-center justify-between px-5 pt-3 pb-3">
                 <div>
                   <h2 className="text-base font-bold text-gray-900 dark:text-white">Chat history</h2>
                   <p className="text-xs text-gray-400">{chats.length} conversation{chats.length !== 1 ? 's' : ''}</p>
                 </div>
                 <button
                   onClick={startNewChat}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-brand-mint text-white text-xs font-semibold"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-brand-mint text-white text-xs font-semibold shadow-sm"
                 >
                   <Plus size={14} />New chat
                 </button>
               </div>
-              <div className="overflow-y-auto flex-1 px-4 pb-6">
+              <div className="overflow-y-auto flex-1 px-4 pb-8">
                 {historyLoading ? (
                   <div className="flex justify-center py-8">
                     <div className="w-6 h-6 rounded-full border-2 border-brand-mint border-t-transparent animate-spin" />
@@ -592,8 +645,8 @@ export function AiPage() {
                             : 'bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:border-brand-mint/50'
                         }`}
                       >
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-mint to-emerald-400 flex items-center justify-center flex-shrink-0">
-                          <MessageSquare size={16} className="text-white" />
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-mint to-teal-500 flex items-center justify-center flex-shrink-0">
+                          <MessageSquare size={15} className="text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{chat.title}</p>

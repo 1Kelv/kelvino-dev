@@ -126,7 +126,7 @@ export default async function handler(req: any, res: any) {
   try {
     const response = await client.messages.create({
       model: 'claude-opus-4-7',
-      max_tokens: 1024,
+      max_tokens: 2048,
       system: buildSystemPrompt(babyContext, userName, recentTopics),
       messages: [
         ...historyMessages,
