@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import { Client, Databases, Query, ID } from 'node-appwrite';
 
 export const config = {
   api: {
@@ -7,6 +8,59 @@ export const config = {
     },
   },
 };
+
+const DAILY_MESSAGE_LIMIT = 20;
+
+const USAGE_COLLECTION = process.env.APPWRITE_COLLECTION_AI_USAGE || 'ai_usage';
+const DB_ID = process.env.VITE_APPWRITE_DATABASE_ID || process.env.APPWRITE_DATABASE_ID || '';
+
+function makeAppwriteClient() {
+  return new Client()
+    .setEndpoint(process.env.VITE_APPWRITE_ENDPOINT || process.env.APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
+    .setProject(process.env.VITE_APPWRITE_PROJECT_ID || process.env.APPWRITE_PROJECT_ID || '')
+    .setKey(process.env.APPWRITE_API_KEY || '');
+}
+
+interface UsageResult {
+  allowed: boolean;
+  remaining: number | null;
+}
+
+// Checks and increments the user's daily Mylo message count.
+// Fails open: if the usage collection or API key is missing, Mylo keeps working.
+async function checkAndIncrementUsage(userId?: string): Promise<UsageResult> {
+  if (!userId || !process.env.APPWRITE_API_KEY || !DB_ID) {
+    return { allowed: true, remaining: null };
+  }
+  try {
+    const databases = new Databases(makeAppwriteClient());
+    const today = new Date().toISOString().slice(0, 10);
+    const existing = await databases.listDocuments(DB_ID, USAGE_COLLECTION, [
+      Query.equal('userId', userId),
+      Query.equal('date', today),
+      Query.limit(1),
+    ]);
+
+    if (existing.documents.length > 0) {
+      const doc = existing.documents[0] as any;
+      if (doc.count >= DAILY_MESSAGE_LIMIT) {
+        return { allowed: false, remaining: 0 };
+      }
+      await databases.updateDocument(DB_ID, USAGE_COLLECTION, doc.$id, { count: doc.count + 1 });
+      return { allowed: true, remaining: DAILY_MESSAGE_LIMIT - doc.count - 1 };
+    }
+
+    await databases.createDocument(DB_ID, USAGE_COLLECTION, ID.unique(), {
+      userId,
+      date: today,
+      count: 1,
+    });
+    return { allowed: true, remaining: DAILY_MESSAGE_LIMIT - 1 };
+  } catch (err) {
+    console.error('Usage check failed (failing open):', err);
+    return { allowed: true, remaining: null };
+  }
+}
 
 const BASE_SYSTEM_PROMPT = `You are Mylo — Mylestone's AI Health Companion, a warm, knowledgeable assistant for parents and carers tracking their baby's health journey.
 
@@ -79,10 +133,18 @@ export default async function handler(req: any, res: any) {
     return res.status(500).json({ error: 'AI service is not configured. Please contact support.' });
   }
 
-  const { message, fileBase64, fileMediaType, fileName, files, history, babyContext, userName, recentTopics } = req.body || {};
+  const { message, fileBase64, fileMediaType, fileName, files, history, babyContext, userName, recentTopics, userId } = req.body || {};
 
   if (!message && !fileBase64 && (!files || files.length === 0)) {
     return res.status(400).json({ error: 'No message or file provided' });
+  }
+
+  const usage = await checkAndIncrementUsage(userId);
+  if (!usage.allowed) {
+    return res.status(429).json({
+      error: `You've reached today's limit of ${DAILY_MESSAGE_LIMIT} Mylo messages. Your limit resets at midnight — see you tomorrow! 💙`,
+      limitReached: true,
+    });
   }
 
   // Normalise to an array — support both legacy single-file and new multi-file formats
@@ -139,7 +201,7 @@ export default async function handler(req: any, res: any) {
       .map((b) => b.text)
       .join('');
 
-    res.status(200).json({ response: text });
+    res.status(200).json({ response: text, remaining: usage.remaining });
   } catch (err: any) {
     console.error('Claude API error:', err);
 
