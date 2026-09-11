@@ -1,0 +1,107 @@
+.music-pill {
+  position: fixed;
+  left: clamp(12px, 2.5vw, 28px);
+  bottom: clamp(12px, 2.5vw, 28px);
+  z-index: 2000;
+  /* Collapsed: a neat disc. Expanded: a pill with the label. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 100px;
+  box-shadow: var(--shadow);
+  color: var(--text-secondary);
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1), gap 0.28s ease,
+    padding 0.28s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  text-align: left;
+}
+
+.music-pill:hover,
+.music-pill:focus-visible,
+.music-pill.on {
+  width: 218px;
+  justify-content: flex-start;
+  gap: 0.65rem;
+  padding: 0 0.9rem;
+  border-color: var(--accent);
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+.music-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 18px;
+  width: 22px;
+  flex-shrink: 0;
+}
+
+.music-bar {
+  flex: 1;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transform-origin: bottom;
+  transform: scaleY(0.18);
+  transition: transform 0.12s ease;
+  opacity: 0.85;
+}
+
+.music-pill.on .music-bar { opacity: 1; }
+
+.music-label {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.music-pill:hover .music-label,
+.music-pill:focus-visible .music-label,
+.music-pill.on .music-label {
+  opacity: 1;
+}
+
+.music-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.music-sub {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+}
+
+/* On touch screens there is no hover, so keep it a tidy disc. */
+@media (max-width: 640px) {
+  .music-pill,
+  .music-pill:hover,
+  .music-pill.on {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    gap: 0;
+    justify-content: center;
+  }
+  .music-label { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-pill,
+  .music-label,
+  .music-bar { transition: none; }
+}

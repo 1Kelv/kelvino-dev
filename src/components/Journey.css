@@ -4,7 +4,7 @@
 
 .experience-section {
   padding: var(--spacing-xl) 0;
-  background: var(--bg-primary);
+  background: transparent;
   overflow: hidden;
 }
 

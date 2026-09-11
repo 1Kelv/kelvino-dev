@@ -4,7 +4,7 @@
 
 .projects-section {
   padding: var(--spacing-xl) 0;
-  background: var(--bg-primary);
+  background: transparent;
 }
 
 .projects-container {
@@ -49,6 +49,7 @@
    ============================================ */
 
 .project-card {
+  position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
@@ -63,6 +64,39 @@
   box-shadow: var(--shadow-hover);
   border-color: var(--border-hover);
 }
+
+/* Cursor-following spotlight */
+.project-spotlight {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), var(--accent-glow), transparent 55%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.project-card:hover .project-spotlight { opacity: 1; }
+
+.project-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), var(--accent), transparent 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.project-card:hover::after { opacity: 1; }
 
 /* ---- Image wrap ---- */
 .project-image-wrap {
@@ -142,6 +176,7 @@ body[data-page-theme='dark'] .project-image-wrap {
 }
 
 .project-title {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
   font-size: var(--font-lg);
   font-weight: 700;
   color: var(--text-primary);
@@ -158,24 +193,31 @@ body[data-page-theme='dark'] .project-image-wrap {
   flex: 1;
 }
 
-/* ---- Tech stack icons ---- */
+/* ---- Tech stack chips ---- */
 .tech-stack {
-  margin-top: 0.5rem;
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
 }
 
-.tech-stack-icons {
-  height: 30px;
-  width: auto;
-  display: block;
-  opacity: 0.85;
-  transition: opacity 0.2s ease;
+.tech-chip {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  transition: border-color 0.2s ease, color 0.2s ease;
 }
 
-.project-card:hover .tech-stack-icons { opacity: 1; }
-
-body[data-page-theme='dark'] .tech-stack-icons {
-  opacity: 0.9;
-  filter: brightness(1.1);
+.project-card:hover .tech-chip {
+  border-color: var(--border-hover);
+  color: var(--accent);
 }
 
 /* ---- Actions ---- */
@@ -218,7 +260,7 @@ body[data-page-theme='dark'] .tech-stack-icons {
     width: 100%;
     justify-content: center;
   }
-  .tech-stack-icons { height: 26px; }
+  .tech-chip { font-size: 0.64rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -4,7 +4,7 @@
 
 .achievements-section {
   padding: var(--spacing-xl) 0;
-  background: var(--bg-secondary);
+  background: var(--bg-tint);
   overflow: hidden;
 }
 

@@ -4,8 +4,10 @@
 
 .footer {
   padding: 2rem var(--spacing-md);
-  background: var(--bg-secondary);
+  background: var(--bg-tint);
   border-top: 1px solid var(--border-color);
+  position: relative;
+  z-index: 1;
 }
 
 .footer-inner {
@@ -52,4 +54,25 @@
     flex-direction: column;
     text-align: center;
   }
+}
+
+.footer-hint {
+  display: inline-block;
+  margin-left: 0.35rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.75rem;
+}
+
+.footer-hint kbd {
+  padding: 0 0.35rem;
+  border: 1px solid var(--border-color);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+@media (max-width: 640px) {
+  .footer-hint { display: none; }
 }

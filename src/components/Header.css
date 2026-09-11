@@ -8,12 +8,17 @@ html, body { overflow-x: hidden; }
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: var(--header-bg);
+  background: transparent;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid transparent;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.header.scrolled {
+  background: var(--header-bg);
+  border-bottom-color: var(--border-color);
   box-shadow: 0 1px 0 var(--border-color);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Three-column grid: brand | nav | actions */
@@ -37,28 +42,34 @@ html, body { overflow-x: hidden; }
   flex-shrink: 0;
 }
 
-.logo-icon {
-  width: 52px;
-  height: auto;
-  aspect-ratio: 3 / 2;
-  object-fit: contain;
-  border-radius: 10px;
-  transition: opacity 0.2s ease;
-}
-
-.logo-icon:hover { opacity: 0.85; }
-
-@media (max-width: 640px) { .logo-icon { width: 40px; } }
-
 .brand-text {
-  font-weight: 700;
-  font-size: clamp(0.95rem, 2vw, 1.35rem);
-  color: var(--text-primary);
-  letter-spacing: -0.01em;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  line-height: 1;
   transition: color 0.2s ease;
 }
 
-.site-title:hover .brand-text { color: var(--accent); }
+.brand-first {
+  font-size: clamp(0.62rem, 1.1vw, 0.7rem);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+
+.brand-last {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-top: 0.15em;
+}
+
+.site-title:hover .brand-first { color: var(--accent); }
+
+.site-title:hover .brand-last { color: var(--accent); }
 
 /* ---- Desktop nav ---- */
 .nav-links {
@@ -84,6 +95,19 @@ html, body { overflow-x: hidden; }
 .nav-links a:hover {
   color: var(--text-primary);
   background-color: var(--accent-dim);
+}
+
+.nav-links a.active {
+  color: var(--accent);
+}
+
+.nav-links a.active::after {
+  content: '';
+  display: block;
+  height: 2px;
+  margin-top: 2px;
+  border-radius: 2px;
+  background: var(--gradient);
 }
 
 /* Request CV — pill button in nav */
@@ -113,6 +137,38 @@ html, body { overflow-x: hidden; }
   align-items: center;
   gap: 8px;
 }
+
+/* Icon buttons */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 0.7rem;
+  border-radius: 100px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.icon-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+  transform: translateY(-1px);
+}
+
+.theme-icon {
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.theme-toggle:hover .theme-icon { transform: rotate(25deg); }
 
 /* Theme toggle */
 .theme-toggle {
@@ -236,6 +292,22 @@ html, body { overflow-x: hidden; }
   background: var(--accent-dim);
 }
 
+.mobile-terminal-btn {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: left;
+}
+
 .mobile-theme-wrap {
   margin-top: 20px;
   padding-top: 20px;
@@ -260,11 +332,12 @@ html, body { overflow-x: hidden; }
   .header-actions { margin-left: auto; }
   .mobile-menu-toggle { display: inline-flex; }
   .theme-toggle-desktop { display: none; }
+  .terminal-btn { display: none; }
 }
 
 @media (max-width: 360px) {
-  .brand-text { font-size: 0.95rem; }
-  .logo-icon { width: 34px; }
+  .brand-first { display: none; }
+  .brand-last { font-size: 1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

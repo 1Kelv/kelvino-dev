@@ -1,0 +1,87 @@
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background: #05070d;
+  color: #c7d2fe;
+  display: grid;
+  place-items: center;
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.boot-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.025) 0px,
+    rgba(255, 255, 255, 0.025) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.boot-inner {
+  width: min(92vw, 560px);
+  padding: 0 1rem;
+}
+
+.boot-logo {
+  display: inline-flex;
+  gap: 2px;
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 2rem;
+  letter-spacing: -0.05em;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.boot-log {
+  margin: 0;
+  font-size: clamp(0.78rem, 1.6vw, 0.95rem);
+  line-height: 1.75;
+  min-height: 12.5em;
+  white-space: pre-wrap;
+  display: flex;
+  flex-direction: column;
+}
+
+.boot-line { color: #a5b4fc; }
+.boot-line.active::after {
+  content: '▍';
+  animation: boot-blink 0.9s steps(2) infinite;
+  color: #c7d2fe;
+}
+
+@keyframes boot-blink {
+  to { opacity: 0; }
+}
+
+.boot-bar {
+  margin-top: 1.25rem;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.boot-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #818cf8, #c084fc);
+  transition: width 0.12s linear;
+}
+
+.boot-hint {
+  margin-top: 1rem;
+  font-size: 0.72rem;
+  color: rgba(199, 210, 254, 0.45);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}

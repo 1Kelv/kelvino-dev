@@ -4,7 +4,7 @@
 
 .about-section {
   padding: var(--spacing-xl) 0;
-  background: var(--bg-secondary);
+  background: var(--bg-tint);
 }
 
 .about-container {
@@ -98,6 +98,46 @@
   box-shadow: 0 24px 56px rgba(0, 0, 0, 0.2);
 }
 
+/* ---- Stickers around the photo ---- */
+.about-image-frame {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+}
+
+.about-sticker {
+  position: absolute;
+  padding: 0.35rem 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-hover);
+  border-radius: 100px;
+  box-shadow: var(--shadow);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.about-sticker-one {
+  top: 6%;
+  left: -8%;
+  transform: rotate(-6deg);
+  animation: sticker-float 6s ease-in-out infinite;
+}
+
+.about-sticker-two {
+  bottom: 8%;
+  right: -6%;
+  transform: rotate(5deg);
+  animation: sticker-float 7s ease-in-out infinite reverse;
+}
+
+@keyframes sticker-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -6px; }
+}
+
 /* ============================================
    RESPONSIVE
    ============================================ */
@@ -111,21 +151,27 @@
 
   .about-image-col { order: -1; }
 
+  .about-image-frame,
   .about-image {
     max-width: 240px;
   }
+  .about-image-frame { margin: 0 auto; }
 }
 
 @media (max-width: 520px) {
   .about-section {
     padding: var(--spacing-lg) 0;
   }
+  .about-image-frame,
   .about-image {
     max-width: 200px;
   }
+  .about-sticker-one { left: -14%; }
+  .about-sticker-two { right: -12%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .about-image,
   .skill-chip { transition: none !important; }
+  .about-sticker { animation: none; }
 }

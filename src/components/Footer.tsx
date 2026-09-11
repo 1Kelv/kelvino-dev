@@ -7,7 +7,8 @@ const Footer: React.FC = () => {
     <footer className="footer">
       <div className="footer-inner">
         <p className="footer-copy">
-          © {year} <span className="footer-name">Kelvin Olasupo</span>. Designed &amp; built with React + TypeScript.
+          © {year} <span className="footer-name">Kelvin Olasupo</span>. Designed &amp; built with React + TypeScript, hand-written CSS and a browser-made synth.
+          <span className="footer-hint"> Press <kbd>`</kbd> for the terminal.</span>
         </p>
         <div className="footer-links">
           <a href="https://github.com/1Kelv" target="_blank" rel="noopener noreferrer">GitHub</a>

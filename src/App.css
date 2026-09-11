@@ -27,7 +27,8 @@ html {
   --bg-primary: #ffffff;
   --bg-secondary: #f8f9ff;
   --bg-card: #ffffff;
-  --header-bg: rgba(255, 255, 255, 0.85);
+  --header-bg: rgba(255, 255, 255, 0.8);
+  --bg-tint: rgba(244, 246, 255, 0.72);
 
   /* Text */
   --text-primary: #0f172a;
@@ -79,7 +80,8 @@ body[data-page-theme='dark'] {
   --bg-primary: #080c14;
   --bg-secondary: #0d1526;
   --bg-card: #111827;
-  --header-bg: rgba(8, 12, 20, 0.85);
+  --header-bg: rgba(8, 12, 20, 0.8);
+  --bg-tint: rgba(13, 21, 38, 0.62);
 
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
@@ -108,14 +110,59 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Film grain over everything, very faint */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 99990;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+body[data-page-theme='dark']::after {
+  opacity: 0.07;
+  mix-blend-mode: screen;
+}
+
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-light) transparent;
+}
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-thumb {
+  background: var(--accent-light);
+  border-radius: 10px;
+  border: 3px solid var(--bg-primary);
+}
+
+/* Everything that sits over the canvas */
+.site-main, .header, .App > footer { position: relative; z-index: 1; }
+
+/* Magnetic buttons need their own transform transition */
+.magnetic {
+  transition: transform 0.18s ease-out, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  will-change: transform;
+}
+
 h1 {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
   font-size: var(--font-4xl);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.03em;
 }
 
 h2 {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
   font-size: var(--font-3xl);
   font-weight: 700;
   line-height: 1.25;
@@ -162,12 +209,8 @@ img {
 
 section {
   padding: var(--spacing-xl) 0;
-  background-color: var(--bg-primary);
+  background-color: transparent;
   transition: background-color 0.3s ease;
-}
-
-section:nth-child(even) {
-  background-color: var(--bg-secondary);
 }
 
 /* ============================================
@@ -176,7 +219,8 @@ section:nth-child(even) {
 
 .section-label {
   display: inline-block;
-  font-size: var(--font-sm);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: var(--font-xs);
   font-weight: 600;
   color: var(--accent);
   text-transform: uppercase;
@@ -188,8 +232,9 @@ section:nth-child(even) {
 }
 
 .section-title {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
   font-size: clamp(1.75rem, 3.5vw, var(--font-3xl));
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.02em;
   margin-bottom: 0.5rem;

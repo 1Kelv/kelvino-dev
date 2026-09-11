@@ -48,7 +48,7 @@ const About: React.FC = () => {
           </p>
 
           <p className="about-text">
-            My stack spans React, TypeScript, Python, and a growing set of AI tooling. I've shipped production software across fraud operations, fintech, and healthcare. Outside Nala, I co-founded Sentinel, an AI agent assist platform for debt support teams, and run Thrive Finance, a personal finance app with 12+ active users.
+            My stack spans React, TypeScript, Python, and a growing set of AI tooling. I've shipped production software across fraud operations, fintech, and healthcare. Outside Nala, I run Thrive Finance, a personal finance app with 12+ active users, built by someone who sees fraud up close every day.
           </p>
 
           <p className="about-text">
@@ -70,12 +70,16 @@ const About: React.FC = () => {
           transition={{ duration: 0.7, delay: 0.15 }}
           viewport={{ once: true }}
         >
-          <motion.img
-            src={gradPhoto}
-            alt="Kelvin Olasupo at graduation"
-            className="about-image"
-            style={{ opacity: imgOpacity, scale: imgScale, willChange: 'opacity, transform' }}
-          />
+          <div className="about-image-frame">
+            <motion.img
+              src={gradPhoto}
+              alt="Kelvin Olasupo at graduation"
+              className="about-image"
+              style={{ opacity: imgOpacity, scale: imgScale, willChange: 'opacity, transform' }}
+            />
+            <span className="about-sticker about-sticker-one" aria-hidden="true">First-Class 🎓</span>
+            <span className="about-sticker about-sticker-two" aria-hidden="true">London 📍</span>
+          </div>
         </motion.div>
       </div>
     </motion.section>
