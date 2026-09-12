@@ -24,7 +24,7 @@
 }
 
 .boot-inner {
-  width: min(92vw, 560px);
+  width: min(92vw, 620px);
   padding: 0 1rem;
 }
 
@@ -44,12 +44,21 @@
 
 .boot-log {
   margin: 0;
-  font-size: clamp(0.78rem, 1.6vw, 0.95rem);
-  line-height: 1.75;
-  min-height: 12.5em;
+  /* Sized against viewport HEIGHT so the whole log always fits without
+     scrolling, and against WIDTH so the longest line never wraps on a phone. */
+  font-size: clamp(0.5rem, min(1.45vh, 2.6vw), 0.84rem);
+  line-height: 1.6;
+  /* 26 lines x 1.6 line-height = 41.6em, with a little headroom. Reserved up
+     front so the layout never jumps as lines arrive. */
+  height: min(42em, 66vh);
+  overflow: hidden;
   white-space: pre-wrap;
   display: flex;
   flex-direction: column;
+  /* Fills from the bottom like a real console: no empty void early on, and if
+     the log ever does outgrow the box the newest line stays visible while the
+     oldest scrolls off the top. */
+  justify-content: flex-end;
 }
 
 .boot-line { color: #a5b4fc; }
@@ -78,10 +87,54 @@
   transition: width 0.12s linear;
 }
 
-.boot-hint {
+.boot-actions {
   margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.boot-countdown {
   font-size: 0.72rem;
   color: rgba(199, 210, 254, 0.45);
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+.boot-skip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: rgba(129, 140, 248, 0.12);
+  border: 1px solid rgba(129, 140, 248, 0.4);
+  border-radius: 100px;
+  color: #c7d2fe;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.boot-skip:hover {
+  background: rgba(129, 140, 248, 0.22);
+  border-color: rgba(129, 140, 248, 0.7);
+  transform: translateY(-1px);
+}
+
+.boot-skip:focus-visible {
+  outline: 2px solid #a5b4fc;
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .boot-actions {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+  }
+  .boot-skip { width: 100%; justify-content: center; }
 }
