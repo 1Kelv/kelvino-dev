@@ -6,6 +6,7 @@ import spreeImg from '../assets/spree.webp';
 import forgewatchLight from '../assets/forgewatch-light.webp';
 import forgewatchDark from '../assets/forgewatch-dark.webp';
 import { useTheme } from '../ThemeContext';
+import TechIcon from './TechIcon';
 
 /** Live screenshot of a site, fetched on demand. Falls back to the emoji tile. */
 const microshot = (url: string) =>
@@ -195,7 +196,10 @@ const ProjectCard: React.FC<{ project: Project; index: number; featured?: boolea
 
         <ul className="tech-stack" aria-label={`${project.title} tech stack`}>
           {project.tech.map(t => (
-            <li key={t} className="tech-chip">{t}</li>
+            <li key={t} className="tech-chip">
+              <TechIcon name={t} />
+              {t}
+            </li>
           ))}
         </ul>
 

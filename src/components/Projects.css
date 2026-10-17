@@ -204,6 +204,9 @@ body[data-page-theme='dark'] .project-image-wrap {
 }
 
 .tech-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 0.68rem;
   font-weight: 500;

@@ -1,0 +1,7 @@
+.tech-icon {
+  width: 0.95em;
+  height: 0.95em;
+  flex-shrink: 0;
+  /* Nudge the mark onto the text's optical centre line. */
+  margin-top: -0.05em;
+}
