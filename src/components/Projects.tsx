@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import './Projects.css';
 import { motion, type Variants } from 'framer-motion';
 import agileflowImg from '../assets/af1.jpeg';
+import spreeImg from '../assets/spree.webp';
+import forgewatchLight from '../assets/forgewatch-light.webp';
+import forgewatchDark from '../assets/forgewatch-dark.webp';
+import { useTheme } from '../ThemeContext';
 
 /** Live screenshot of a site, fetched on demand. Falls back to the emoji tile. */
 const microshot = (url: string) =>
@@ -20,6 +24,8 @@ interface Project {
   tag: string;
   description: string;
   image: string | null;
+  /** Optional dark-theme variant, used when the page is in dark mode. */
+  imageDark?: string;
   tech: string[];
   links: ProjectLink[];
 }
@@ -31,7 +37,8 @@ const featuredProjects: Project[] = [
     tag: 'Personal Project · Live',
     description:
       'A standalone repository security agent. It scans a Git checkout with Semgrep, OSV-Scanner and Gitleaks, then explains what needs attention in plain English rather than raw tool output. It remembers findings between scans and prepares narrow fixes for a human to approve, never merging or deploying by itself.',
-    image: microshot('https://forgewatch-sepia.vercel.app'),
+    image: forgewatchLight,
+    imageDark: forgewatchDark,
     tech: ['Python', 'TypeScript', 'Next.js', 'PostgreSQL'],
     links: [
       { label: 'Visit Live App', href: 'https://forgewatch-sepia.vercel.app', type: 'primary', external: true },
@@ -59,7 +66,7 @@ const projects: Project[] = [
     tag: 'Personal Project · Live',
     description:
       'A real-time shared shopping list for households. Everyone adds, edits and ticks off items together and sees who added what, syncing live across devices. Google and email sign-in, private household join codes, and installable as a progressive web app.',
-    image: microshot('https://spree-1343b.web.app'),
+    image: spreeImg,
     tech: ['React', 'TypeScript', 'Firebase', 'Firestore'],
     links: [
       { label: 'Visit Live App', href: 'https://spree-1343b.web.app', type: 'primary', external: true },
@@ -140,9 +147,12 @@ const ProjectCard: React.FC<{ project: Project; index: number; featured?: boolea
   index,
   featured,
 }) => {
-  // Screenshots come from a third-party service, so assume they may not arrive.
-  const [imageFailed, setImageFailed] = useState(false);
-  const showImage = project.image && !imageFailed;
+  const { theme } = useTheme();
+  // Remote screenshots can fail, so remember which src did rather than a bare
+  // flag: swapping theme (or retrying) then gets a fresh chance.
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const src = (theme === 'dark' && project.imageDark) || project.image;
+  const showImage = src && failedSrc !== src;
 
   return (
     <motion.div
@@ -162,10 +172,10 @@ const ProjectCard: React.FC<{ project: Project; index: number; featured?: boolea
         <div className="project-image-wrap">
           <img
             className="project-image"
-            src={project.image as string}
+            src={src as string}
             alt={`${project.title} screenshot`}
             loading="lazy"
-            onError={() => setImageFailed(true)}
+            onError={() => setFailedSrc(src as string)}
           />
         </div>
       ) : (
