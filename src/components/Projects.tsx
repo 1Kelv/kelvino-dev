@@ -26,15 +26,16 @@ interface Project {
 
 const featuredProjects: Project[] = [
   {
-    title: 'AgileFlow',
-    emoji: '⚙️',
-    tag: 'Final Year Project · Bronze Award',
+    title: 'ForgeWatch',
+    emoji: '🛡️',
+    tag: 'Personal Project · Live',
     description:
-      'An Agile project management tool with AI-driven sprint predictions using TensorFlow. Built with React, TypeScript, and Supabase. Earned the Bronze Award for Innovation from SwitchShop Limited.',
-    image: agileflowImg,
-    tech: ['React', 'TypeScript', 'Supabase', 'TensorFlow'],
+      'A standalone repository security agent. It scans a Git checkout with Semgrep, OSV-Scanner and Gitleaks, then explains what needs attention in plain English rather than raw tool output. It remembers findings between scans and prepares narrow fixes for a human to approve, never merging or deploying by itself.',
+    image: microshot('https://forgewatch-sepia.vercel.app'),
+    tech: ['Python', 'TypeScript', 'Next.js', 'PostgreSQL'],
     links: [
-      { label: 'View on GitHub', href: 'https://github.com/1Kelv/AgileFlow', type: 'primary', external: true },
+      { label: 'Visit Live App', href: 'https://forgewatch-sepia.vercel.app', type: 'primary', external: true },
+      { label: 'GitHub', href: 'https://github.com/1Kelv/forgewatch', type: 'secondary', external: true },
     ],
   },
   {
@@ -66,16 +67,15 @@ const projects: Project[] = [
     ],
   },
   {
-    title: 'ForgeWatch',
-    emoji: '🛡️',
-    tag: 'Personal Project · Live',
+    title: 'AgileFlow',
+    emoji: '⚙️',
+    tag: 'Final Year Project · Bronze Award',
     description:
-      'A standalone repository security agent. It scans a Git checkout with Semgrep, OSV-Scanner and Gitleaks, then explains what needs attention in plain English rather than raw tool output. It remembers findings between scans and prepares narrow fixes for a human to approve, never merging or deploying by itself.',
-    image: microshot('https://forgewatch-sepia.vercel.app'),
-    tech: ['Python', 'TypeScript', 'Next.js', 'PostgreSQL'],
+      'An Agile project management tool with AI-driven sprint predictions using TensorFlow. Built with React, TypeScript, and Supabase. Earned the Bronze Award for Innovation from SwitchShop Limited.',
+    image: agileflowImg,
+    tech: ['React', 'TypeScript', 'Supabase', 'TensorFlow'],
     links: [
-      { label: 'Visit Live App', href: 'https://forgewatch-sepia.vercel.app', type: 'primary', external: true },
-      { label: 'GitHub', href: 'https://github.com/1Kelv/forgewatch', type: 'secondary', external: true },
+      { label: 'View on GitHub', href: 'https://github.com/1Kelv/AgileFlow', type: 'primary', external: true },
     ],
   },
   {
