@@ -28,7 +28,7 @@ const LINES = [
   '> [build] compiling projects ........ 6 found',
   '',
   '    spree ................. live',
-  '    forgewatch ............ security agent',
+  '    forgewatch ............ live, security agent',
   '    thrive-finance ........ live, real users',
   '    agileflow ............. bronze award',
   '    mylestone ............. live',

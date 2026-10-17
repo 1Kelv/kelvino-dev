@@ -29,7 +29,7 @@ cursor is not mounted, the canvas stops animating, and the marquee holds still.
 ## 💡 Featured Projects
 
 - **Spree** – A real-time shared shopping list for households, built on Firebase. Live.
-- **ForgeWatch** – A standalone repository security agent that scans a checkout and explains findings in plain English.
+- **ForgeWatch** – A standalone repository security agent that scans a checkout and explains findings in plain English. Live.
 - **Thrive Finance** – My own personal finance startup, live with real users.
 - **AgileFlow** – Agile sprint manager with TensorFlow-driven predictions. Bronze Award for Innovation.
 - **Mylestone** – A care-tracking PWA for medically complex infants.

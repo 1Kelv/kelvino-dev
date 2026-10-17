@@ -20,7 +20,7 @@ const COMMANDS = [
 
 const PROJECTS = [
   { name: 'spree', desc: 'Real-time shared shopping list for households', url: 'https://spree-1343b.web.app' },
-  { name: 'forgewatch', desc: 'Repository security agent, scans and explains findings', url: 'https://github.com/1Kelv/forgewatch' },
+  { name: 'forgewatch', desc: 'Repository security agent, scans and explains findings', url: 'https://forgewatch-sepia.vercel.app' },
   { name: 'thrive-finance', desc: 'Personal finance app, live with real users', url: 'https://getmythrive.io' },
   { name: 'agileflow', desc: 'AI sprint prediction, Bronze Award for Innovation', url: 'https://github.com/1Kelv/AgileFlow' },
   { name: 'mylestone', desc: 'Care-tracking PWA for medically complex infants', url: 'https://mylestone-seven.vercel.app' },

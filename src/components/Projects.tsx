@@ -68,14 +68,14 @@ const projects: Project[] = [
   {
     title: 'ForgeWatch',
     emoji: '🛡️',
-    tag: 'Personal Project · Security Tooling',
+    tag: 'Personal Project · Live',
     description:
       'A standalone repository security agent. It scans a Git checkout with Semgrep, OSV-Scanner and Gitleaks, then explains what needs attention in plain English rather than raw tool output. It remembers findings between scans and prepares narrow fixes for a human to approve, never merging or deploying by itself.',
     image: microshot('https://forgewatch-sepia.vercel.app'),
     tech: ['Python', 'TypeScript', 'Next.js', 'PostgreSQL'],
     links: [
-      { label: 'View on GitHub', href: 'https://github.com/1Kelv/forgewatch', type: 'primary', external: true },
-      { label: 'Live Dashboard', href: 'https://forgewatch-sepia.vercel.app', type: 'secondary', external: true },
+      { label: 'Visit Live App', href: 'https://forgewatch-sepia.vercel.app', type: 'primary', external: true },
+      { label: 'GitHub', href: 'https://github.com/1Kelv/forgewatch', type: 'secondary', external: true },
     ],
   },
   {
