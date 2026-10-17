@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import './Journey.css';
+import TechIcon from './TechIcon';
 
 const experiences = [
   {
@@ -71,7 +72,10 @@ const Journey: React.FC = () => {
 
               <div className="exp-tags">
                 {exp.tags.map(tag => (
-                  <span key={tag} className="exp-tag">{tag}</span>
+                  <span key={tag} className="exp-tag">
+                    <TechIcon name={tag} />
+                    {tag}
+                  </span>
                 ))}
               </div>
             </motion.div>

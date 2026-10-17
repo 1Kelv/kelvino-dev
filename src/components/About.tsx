@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import './About.css';
 import gradPhoto from '../assets/gradphoto.jpg';
+import TechIcon from './TechIcon';
 
 const skills = [
   'React', 'TypeScript', 'JavaScript', 'Python', 'Streamlit',
@@ -57,7 +58,10 @@ const About: React.FC = () => {
 
           <div className="about-skills">
             {skills.map(skill => (
-              <span key={skill} className="skill-chip">{skill}</span>
+              <span key={skill} className="skill-chip">
+                <TechIcon name={skill} />
+                {skill}
+              </span>
             ))}
           </div>
         </motion.div>

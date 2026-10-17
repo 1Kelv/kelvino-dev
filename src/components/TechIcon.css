@@ -5,3 +5,16 @@
   /* Nudge the mark onto the text's optical centre line. */
   margin-top: -0.05em;
 }
+
+/* Capabilities have no brand colour, so they sit back a little and let the
+   brand marks in the same row carry the colour. */
+.tech-icon-muted {
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.project-card:hover .tech-icon-muted,
+.skill-chip:hover .tech-icon-muted,
+.exp-tag:hover .tech-icon-muted {
+  opacity: 0.9;
+}
