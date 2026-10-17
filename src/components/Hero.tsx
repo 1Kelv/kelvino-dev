@@ -40,7 +40,7 @@ type Token = [string, string];
 const CODE: Token[][] = [
   [['tk-kw', 'const'], ['', ' '], ['tk-var', 'kelvin'], ['', ' '], ['tk-op', '='], ['', ' {']],
   [['', '  '], ['tk-key', 'role'], ['tk-op', ': '], ['tk-str', '"Fraud Ops Lead @ Nala"'], ['tk-op', ',']],
-  [['', '  '], ['tk-key', 'builds'], ['tk-op', ': ['], ['tk-str', '"Thrive Finance"'], ['tk-op', ', '], ['tk-str', '"AgileFlow"'], ['tk-op', '],']],
+  [['', '  '], ['tk-key', 'builds'], ['tk-op', ': ['], ['tk-str', '"Spree"'], ['tk-op', ', '], ['tk-str', '"ForgeWatch"'], ['tk-op', ', '], ['tk-str', '"Thrive Finance"'], ['tk-op', '],']],
   [['', '  '], ['tk-key', 'stack'], ['tk-op', ': ['], ['tk-str', '"React"'], ['tk-op', ', '], ['tk-str', '"TypeScript"'], ['tk-op', ', '], ['tk-str', '"Python"'], ['tk-op', '],']],
   [['', '  '], ['tk-key', 'degree'], ['tk-op', ': '], ['tk-str', '"BSc CS, First-Class"'], ['tk-op', ',']],
   [['', '  '], ['tk-key', 'next'], ['tk-op', ': '], ['tk-str', '"MSc AI & Machine Learning"'], ['tk-op', ',']],

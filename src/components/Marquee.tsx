@@ -9,7 +9,7 @@ const ROW_ONE = [
 const ROW_TWO = [
   'Fraud Operations', 'Regulation E', 'Chargeback Automation', 'Risk Dashboards',
   'First-Class Honours', 'Founder', 'MSc AI (in progress)', 'London',
-  'Thrive Finance', 'AgileFlow', 'Mylestone', 'AlertIQ', 'Riposte',
+  'Thrive Finance', 'Spree', 'ForgeWatch', 'AgileFlow', 'Mylestone', 'AlertIQ',
 ];
 
 const Row: React.FC<{ items: string[]; reverse?: boolean }> = ({ items, reverse }) => {

@@ -19,6 +19,8 @@ const COMMANDS = [
 ];
 
 const PROJECTS = [
+  { name: 'spree', desc: 'Real-time shared shopping list for households', url: 'https://spree-1343b.web.app' },
+  { name: 'forgewatch', desc: 'Repository security agent, scans and explains findings', url: 'https://github.com/1Kelv/forgewatch' },
   { name: 'thrive-finance', desc: 'Personal finance app, live with real users', url: 'https://getmythrive.io' },
   { name: 'agileflow', desc: 'AI sprint prediction, Bronze Award for Innovation', url: 'https://github.com/1Kelv/AgileFlow' },
   { name: 'mylestone', desc: 'Care-tracking PWA for medically complex infants', url: 'https://mylestone-seven.vercel.app' },
@@ -231,7 +233,7 @@ const Terminal: React.FC = () => {
             <pre className="term-pre">{JSON.stringify({
               name: 'Kelvin Olasupo',
               role: 'Fraud Operations Lead @ Nala',
-              builds: ['Thrive Finance', 'AgileFlow', 'Mylestone', 'AlertIQ'],
+              builds: ['Spree', 'ForgeWatch', 'Thrive Finance', 'AgileFlow', 'Mylestone', 'AlertIQ'],
               stack: ['React', 'TypeScript', 'Python', 'Supabase'],
               studying: 'MSc AI & Machine Learning',
               status: 'open to software engineering roles',

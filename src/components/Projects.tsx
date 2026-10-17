@@ -53,6 +53,32 @@ const featuredProjects: Project[] = [
 
 const projects: Project[] = [
   {
+    title: 'Spree',
+    emoji: '🛒',
+    tag: 'Personal Project · Live',
+    description:
+      'A real-time shared shopping list for households. Everyone adds, edits and ticks off items together and sees who added what, syncing live across devices. Google and email sign-in, private household join codes, and installable as a progressive web app.',
+    image: microshot('https://spree-1343b.web.app'),
+    tech: ['React', 'TypeScript', 'Firebase', 'Firestore'],
+    links: [
+      { label: 'Visit Live App', href: 'https://spree-1343b.web.app', type: 'primary', external: true },
+      { label: 'GitHub', href: 'https://github.com/1Kelv/spree', type: 'secondary', external: true },
+    ],
+  },
+  {
+    title: 'ForgeWatch',
+    emoji: '🛡️',
+    tag: 'Personal Project · Security Tooling',
+    description:
+      'A standalone repository security agent. It scans a Git checkout with Semgrep, OSV-Scanner and Gitleaks, then explains what needs attention in plain English rather than raw tool output. It remembers findings between scans and prepares narrow fixes for a human to approve, never merging or deploying by itself.',
+    image: microshot('https://forgewatch-sepia.vercel.app'),
+    tech: ['Python', 'TypeScript', 'Next.js', 'PostgreSQL'],
+    links: [
+      { label: 'View on GitHub', href: 'https://github.com/1Kelv/forgewatch', type: 'primary', external: true },
+      { label: 'Live Dashboard', href: 'https://forgewatch-sepia.vercel.app', type: 'secondary', external: true },
+    ],
+  },
+  {
     title: 'Mylestone',
     emoji: '👶',
     tag: 'Personal Project · PWA',
