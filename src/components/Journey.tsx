@@ -3,20 +3,53 @@ import { motion } from 'framer-motion';
 import './Journey.css';
 import TechIcon from './TechIcon';
 
-const experiences = [
+interface Experience {
+  company: string;
+  /** Omitted when there is no single company to link to. */
+  companyUrl?: string;
+  role: string;
+  period: string;
+  location: string;
+  bullets: string[];
+  tags: string[];
+}
+
+const experiences: Experience[] = [
   {
     company: 'Nala',
     companyUrl: 'https://www.nala.com/',
     role: 'Fraud Operations Lead',
-    period: 'April 2025 – Present',
-    location: 'Remote · London, UK',
+    period: 'April 2025 \u2013 Present',
+    location: 'Remote \u00b7 London, UK',
     bullets: [
       'Shipped 5+ internal tools used daily by the fraud operations team, including Riposte (chargeback automation), NALA Fraud Academy (analyst onboarding), and EXCO Reporter (automated weekly reporting via Claude AI).',
+      'Lead a six-person team, owning delivery across fraud operations, tooling, process improvement, and cross-functional technical initiatives.',
       'Designed fraud detection frameworks and standard operating procedures covering Regulation E disputes, pre-arbitration workflows, and case classification.',
-      'Built Hex dashboards and Python tooling for real-time risk monitoring and operational decision support.',
-      'Embedded across engineering and data teams, translating operational pain points into technical requirements and shipping solutions into production.',
+      'Write SQL and build operational analysis in Hex and Metabase, translating complex operational and compliance problems into testable technical requirements.',
+      'Embedded across engineering and product teams, translating operational pain points into technical requirements and shipping solutions into production.',
     ],
-    tags: ['React', 'Python', 'Node.js', 'Hex', 'SQL', 'Claude AI'],
+    tags: ['React', 'Python', 'Node.js', 'Hex', 'Metabase', 'SQL', 'Claude AI', 'Team Leadership'],
+  },
+  {
+    company: 'Independent',
+    role: 'Software Developer',
+    period: '2022 \u2013 Present',
+    location: 'Project-based \u00b7 Remote',
+    bullets: [
+      'Design and ship full-stack applications across React, TypeScript, Node.js, Appwrite/Supabase, SQL, and Python, taking products from requirements through deployment and iteration.',
+      'Maintain codebases in Git and GitHub with practical documentation, environment configuration, and production deployment habits.',
+    ],
+    tags: ['React', 'TypeScript', 'Node.js', 'Appwrite', 'Supabase', 'SQL', 'Python', 'Git'],
+  },
+  {
+    company: 'easyJet Holidays & TSYS Managed Services',
+    role: 'Fraud & Risk / Operations',
+    period: '2019 \u2013 2025',
+    location: 'EMEA \u00b7 UK',
+    bullets: [
+      'Built professional experience across regulated financial services, payments, customer risk, operations, and team leadership, providing strong domain context for product and engineering decisions.',
+    ],
+    tags: ['Fraud Operations', 'Payments', 'Customer Risk', 'Financial Services', 'Team Leadership'],
   },
 ];
 
@@ -48,14 +81,18 @@ const Journey: React.FC = () => {
             >
               <div className="exp-top">
                 <div className="exp-company-info">
-                  <a
-                    href={exp.companyUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="exp-company-name"
-                  >
-                    {exp.company}
-                  </a>
+                  {exp.companyUrl ? (
+                    <a
+                      href={exp.companyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="exp-company-name"
+                    >
+                      {exp.company}
+                    </a>
+                  ) : (
+                    <span className="exp-company-name">{exp.company}</span>
+                  )}
                   <span className="exp-location">{exp.location}</span>
                 </div>
                 <div className="exp-date-info">

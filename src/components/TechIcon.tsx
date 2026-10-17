@@ -7,6 +7,7 @@ import {
 } from 'react-icons/si';
 import {
   LuDatabase, LuChartColumn, LuChartLine, LuShieldCheck, LuTestTube,
+  LuCreditCard, LuUsers, LuScale, LuLandmark, LuWorkflow,
 } from 'react-icons/lu';
 import { useTheme } from '../ThemeContext';
 import './TechIcon.css';
@@ -62,6 +63,13 @@ const ICONS: Record<string, Entry> = {
   dataanalytics:    { Icon: LuChartLine },
   fraudoperations:  { Icon: LuShieldCheck },
   playwright:       { Icon: LuTestTube },
+  payments:         { Icon: LuCreditCard },
+  teamleadership:   { Icon: LuUsers },
+  customerrisk:     { Icon: LuScale },
+  riskoperations:   { Icon: LuScale },
+  financialservices:{ Icon: LuLandmark },
+  processdesign:    { Icon: LuWorkflow },
+  regulatione:      { Icon: LuScale },
 };
 
 /** "Node.js" -> "nodejs", "Hex Dashboards" -> "hexdashboards". */
