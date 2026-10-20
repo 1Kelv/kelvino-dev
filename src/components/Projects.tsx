@@ -7,6 +7,7 @@ import forgewatchLight from '../assets/forgewatch-light.webp';
 import forgewatchDark from '../assets/forgewatch-dark.webp';
 import { useTheme } from '../ThemeContext';
 import TechIcon from './TechIcon';
+import ToolingTile from './ToolingTile';
 
 /** Live screenshot of a site, fetched on demand. Falls back to the emoji tile. */
 const microshot = (url: string) =>
@@ -27,6 +28,8 @@ interface Project {
   image: string | null;
   /** Optional dark-theme variant, used when the page is in dark mode. */
   imageDark?: string;
+  /** Rendered instead of a screenshot, for work with nothing public to show. */
+  visual?: React.FC;
   tech: string[];
   links: ProjectLink[];
 }
@@ -37,8 +40,9 @@ const featuredProjects: Project[] = [
     emoji: '🔧',
     tag: 'Production · Fraud Ops @ Nala',
     description:
-      'The tooling my team runs on. Reg E Radar standardises Regulation E dispute assessment, evidence generation and auditable decisions. Fraud Ops Pulse delivers scheduled reporting and AI-assisted summaries to Slack. Card Scheme Health monitors authorisations, 3DS/ECI, wallets and issuers for emerging exposure. Plus Riposte for chargeback automation and the NALA Fraud Academy for analyst onboarding.',
+      'The tooling my team runs on. Reg E Radar standardises Regulation E dispute assessment, evidence generation and auditable decisions. Fraud Ops Pulse delivers scheduled reporting and AI-assisted summaries to Slack. Card Scheme Health monitors authorisations, 3DS/ECI, wallets and issuers for emerging exposure. Plus Riposte for chargeback automation and the NALA Fraud Academy, the analyst onboarding programme that grew out of AlertIQ.',
     image: null,
+    visual: ToolingTile,
     tech: ['React', 'TypeScript', 'Node.js', 'SQL', 'Hex', 'Metabase'],
     links: [
       { label: 'Case study on request', href: '#contact', type: 'secondary', external: false },
@@ -49,7 +53,7 @@ const featuredProjects: Project[] = [
     emoji: '🚨',
     tag: 'Fraud Tooling \u00b7 Personal Build',
     description:
-      'The personal counterpart to the NALA Fraud Academy I built for my team at work. An interactive training simulator that runs timed exam scenarios against real-world alert patterns, scores performance, and sharpens threat detection for analysts coming up through the discipline.',
+      'Where the NALA Fraud Academy started. I built AlertIQ first as a personal project, an interactive simulator that runs timed exam scenarios against real-world alert patterns and scores performance. It worked well enough that I rebuilt the idea Nala-focused for my own team, and it became the analyst onboarding programme we run in production.',
     image: microshot('https://fraud-simulator-three.vercel.app'),
     tech: ['React', 'JavaScript', 'Vite', 'Fraud Operations'],
     links: [
@@ -152,8 +156,9 @@ const ProjectCard: React.FC<{ project: Project; index: number; featured?: boolea
   // Remote screenshots can fail, so remember which src did rather than a bare
   // flag: swapping theme (or retrying) then gets a fresh chance.
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const Visual = project.visual;
   const src = (theme === 'dark' && project.imageDark) || project.image;
-  const showImage = src && failedSrc !== src;
+  const showImage = !Visual && src && failedSrc !== src;
 
   return (
     <motion.div
@@ -169,7 +174,11 @@ const ProjectCard: React.FC<{ project: Project; index: number; featured?: boolea
     >
       <span className="project-spotlight" aria-hidden="true" />
 
-      {showImage ? (
+      {Visual ? (
+        <div className="project-image-wrap">
+          <Visual />
+        </div>
+      ) : showImage ? (
         <div className="project-image-wrap">
           <img
             className="project-image"

@@ -83,7 +83,7 @@ const education = {
   school: 'University of Bedfordshire',
   degree: 'BSc Computer Science, First-Class Honours',
   period: '2021 – 2025',
-  note: 'Bronze Award for Innovation from SwitchShop Limited, awarded for AgileFlow. Google Data Analytics Professional Certificate in progress.',
+  note: 'Bronze Award for Innovation from SwitchShop Limited, awarded for AgileFlow. Google Data Analytics Professional Certificate in progress, and an MSc in AI and Machine Learning starting next year.',
 };
 
 const Journey: React.FC = () => {

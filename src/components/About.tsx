@@ -45,7 +45,7 @@ const About: React.FC = () => {
         >
           <div className="about-header">
             <span className="section-label">About Me</span>
-            <h2 className="section-title">Seven years in fraud. I build the tooling too.</h2>
+            <h2 className="section-title">7+ years in fraud. I build the tooling too.</h2>
           </div>
 
           <p className="about-text">
@@ -61,7 +61,7 @@ const About: React.FC = () => {
           </p>
 
           <p className="about-text">
-            I'm looking for fraud risk, fraud strategy and payments risk leadership roles. Engineering roles where the fraud domain genuinely matters are welcome too.
+            I'm looking for fraud risk, fraud strategy and payments risk leadership roles. Engineering roles where the fraud domain genuinely matters are welcome too. Currently working through the Google Data Analytics certificate, with an MSc in AI and Machine Learning starting next year.
           </p>
 
           <div className="about-skills">

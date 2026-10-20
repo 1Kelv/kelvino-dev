@@ -147,7 +147,7 @@ const Hero: React.FC = () => {
           </p>
 
           <p className="hero-description">
-            Seven years building fraud and risk functions across payments, card issuing
+            Over seven years building fraud and risk functions across payments, card issuing
             and consumer finance. I lead the team at{' '}
             <a href="https://www.nala.com/" target="_blank" rel="noopener noreferrer" className="hero-company-link">Nala</a>,
             own the detection strategy, and build the tooling myself rather than waiting on a roadmap.
