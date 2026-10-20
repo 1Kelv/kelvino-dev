@@ -48,9 +48,9 @@
      scrolling, and against WIDTH so the longest line never wraps on a phone. */
   font-size: clamp(0.5rem, min(1.45vh, 2.6vw), 0.84rem);
   line-height: 1.6;
-  /* 28 lines x 1.6 line-height = 44.8em, with a little headroom. Reserved up
+  /* 30 lines x 1.6 line-height = 48em, with a little headroom. Reserved up
      front so the layout never jumps as lines arrive. */
-  height: min(45em, 70vh);
+  height: min(49em, 74vh);
   overflow: hidden;
   white-space: pre-wrap;
   display: flex;

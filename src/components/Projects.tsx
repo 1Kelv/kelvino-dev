@@ -33,6 +33,34 @@ interface Project {
 
 const featuredProjects: Project[] = [
   {
+    title: 'Internal Tooling @ Nala',
+    emoji: '🔧',
+    tag: 'Production · Fraud Ops @ Nala',
+    description:
+      'The tooling my team runs on. Reg E Radar standardises Regulation E dispute assessment, evidence generation and auditable decisions. Fraud Ops Pulse delivers scheduled reporting and AI-assisted summaries to Slack. Card Scheme Health monitors authorisations, 3DS/ECI, wallets and issuers for emerging exposure. Plus Riposte for chargeback automation and the NALA Fraud Academy for analyst onboarding.',
+    image: null,
+    tech: ['React', 'TypeScript', 'Node.js', 'SQL', 'Hex', 'Metabase'],
+    links: [
+      { label: 'Case study on request', href: '#contact', type: 'secondary', external: false },
+    ],
+  },
+  {
+    title: 'AlertIQ',
+    emoji: '🚨',
+    tag: 'Fraud Tooling \u00b7 Personal Build',
+    description:
+      'The personal counterpart to the NALA Fraud Academy I built for my team at work. An interactive training simulator that runs timed exam scenarios against real-world alert patterns, scores performance, and sharpens threat detection for analysts coming up through the discipline.',
+    image: microshot('https://fraud-simulator-three.vercel.app'),
+    tech: ['React', 'JavaScript', 'Vite', 'Fraud Operations'],
+    links: [
+      { label: 'Try It', href: 'https://fraud-simulator-three.vercel.app', type: 'primary', external: true },
+      { label: 'GitHub', href: 'https://github.com/1Kelv/alertiq', type: 'secondary', external: true },
+    ],
+  },
+];
+
+const projects: Project[] = [
+  {
     title: 'ForgeWatch',
     emoji: '🛡️',
     tag: 'Personal Project · Live',
@@ -58,9 +86,6 @@ const featuredProjects: Project[] = [
       { label: 'Visit Live App', href: 'https://getmythrive.io', type: 'primary', external: true },
     ],
   },
-];
-
-const projects: Project[] = [
   {
     title: 'Spree',
     emoji: '🛒',
@@ -72,18 +97,6 @@ const projects: Project[] = [
     links: [
       { label: 'Visit Live App', href: 'https://spree-1343b.web.app', type: 'primary', external: true },
       { label: 'GitHub', href: 'https://github.com/1Kelv/spree', type: 'secondary', external: true },
-    ],
-  },
-  {
-    title: 'AgileFlow',
-    emoji: '⚙️',
-    tag: 'Final Year Project · Bronze Award',
-    description:
-      'An Agile project management tool with AI-driven sprint predictions using TensorFlow. Built with React, TypeScript, and Supabase. Earned the Bronze Award for Innovation from SwitchShop Limited.',
-    image: agileflowImg,
-    tech: ['React', 'TypeScript', 'Supabase', 'TensorFlow'],
-    links: [
-      { label: 'View on GitHub', href: 'https://github.com/1Kelv/AgileFlow', type: 'primary', external: true },
     ],
   },
   {
@@ -100,28 +113,15 @@ const projects: Project[] = [
     ],
   },
   {
-    title: 'AlertIQ',
-    emoji: '🚨',
-    tag: 'Training Tool',
+    title: 'AgileFlow',
+    emoji: '⚙️',
+    tag: 'Final Year Project · Bronze Award',
     description:
-      'Interactive fraud analyst training simulator built for the Fraud Analysis Bootcamp. Runs timed exam scenarios, scores performance, and sharpens threat detection skills using real-world alert patterns.',
-    image: microshot('https://fraud-simulator-three.vercel.app'),
-    tech: ['React', 'JavaScript', 'Vite'],
+      'An Agile project management tool with AI-driven sprint predictions using TensorFlow. Built with React, TypeScript, and Supabase. Earned the Bronze Award for Innovation from SwitchShop Limited.',
+    image: agileflowImg,
+    tech: ['React', 'TypeScript', 'Supabase', 'TensorFlow'],
     links: [
-      { label: 'Try It', href: 'https://fraud-simulator-three.vercel.app', type: 'primary', external: true },
-      { label: 'GitHub', href: 'https://github.com/1Kelv/alertiq', type: 'secondary', external: true },
-    ],
-  },
-  {
-    title: 'Internal Tooling @ Nala',
-    emoji: '🔧',
-    tag: 'Internal · Nala',
-    description:
-      'Five production tools built for the Fraud Ops team: Riposte (chargeback automation), NALA Fraud Academy (analyst onboarding), EXCO Reporter (automated weekly reporting via Claude AI), Reg-E Radar (Regulation E dispute classification), and Overtime Helper (payroll reconciliation).',
-    image: null,
-    tech: ['React', 'Python', 'Node.js', 'Streamlit'],
-    links: [
-      { label: 'Case study on request', href: '#contact', type: 'secondary', external: false },
+      { label: 'View on GitHub', href: 'https://github.com/1Kelv/AgileFlow', type: 'primary', external: true },
     ],
   },
 ];
@@ -228,7 +228,7 @@ const Projects: React.FC = () => (
         <span className="section-label">Projects</span>
         <h2 className="section-title">Things I've Built</h2>
         <p className="section-subtitle">
-          Personal projects, my own startup, and internal tooling, built to solve real problems.
+          Fraud tooling built for live operations, plus the personal projects and startup work alongside it.
         </p>
       </div>
 

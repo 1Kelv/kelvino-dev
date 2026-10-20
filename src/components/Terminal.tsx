@@ -19,16 +19,16 @@ const COMMANDS = [
 ];
 
 const PROJECTS = [
-  { name: 'spree', desc: 'Real-time shared shopping list for households', url: 'https://spree-1343b.web.app' },
+  { name: 'nala-fraud-tooling', desc: 'Reg E Radar, Fraud Ops Pulse, Card Scheme Health', url: '#contact' },
+  { name: 'alertiq', desc: 'Fraud analyst training simulator', url: 'https://fraud-simulator-three.vercel.app' },
   { name: 'forgewatch', desc: 'Repository security agent, scans and explains findings', url: 'https://forgewatch-sepia.vercel.app' },
   { name: 'thrive-finance', desc: 'Personal finance app, live with real users', url: 'https://getmythrive.io' },
-  { name: 'agileflow', desc: 'AI sprint prediction, Bronze Award for Innovation', url: 'https://github.com/1Kelv/AgileFlow' },
+  { name: 'spree', desc: 'Real-time shared shopping list for households', url: 'https://spree-1343b.web.app' },
   { name: 'mylestone', desc: 'Care-tracking PWA for medically complex infants', url: 'https://mylestone-seven.vercel.app' },
-  { name: 'alertiq', desc: 'Fraud analyst training simulator', url: 'https://fraud-simulator-three.vercel.app' },
-  { name: 'nala-internal', desc: 'Riposte, Fraud Academy, EXCO Reporter, Reg-E Radar, Overtime Helper', url: '#contact' },
+  { name: 'agileflow', desc: 'AI sprint prediction, Bronze Award for Innovation', url: 'https://github.com/1Kelv/AgileFlow' },
 ];
 
-const SKILLS = 'React · TypeScript · JavaScript · Python · Node.js · SQL · Supabase · Appwrite · Streamlit · Hex · Playwright · Claude AI · Fraud Operations · Data Analytics';
+const SKILLS = 'Fraud Operations \u00b7 Fraud Strategy \u00b7 Detection & Controls \u00b7 Disputes & Chargebacks \u00b7 Payments Risk \u00b7 Team Leadership \u00b7 SQL \u00b7 Snowflake \u00b7 Hex \u00b7 Metabase \u00b7 Python \u00b7 React \u00b7 TypeScript \u00b7 Node.js';
 
 const NEOFETCH = String.raw`
    ██╗  ██╗ ██████╗    kelvin@kelvino.dev
@@ -146,9 +146,11 @@ const Terminal: React.FC = () => {
       case 'whoami':
         push('out', (
           <>
-            Kelvin Olasupo. Fraud Operations Lead at Nala, software engineer and founder of Thrive Finance.
-            First-Class BSc in Computer Science, working towards an MSc in AI &amp; Machine Learning.
-            I build the tools my team actually relies on, then go home and build some more.
+            Kelvin Olasupo. Fraud Operations Lead at Nala, with 7+ years in fraud, risk and payments
+            across fintech, card issuing and consumer finance. Built Nala's fraud function from zero
+            to six analysts; previously managed 20+ credit-card fraud analysts at TSYS.
+            First-Class BSc in Computer Science, which is why I build the detection tooling myself
+            instead of waiting for it.
           </>
         ));
         break;
@@ -174,10 +176,15 @@ const Terminal: React.FC = () => {
       case 'experience':
         push('out', (
           <>
-            <b>Nala</b>, Fraud Operations Lead (Apr 2025 – present). Shipped 5+ internal tools, designed fraud
-            frameworks and SOPs, built Hex dashboards and Python tooling for real-time risk monitoring.
+            <b>Nala</b>, Fraud Operations Lead (Apr 2025 \u2013 present). Built the fraud function 0 \u2192 6 analysts,
+            took chargeback win rates from 41% to over 80%, built fraud MI across 4M+ transactions in 20 markets.
             <br />
-            <b>University of Bedfordshire</b>, BSc Computer Science, First-Class Honours (2021 – 2025).
+            <b>easyJet Holidays</b>, Fraud &amp; Risk Analyst (Nov 2024 \u2013 Mar 2025).
+            <br />
+            <b>TSYS Managed Services EMEA</b> (Jan 2019 \u2013 Oct 2024). Fraud Team Manager for Sainsbury's Bank
+            credit cards, managing 20+ analysts. Before that, fraud analyst across disputes, chargebacks and collections.
+            <br />
+            <b>University of Bedfordshire</b>, BSc Computer Science, First-Class Honours.
           </>
         ));
         break;
@@ -233,10 +240,13 @@ const Terminal: React.FC = () => {
             <pre className="term-pre">{JSON.stringify({
               name: 'Kelvin Olasupo',
               role: 'Fraud Operations Lead @ Nala',
-              builds: ['Spree', 'ForgeWatch', 'Thrive Finance', 'AgileFlow', 'Mylestone', 'AlertIQ'],
-              stack: ['React', 'TypeScript', 'Python', 'Supabase'],
-              studying: 'MSc AI & Machine Learning',
-              status: 'open to software engineering roles',
+              years_in_fraud: 7,
+              team: 'built 0 -> 6 analysts at Nala',
+              previously: 'managed 20+ analysts at TSYS',
+              domains: ['payments', 'card issuing', 'disputes'],
+              stack: ['SQL', 'Snowflake', 'Hex', 'React', 'TypeScript'],
+              builds: ['Reg E Radar', 'Fraud Ops Pulse', 'AlertIQ'],
+              status: 'open to fraud & risk leadership',
             }, null, 2)}</pre>
           ));
         } else if (!arg) {

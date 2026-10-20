@@ -5,9 +5,13 @@ import gradPhoto from '../assets/gradphoto.jpg';
 import TechIcon from './TechIcon';
 
 const skills = [
-  'React', 'TypeScript', 'JavaScript', 'Python', 'Streamlit',
-  'Supabase', 'Appwrite', 'Node.js', 'SQL', 'Playwright',
-  'Hex Dashboards', 'Claude AI', 'Fraud Operations', 'Data Analytics', 'Git',
+  // Fraud and risk first: this is the career, not the hobby.
+  'Fraud Operations', 'Fraud Strategy', 'Detection & Controls', 'Disputes & Chargebacks',
+  'Payments Risk', 'Team Leadership', 'Regulatory Reporting',
+  // Then the analytics that back it up.
+  'SQL', 'Snowflake', 'Hex', 'Metabase', 'Python',
+  // Then the engineering that makes the tooling possible.
+  'React', 'TypeScript', 'Node.js', 'Git',
 ];
 
 const About: React.FC = () => {
@@ -41,19 +45,23 @@ const About: React.FC = () => {
         >
           <div className="about-header">
             <span className="section-label">About Me</span>
-            <h2 className="section-title">Engineer. Founder. Fraud specialist.</h2>
+            <h2 className="section-title">Seven years in fraud. I build the tooling too.</h2>
           </div>
 
           <p className="about-text">
-            I'm Kelvin, a First-Class CS graduate and Fraud Operations Lead at Nala. I build the tools my team actually relies on: fraud detection frameworks, dispute automation, analyst onboarding, and the dashboards that surface risk before it becomes a problem.
+            I'm Kelvin, a Fraud Operations Lead at Nala. I've spent 7+ years in fraud, risk and payments across fintech, card issuing and consumer finance. I built Nala's fraud operations function from zero to six analysts across Nairobi and Dakar, and before that managed a team of 20+ credit-card fraud analysts at TSYS.
           </p>
 
           <p className="about-text">
-            My stack spans React, TypeScript, Python, and a growing set of AI tooling. I've shipped production software across fraud operations, fintech, and healthcare. Outside Nala, I run Thrive Finance, a personal finance app with 12+ active users, built by someone who sees fraud up close every day.
+            Most of my work is detection and controls: finding where losses concentrate, working out whether a rule is firing late or catching good customers, and turning frontline findings into evidence Product and Engineering can act on. Redesigning chargeback evidence and coaching the team took win rates from 41% to over 80% in three months. I've built fraud reporting covering 4M+ transactions across 20 EU and UK markets, and owned the fraud analysis behind a Central Bank of Nigeria regulatory return.
           </p>
 
           <p className="about-text">
-            I'm looking for software engineering roles focused on product and AI systems. Working toward an MSc in AI and Machine Learning.
+            I'm also a First-Class Computer Science graduate, which means I build the tooling rather than wait for it. Reg E Radar standardises Regulation E dispute decisions, Fraud Ops Pulse automates the team's reporting, and Card Scheme Health monitors authorisations and 3DS performance. That combination is the point: I can see the operational problem and close the loop myself.
+          </p>
+
+          <p className="about-text">
+            I'm looking for fraud risk, fraud strategy and payments risk leadership roles. Engineering roles where the fraud domain genuinely matters are welcome too.
           </p>
 
           <div className="about-skills">

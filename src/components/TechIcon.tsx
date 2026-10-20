@@ -8,6 +8,7 @@ import {
 import {
   LuDatabase, LuChartColumn, LuChartLine, LuShieldCheck, LuTestTube,
   LuCreditCard, LuUsers, LuScale, LuLandmark, LuWorkflow,
+  LuSearch, LuGavel, LuFileText, LuSnowflake,
 } from 'react-icons/lu';
 import { useTheme } from '../ThemeContext';
 import './TechIcon.css';
@@ -70,6 +71,12 @@ const ICONS: Record<string, Entry> = {
   financialservices:{ Icon: LuLandmark },
   processdesign:    { Icon: LuWorkflow },
   regulatione:      { Icon: LuScale },
+  fraudstrategy:    { Icon: LuSearch },
+  detectioncontrols:{ Icon: LuShieldCheck },
+  disputeschargebacks: { Icon: LuGavel },
+  paymentsrisk:     { Icon: LuCreditCard },
+  regulatoryreporting: { Icon: LuFileText },
+  snowflake:        { Icon: LuSnowflake, colour: { light: '#2A8FD4', dark: '#6BC5F5' } },
 };
 
 /** "Node.js" -> "nodejs", "Hex Dashboards" -> "hexdashboards". */

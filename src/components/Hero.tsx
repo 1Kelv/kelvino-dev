@@ -7,10 +7,10 @@ import './Hero.css';
 
 const ROLES = [
   'Fraud Operations Lead',
-  'Software Engineer',
-  'Founder of Thrive Finance',
-  'MSc AI student (soon)',
-  'builder of internal tools',
+  'Fraud Risk & Strategy',
+  'Payments Risk & Controls',
+  'Detection & Analytics',
+  'and I build the tooling myself',
 ];
 
 const CV_MAILTO =
@@ -39,13 +39,14 @@ function useLondonTime() {
 type Token = [string, string];
 const CODE: Token[][] = [
   [['tk-kw', 'const'], ['', ' '], ['tk-var', 'kelvin'], ['', ' '], ['tk-op', '='], ['', ' {']],
-  [['', '  '], ['tk-key', 'role'], ['tk-op', ': '], ['tk-str', '"Fraud Ops Lead @ Nala"'], ['tk-op', ',']],
-  [['', '  '], ['tk-key', 'builds'], ['tk-op', ': ['], ['tk-str', '"Spree"'], ['tk-op', ', '], ['tk-str', '"ForgeWatch"'], ['tk-op', ', '], ['tk-str', '"Thrive Finance"'], ['tk-op', '],']],
-  [['', '  '], ['tk-key', 'stack'], ['tk-op', ': ['], ['tk-str', '"React"'], ['tk-op', ', '], ['tk-str', '"TypeScript"'], ['tk-op', ', '], ['tk-str', '"Python"'], ['tk-op', '],']],
+  [['', '  '], ['tk-key', 'role'], ['tk-op', ': '], ['tk-str', '"Fraud Operations Lead @ Nala"'], ['tk-op', ',']],
+  [['', '  '], ['tk-key', 'years'], ['tk-op', ': '], ['tk-num', '7'], ['tk-op', ',']],
+  [['', '  '], ['tk-key', 'team'], ['tk-op', ': '], ['tk-str', '"built 0 -> 6 analysts"'], ['tk-op', ',']],
+  [['', '  '], ['tk-key', 'domains'], ['tk-op', ': ['], ['tk-str', '"payments"'], ['tk-op', ', '], ['tk-str', '"cards"'], ['tk-op', ', '], ['tk-str', '"disputes"'], ['tk-op', '],']],
+  [['', '  '], ['tk-key', 'stack'], ['tk-op', ': ['], ['tk-str', '"SQL"'], ['tk-op', ', '], ['tk-str', '"Hex"'], ['tk-op', ', '], ['tk-str', '"Snowflake"'], ['tk-op', '],']],
+  [['', '  '], ['tk-key', 'alsoBuilds'], ['tk-op', ': ['], ['tk-str', '"Reg E Radar"'], ['tk-op', ', '], ['tk-str', '"Fraud Ops Pulse"'], ['tk-op', '],']],
   [['', '  '], ['tk-key', 'degree'], ['tk-op', ': '], ['tk-str', '"BSc CS, First-Class"'], ['tk-op', ',']],
-  [['', '  '], ['tk-key', 'next'], ['tk-op', ': '], ['tk-str', '"MSc AI & Machine Learning"'], ['tk-op', ',']],
-  [['', '  '], ['tk-key', 'status'], ['tk-op', ': '], ['tk-str', '"open to SWE roles"'], ['tk-op', ',']],
-  [['', '  '], ['tk-key', 'coffee'], ['tk-op', ': '], ['tk-num', 'Infinity'], ['tk-op', ',']],
+  [['', '  '], ['tk-key', 'status'], ['tk-op', ': '], ['tk-str', '"open to fraud & risk leadership"'], ['tk-op', ',']],
   [['tk-op', '} '], ['tk-kw', 'as const'], ['tk-op', ';']],
 ];
 
@@ -146,9 +147,10 @@ const Hero: React.FC = () => {
           </p>
 
           <p className="hero-description">
-            I build software that solves operational problems. Fraud tooling at{' '}
+            Seven years building fraud and risk functions across payments, card issuing
+            and consumer finance. I lead the team at{' '}
             <a href="https://www.nala.com/" target="_blank" rel="noopener noreferrer" className="hero-company-link">Nala</a>,
-            a personal finance startup in production, and an MSc in AI on the way.
+            own the detection strategy, and build the tooling myself rather than waiting on a roadmap.
           </p>
 
           <div className="hero-cta">
@@ -165,18 +167,18 @@ const Hero: React.FC = () => {
 
           <div className="hero-stats">
             <div className="hero-stat">
-              <span className="hero-stat-value">1st</span>
-              <span className="hero-stat-label">Class Honours</span>
+              <span className="hero-stat-value"><CountUp to={7} suffix="+" /></span>
+              <span className="hero-stat-label">Years in Fraud &amp; Risk</span>
+            </div>
+            <div className="hero-stat-divider" />
+            <div className="hero-stat">
+              <span className="hero-stat-value"><CountUp to={20} suffix="+" /></span>
+              <span className="hero-stat-label">Analysts Led</span>
             </div>
             <div className="hero-stat-divider" />
             <div className="hero-stat">
               <span className="hero-stat-value"><CountUp to={10} suffix="+" /></span>
-              <span className="hero-stat-label">Projects Built</span>
-            </div>
-            <div className="hero-stat-divider" />
-            <div className="hero-stat">
-              <span className="hero-stat-value"><CountUp to={5} suffix="+" /></span>
-              <span className="hero-stat-label">Tools shipped at Nala</span>
+              <span className="hero-stat-label">Internal Tools Shipped</span>
             </div>
           </div>
 

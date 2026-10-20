@@ -2,14 +2,16 @@ import React from 'react';
 import './Marquee.css';
 
 const ROW_ONE = [
-  'React', 'TypeScript', 'Python', 'Node.js', 'Supabase', 'Appwrite', 'SQL',
-  'Playwright', 'Streamlit', 'Hex', 'Claude AI', 'TensorFlow', 'Vite', 'Git',
+  'Fraud Operations', 'Detection & Controls', 'Disputes & Chargebacks', 'Payments Risk',
+  'Fraud Strategy', 'Team Leadership', 'SQL', 'Snowflake', 'Hex', 'Metabase',
+  'Python', 'React', 'TypeScript', 'Node.js',
 ];
 
 const ROW_TWO = [
-  'Fraud Operations', 'Regulation E', 'Chargeback Automation', 'Risk Dashboards',
-  'First-Class Honours', 'Founder', 'MSc AI (in progress)', 'London',
-  'Thrive Finance', 'Spree', 'ForgeWatch', 'AgileFlow', 'Mylestone', 'AlertIQ',
+  '7+ years in fraud & risk', 'Built 0 to 6 analysts', 'Managed 20+ analysts',
+  'Chargeback win rate 41% to 80%', '4M+ transactions analysed', '20 EU & UK markets',
+  'Reg E Radar', 'Fraud Ops Pulse', 'Card Scheme Health', 'AlertIQ',
+  'First-Class Honours', 'London',
 ];
 
 const Row: React.FC<{ items: string[]; reverse?: boolean }> = ({ items, reverse }) => {
